@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "outDir": "./dist",
+    "lib": ["es5", "es6"],
+    "target": "es6",
     "module": "commonjs",
-    "rootDir": "src",
-    "outDir": "public",
-    "jsx": "react",
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
-  "include": ["src", "custom.d.ts"]
+  "include": ["./src/**/*", "jest.config.js"]
 }
