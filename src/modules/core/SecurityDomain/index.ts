@@ -4,8 +4,4 @@ import SecurityDomainResolver from './SecurityDomain.resolver';
 
 const SecurityDomainModel = getModelForClass(SecurityDomain);
 
-export {
-  SecurityDomain,
-  SecurityDomainModel,
-  SecurityDomainResolver
-}
+export { SecurityDomain, SecurityDomainModel, SecurityDomainResolver };

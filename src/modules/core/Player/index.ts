@@ -4,8 +4,4 @@ import PlayerResolver from './Player.resolver';
 
 const PlayerModel = getModelForClass(Player);
 
-export { 
-  Player,
-  PlayerModel,
-  PlayerResolver
-}
+export { Player, PlayerModel, PlayerResolver };

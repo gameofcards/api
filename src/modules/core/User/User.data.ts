@@ -1,56 +1,56 @@
 export default [
-  { 
+  {
     username: 'tommypastrami',
     email: 'tommypastrami@gmail.com',
     displayName: 'tommyCHEESE',
-    password: 'cheese'
+    password: 'cheese',
   },
-  { 
+  {
     username: 'johnnyroastbeef',
     email: 'johnnyroastbeef@gmail.com',
     password: 'XxBeefCakexX',
-    displayName: 'beefcake'
+    displayName: 'beefcake',
   },
-  { 
+  {
     username: 'bella',
     email: 'bella@gmail.com',
     password: 'mortadella',
-    displayName: 'belladella'
+    displayName: 'belladella',
   },
-  { 
+  {
     username: 'tony',
     email: 'tony@gmail.com',
     password: 'pepperoni',
-    displayName: 'tonyP'
+    displayName: 'tonyP',
   },
-  { 
+  {
     username: 'tammy',
     email: 'tammy@gmail.com',
     password: 'salami',
-    displayName: 'tammy.salami'
+    displayName: 'tammy.salami',
   },
-  { 
+  {
     username: 'malory',
     email: 'malory@gmail.com',
     password: 'cellory',
-    displayName: 'mal.cell'
+    displayName: 'mal.cell',
   },
-  { 
+  {
     username: 'bobby',
     email: 'bobby@gmail.com',
     password: 'apples',
-    displayName: 'bobbyeatsapples'
+    displayName: 'bobbyeatsapples',
   },
-  { 
+  {
     username: 'timmy',
     email: 'timmy@gmail.com',
     password: 'cheesecake',
-    displayName: 'timmy.cheese'
+    displayName: 'timmy.cheese',
   },
   {
     username: 'jethro',
     email: 'jethro@gmail.com',
     password: 'mud',
-    displayName: 'jethro.mud'
-  }
+    displayName: 'jethro.mud',
+  },
 ];

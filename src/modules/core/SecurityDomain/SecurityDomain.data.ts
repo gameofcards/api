@@ -1,10 +1,10 @@
 export default [
   {
     name: 'root',
-    clearanceLevel: 1
+    clearanceLevel: 1,
   },
   {
     name: 'user',
-    clearanceLevel: 2
-  }
+    clearanceLevel: 2,
+  },
 ];

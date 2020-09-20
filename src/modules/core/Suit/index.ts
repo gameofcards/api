@@ -4,8 +4,4 @@ import SuitResolver from './Suit.resolver';
 
 const SuitModel = getModelForClass(Suit);
 
-export {
-  Suit,
-  SuitModel,
-  SuitResolver
-}
+export { Suit, SuitModel, SuitResolver };

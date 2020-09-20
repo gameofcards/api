@@ -4,8 +4,4 @@ import CardRankResolver from './CardRank.resolver';
 
 const CardRankModel = getModelForClass(CardRank);
 
-export {
-  CardRank,
-  CardRankModel,
-  CardRankResolver
-}
+export { CardRank, CardRankModel, CardRankResolver };

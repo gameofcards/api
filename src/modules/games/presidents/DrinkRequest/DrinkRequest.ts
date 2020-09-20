@@ -10,60 +10,58 @@ import ClassBase from '../../../core/ClassBase';
 @ModelOptions({
   schemaOptions: {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 })
 @Plugin(autopopulate)
-@ObjectType({implements: ClassBase})
+@ObjectType({ implements: ClassBase })
 export default class DrinkRequest {
-  
-  public _id!: InstanceId
+  public _id!: InstanceId;
 
   @Property({ required: true, ref: 'PresidentsPlayer' })
-  @Field(type => PresidentsPlayer)
-  public fromPlayer!: Ref<PresidentsPlayer>
+  @Field((type) => PresidentsPlayer)
+  public fromPlayer!: Ref<PresidentsPlayer>;
 
   @Property({ required: true, ref: 'PresidentsPlayer' })
-  @Field(type => PresidentsPlayer)
-  public toPlayer!: Ref<PresidentsPlayer>
+  @Field((type) => PresidentsPlayer)
+  public toPlayer!: Ref<PresidentsPlayer>;
 
   @Property({ required: true, ref: 'PresidentsGame' })
-  @Field(type => PresidentsGame)
-  public game!: Ref<PresidentsGame>
+  @Field((type) => PresidentsGame)
+  public game!: Ref<PresidentsGame>;
 
   @Property({ required: true, default: Date.now })
   @Field()
-  public sentAt!: Date
+  public sentAt!: Date;
 
-  @Property({required: true })
+  @Property({ required: true })
   @Field()
-  public fulfilled!: boolean
+  public fulfilled!: boolean;
 
   @Property()
   @Field()
-  public fulfilledAt!: Date
+  public fulfilledAt!: Date;
 
   public async fulfill(this: DocumentType<typeof DrinkRequest>) {
     this.fulfilled = true;
     this.fulfilledAt = new Date();
     return await this.save();
   }
-  
+
   public static async createInstance(
     fromPlayer: DocumentType<typeof PresidentsPlayer>,
     toPlayer: DocumentType<typeof PresidentsPlayer>,
-    game: DocumentType<typeof PresidentsGame>) {
-    
-    const request = { 
+    game: DocumentType<typeof PresidentsGame>
+  ) {
+    const request = {
       fromPlayer,
       toPlayer,
       game,
       sentAt: new Date(),
-      fulfilled: false
+      fulfilled: false,
     };
 
     const instance = new DrinkRequestModel(request);
     return await instance.save();
   }
-
 }

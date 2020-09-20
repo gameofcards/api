@@ -6,27 +6,26 @@ import ClassBase from '../ClassBase';
 @ModelOptions({
   schemaOptions: {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 })
-@ObjectType({implements: ClassBase})
+@ObjectType({ implements: ClassBase })
 export default class CardRank {
-  
-  public _id!: InstanceId
+  public _id!: InstanceId;
 
   @Property({ required: true, unique: true })
   @Field()
-  public name!: string
+  public name!: string;
 
   @Property({ required: true, unique: true })
   @Field()
-  public character!: string
+  public character!: string;
 
   @Property({ required: true, unique: true })
-  @Field(type => Int)
-  public value!: number
+  @Field((type) => Int)
+  public value!: number;
 
-  public static async findByChar(this: ReturnModelType<typeof CardRank>, character: string) : Promise<CardRank> {
-    return this.findOne({character});
+  public static async findByChar(this: ReturnModelType<typeof CardRank>, character: string): Promise<CardRank> {
+    return this.findOne({ character });
   }
 }

@@ -4,8 +4,4 @@ import StatusResolver from './Status.resolver';
 
 const StatusModel = getModelForClass(Status);
 
-export {
-  Status,
-  StatusModel,
-  StatusResolver
-}
+export { Status, StatusModel, StatusResolver };

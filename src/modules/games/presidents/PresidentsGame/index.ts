@@ -5,8 +5,4 @@ import PresidentsGameResolver from './PresidentsGame.resolver';
 
 const PresidentsGameModel = getDiscriminatorModelForClass(GameModel, PresidentsGame);
 
-export {
-  PresidentsGame,
-  PresidentsGameModel,
-  PresidentsGameResolver
-}
+export { PresidentsGame, PresidentsGameModel, PresidentsGameResolver };

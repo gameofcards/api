@@ -1,19 +1,17 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
 import { Resolver, Query, Arg } from 'type-graphql';
 import { Deck, DeckModel } from '.';
-import { ObjectIdScalar } from "../../../types";
+import { ObjectIdScalar } from '../../../types';
 
-@Resolver(of => Deck)
+@Resolver((of) => Deck)
 export default class DeckResolver {
-
-  @Query(returns => Deck)
-  async deck(@Arg('id', type => ObjectIdScalar) id: ObjectId) {
+  @Query((returns) => Deck)
+  async deck(@Arg('id', (type) => ObjectIdScalar) id: ObjectId) {
     return DeckModel.findById(id);
   }
 
-  @Query(returns => [Deck])
+  @Query((returns) => [Deck])
   async decks(): Promise<Deck[]> {
     return await DeckModel.find({});
   }
-
 }

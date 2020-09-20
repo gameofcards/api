@@ -7,5 +7,5 @@ export { GameStatus, GameStatusModel, GameStatusResolver } from './GameStatus';
 export { Player, PlayerModel, PlayerResolver } from './Player';
 export { SecurityDomain, SecurityDomainModel, SecurityDomainResolver } from './SecurityDomain';
 export { Status, StatusModel, StatusResolver } from './Status';
-export { Suit, SuitModel, SuitResolver} from './Suit';
+export { Suit, SuitModel, SuitResolver } from './Suit';
 export { User, UserModel, UserResolver } from './User';

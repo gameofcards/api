@@ -5,8 +5,4 @@ import GameStatusResolver from './GameStatus.resolver';
 
 const GameStatusModel = getDiscriminatorModelForClass(StatusModel, GameStatus);
 
-export {
-  GameStatus,
-  GameStatusModel,
-  GameStatusResolver
-}
+export { GameStatus, GameStatusModel, GameStatusResolver };

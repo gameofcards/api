@@ -1,19 +1,17 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
 import { Resolver, Query, Arg } from 'type-graphql';
 import { GameStatus, GameStatusModel } from '.';
-import { ObjectIdScalar } from "../../../types";
+import { ObjectIdScalar } from '../../../types';
 
-@Resolver(of => GameStatus)
+@Resolver((of) => GameStatus)
 export default class GameStatusResolver {
-
-  @Query(returns => GameStatus)
-  async gameStatus(@Arg('id', type => ObjectIdScalar) id: ObjectId) {
+  @Query((returns) => GameStatus)
+  async gameStatus(@Arg('id', (type) => ObjectIdScalar) id: ObjectId) {
     return GameStatusModel.findById(id);
   }
 
-  @Query(returns => [GameStatus])
+  @Query((returns) => [GameStatus])
   async gameStatuses(): Promise<GameStatus[]> {
     return await GameStatusModel.find({});
   }
-
 }

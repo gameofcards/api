@@ -3,7 +3,4 @@ import { getModelForClass } from '@typegoose/typegoose';
 
 const GameModel = getModelForClass(Game);
 
-export { 
-  Game,
-  GameModel,
-}
+export { Game, GameModel };

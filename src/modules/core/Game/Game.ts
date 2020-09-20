@@ -12,44 +12,43 @@ import ClassBase from '../ClassBase';
   schemaOptions: {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    discriminatorKey: 'type'
-  }
+    discriminatorKey: 'type',
+  },
 })
-@InterfaceType({implements: ClassBase})
+@InterfaceType({ implements: ClassBase })
 @Plugin(autopopulate)
 export default class Game {
-  
-  public _id!: InstanceId
-  
+  public _id!: InstanceId;
+
   @Property({ required: true, unique: true })
   @Field()
-  public name!: String
+  public name!: String;
 
   @Property({ required: true, default: Date.now })
   @Field()
-  public createdAt!: Date
+  public createdAt!: Date;
 
   @Property()
   @Field()
-  public startedAt?: Date
+  public startedAt?: Date;
 
   @Property()
   @Field()
-  public finishedAt?: Date
+  public finishedAt?: Date;
 
   @Property({ autopopulate: true, ref: 'GameStatus' })
-  @Field(type => GameStatus)
-  public status!: Ref<GameStatus>
+  @Field((type) => GameStatus)
+  public status!: Ref<GameStatus>;
 
   @Property({ autopopulate: true, ref: 'GameConfiguration' })
-  @Field(type => GameConfiguration)
-  public config!: Ref<GameConfiguration>
+  @Field((type) => GameConfiguration)
+  public config!: Ref<GameConfiguration>;
 
   @Property({ required: true, ref: 'User' })
-  @Field(type => User)
-  public createdByUser!: Ref<User>
+  @Field((type) => User)
+  public createdByUser!: Ref<User>;
 
   @Property({ autopopulate: true, ref: 'Player' })
-  @Field(type => Player)
-  public currentPlayer?: Ref<Player>
+  @Field((type) => Player)
+  public currentPlayer?: Ref<Player>;
 }

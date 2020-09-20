@@ -4,8 +4,4 @@ import CardResolver from './Card.resolver';
 
 const CardModel = getModelForClass(Card);
 
-export {
-  Card,
-  CardModel,
-  CardResolver
-}
+export { Card, CardModel, CardResolver };

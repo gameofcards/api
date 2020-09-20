@@ -1,4 +1,11 @@
-import { prop as Property, defaultClasses, Ref, ReturnModelType, modelOptions as ModelOptions, plugin as Plugin } from '@typegoose/typegoose';
+import {
+  prop as Property,
+  defaultClasses,
+  Ref,
+  ReturnModelType,
+  modelOptions as ModelOptions,
+  plugin as Plugin,
+} from '@typegoose/typegoose';
 import { ObjectType, Field } from 'type-graphql';
 import PresidentsTurn from '../PresidentsTurn/PresidentsTurn';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
@@ -9,32 +16,31 @@ import ClassBase from '../../../core/ClassBase';
 @ModelOptions({
   schemaOptions: {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 })
-@ObjectType({implements: ClassBase})
+@ObjectType({ implements: ClassBase })
 export default class PresidentsRound {
-  
-  public _id!: InstanceId
-  
+  public _id!: InstanceId;
+
   @Property({ required: true, default: Date.now })
   @Field()
-  public startedAt!: Date
+  public startedAt!: Date;
 
   @Property({ ref: 'PresidentsGame' })
-  @Field(type => PresidentsGame)
-  public game!: Ref<PresidentsGame>
+  @Field((type) => PresidentsGame)
+  public game!: Ref<PresidentsGame>;
 
   @Property({ autopopulate: true, ref: 'PresidentsTurn' })
-  @Field(type => [PresidentsTurn])
-  public turns!: Ref<PresidentsTurn>[]
+  @Field((type) => [PresidentsTurn])
+  public turns!: Ref<PresidentsTurn>[];
 
   public static async createInstance(game: ReturnModelType<typeof PresidentsGame>) {
     const round = {
       startedAt: new Date(),
       game,
-      turns: []
-    }
+      turns: [],
+    };
     const instance = new PresidentsRoundModel(round);
     return await instance.save();
   }

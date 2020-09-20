@@ -7,15 +7,14 @@ export default class Connection {
       useCreateIndex: true,
       bufferMaxEntries: 0,
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     };
     try {
       await mongoose.connect(url, options);
       console.log('[Database] connected to mongodb.');
-    }
-    catch (err) {
+    } catch (err) {
       console.log('[Database] failed to connect to mongodb.');
-      console.log(`[Database] error: ${err}`);  
+      console.log(`[Database] error: ${err}`);
     }
   }
 
@@ -23,10 +22,9 @@ export default class Connection {
     try {
       await mongoose.connection.close();
       console.log('[Database] disconnected from mongodb.');
-    } 
-    catch (err) {
+    } catch (err) {
       console.log('[Database] failed to disconnect from mongodb.');
-      console.log(`[Database] error: ${err}`);  
+      console.log(`[Database] error: ${err}`);
     }
   }
 }

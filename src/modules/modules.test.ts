@@ -1,23 +1,23 @@
-import { 
+import {
   CardModel,
-  CardRankModel, 
-  DeckModel, 
+  CardRankModel,
+  DeckModel,
   GameModel,
-  GameConfigurationModel, 
+  GameConfigurationModel,
   PlayerModel,
   SecurityDomainModel,
   StatusModel,
-  SuitModel, 
+  SuitModel,
   UserModel,
 } from './core';
 
-import { 
-  DrinkRequestModel, 
-  PoliticalRankModel, 
+import {
+  DrinkRequestModel,
+  PoliticalRankModel,
   PresidentsDeckModel,
   PresidentsGameModel,
   PresidentsPlayerModel,
-  PresidentsRoundModel, 
+  PresidentsRoundModel,
   PresidentsTurnModel,
 } from './games/presidents';
 
@@ -35,7 +35,6 @@ import { createPoliticalRanks } from './games/presidents/PoliticalRank/Political
 
 import Connection from '../db';
 
-
 const dropAll = async () => {
   console.log('[UPLOAD] Dropping the database...');
   try {
@@ -49,7 +48,7 @@ const dropAll = async () => {
       SecurityDomainModel.deleteMany({}),
       StatusModel.deleteMany({}),
       SuitModel.deleteMany({}),
-      UserModel.deleteMany({})
+      UserModel.deleteMany({}),
     ]);
 
     const presidents = await Promise.all([
@@ -61,8 +60,7 @@ const dropAll = async () => {
       PresidentsRoundModel.deleteMany({}),
       PresidentsTurnModel.deleteMany({}),
     ]);
-  }
-  catch (err) {
+  } catch (err) {
     console.log('[UPLOAD] Failed to drop the database.');
     console.log(err);
   }
@@ -82,25 +80,22 @@ const initAll = async () => {
     await createPresidentsDeck();
     await createPoliticalRanks();
     await createUsers();
-  }
-  catch (err) {
+  } catch (err) {
     console.log('[UPLOAD] Failed to initialize the database.');
     console.log(err);
   }
   console.log('[UPLOAD] Database initialization completed.');
 };
 
-
 (async () => {
   await Connection.connect();
 
   try {
     await initAll();
-  }
-  catch (err) {
+  } catch (err) {
     console.log('[UPLOAD] Data upload failed.');
   }
 
-  console.log('[UPLOAD] Data upload complete.')
+  console.log('[UPLOAD] Data upload complete.');
   await Connection.disconnect();
 })();

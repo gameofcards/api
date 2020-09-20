@@ -3,7 +3,4 @@ import { getModelForClass } from '@typegoose/typegoose';
 
 const PresidentsRoundModel = getModelForClass(PresidentsRound);
 
-export {
-  PresidentsRound,
-  PresidentsRoundModel
-}
+export { PresidentsRound, PresidentsRoundModel };

@@ -7,19 +7,18 @@ import { InstanceId } from '../../../types';
   schemaOptions: {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    discriminatorKey: 'type'
-  }
+    discriminatorKey: 'type',
+  },
 })
-@InterfaceType({implements: ClassBase})
+@InterfaceType({ implements: ClassBase })
 export default class Status {
-
-  public _id!: InstanceId
+  public _id!: InstanceId;
 
   @Property({ required: true, unique: true, uppercase: true })
   @Field()
-  public value!: string
+  public value!: string;
 
   public static async findByValue(this: ReturnModelType<typeof Status>, value: string) {
-    return this.findOne({value});
+    return this.findOne({ value });
   }
 }

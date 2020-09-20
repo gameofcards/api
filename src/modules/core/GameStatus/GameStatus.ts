@@ -7,11 +7,11 @@ import { InstanceId } from '../../../types';
 @modelOptions({
   schemaOptions: {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 })
-@ObjectType({implements: [ClassBase, Status]})
+@ObjectType({ implements: [ClassBase, Status] })
 export default class GameStatus extends Status {
-  public _id!: InstanceId
-  public value!: string
+  public _id!: InstanceId;
+  public value!: string;
 }

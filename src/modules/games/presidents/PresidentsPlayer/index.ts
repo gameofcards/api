@@ -4,7 +4,4 @@ import { PlayerModel } from '../../../core';
 
 const PresidentsPlayerModel = getDiscriminatorModelForClass(PlayerModel, PresidentsPlayer);
 
-export {
-  PresidentsPlayer,
-  PresidentsPlayerModel
-}
+export { PresidentsPlayer, PresidentsPlayerModel };

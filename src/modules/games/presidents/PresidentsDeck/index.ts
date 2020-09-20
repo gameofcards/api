@@ -4,7 +4,4 @@ import { getDiscriminatorModelForClass } from '@typegoose/typegoose';
 
 const PresidentsDeckModel = getDiscriminatorModelForClass(DeckModel, PresidentsDeck);
 
-export {
-  PresidentsDeck,
-  PresidentsDeckModel
-}
+export { PresidentsDeck, PresidentsDeckModel };

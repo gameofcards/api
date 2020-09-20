@@ -6,9 +6,8 @@ import GameConfigurations from './GameConfiguration.data';
 export const createGameConfigurations = async () => {
   console.log('[UPLOAD] GameConfiguration');
   try {
-
-    const presidentsDeck = await PresidentsDeckModel.findOne({ name: 'Standard Presidents Deck'});
-    const standardDeck = await DeckModel.findOne({ name: 'Standard Deck'});
+    const presidentsDeck = await PresidentsDeckModel.findOne({ name: 'Standard Presidents Deck' });
+    const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
 
     const presidentsConfig = { ...GameConfigurations[0] };
     presidentsConfig.deck = presidentsDeck;
@@ -18,12 +17,11 @@ export const createGameConfigurations = async () => {
 
     const configs = [presidentsConfig, pokerConfig];
 
-    let configInstance = configs.map(config => new GameConfigurationModel(config));
-    let configPromises = configInstance.map(instance => instance.save());
-    
+    let configInstance = configs.map((config) => new GameConfigurationModel(config));
+    let configPromises = configInstance.map((instance) => instance.save());
+
     await Promise.all(configPromises);
-  }
-  catch (err) {
+  } catch (err) {
     console.log('[UPLOAD] Failed.');
     console.log(err);
   }

@@ -1,4 +1,12 @@
-import { prop as Property, defaultClasses, Ref, ReturnModelType, DocumentType, modelOptions as ModelOptions, plugin as Plugin } from '@typegoose/typegoose';
+import {
+  prop as Property,
+  defaultClasses,
+  Ref,
+  ReturnModelType,
+  DocumentType,
+  modelOptions as ModelOptions,
+  plugin as Plugin,
+} from '@typegoose/typegoose';
 import { ObjectType, Field } from 'type-graphql';
 import * as autopopulate from 'mongoose-autopopulate';
 import Player from '../Player/Player';
@@ -10,49 +18,48 @@ import ClassBase from '../ClassBase';
 @ModelOptions({
   schemaOptions: {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 })
 @Plugin(autopopulate)
-@ObjectType({implements: ClassBase})
+@ObjectType({ implements: ClassBase })
 export default class User {
-  
-  public _id!: InstanceId
+  public _id!: InstanceId;
 
   @Property({ required: true })
   @Field()
-  public username!: string
+  public username!: string;
 
   @Property({ required: true })
   @Field()
-  public email!: string
+  public email!: string;
 
   @Property({ required: true })
   @Field()
-  public displayName!: string
+  public displayName!: string;
 
   @Property({ required: true })
   @Field()
-  public password!: string
+  public password!: string;
 
   @Property()
   @Field()
-  public token?: string
+  public token?: string;
 
   @Property({ autopopulate: true, ref: 'SecurityDomain' })
-  @Field(type => SecurityDomain)
-  public security!: Ref<SecurityDomain>
+  @Field((type) => SecurityDomain)
+  public security!: Ref<SecurityDomain>;
 
   @Property({ ref: 'Player' })
-  @Field(type => [Player])
-  public playerRecords!: Ref<Player>[]
+  @Field((type) => [Player])
+  public playerRecords!: Ref<Player>[];
 
   public static async createInstance(this: ReturnModelType<typeof User>, input: CreateUserInput) {
     const security = await SecurityDomainModel.findOne({ name: 'user' });
     const user = {
       ...input,
       security,
-      token: ''
+      token: '',
     };
     const instance = await this.create(user);
     return instance;

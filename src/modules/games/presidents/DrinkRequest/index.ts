@@ -3,7 +3,4 @@ import { getModelForClass } from '@typegoose/typegoose';
 
 const DrinkRequestModel = getModelForClass(DrinkRequest);
 
-export {
-  DrinkRequest,
-  DrinkRequestModel
-}
+export { DrinkRequest, DrinkRequestModel };

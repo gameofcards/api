@@ -4,8 +4,4 @@ import DeckResolver from './Deck.resolver';
 
 const DeckModel = getModelForClass(Deck);
 
-export {
-  Deck,
-  DeckModel,
-  DeckResolver
-}
+export { Deck, DeckModel, DeckResolver };

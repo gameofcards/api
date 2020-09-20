@@ -8,12 +8,10 @@ import {
   SecurityDomainResolver,
   StatusResolver,
   SuitResolver,
-  UserResolver
+  UserResolver,
 } from './core';
 
-import {
-  PresidentsGameResolver
-} from './games';
+import { PresidentsGameResolver } from './games';
 
 import { NonEmptyArray } from '../types';
 
@@ -28,7 +26,7 @@ const resolvers: NonEmptyArray<Function> = [
   StatusResolver,
   SuitResolver,
   UserResolver,
-  PresidentsGameResolver
-]
+  PresidentsGameResolver,
+];
 
 export default resolvers;

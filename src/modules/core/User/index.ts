@@ -4,8 +4,4 @@ import UserResolver from './User.resolver';
 
 const UserModel = getModelForClass(User);
 
-export {
-  User,
-  UserModel,
-  UserResolver
-}
+export { User, UserModel, UserResolver };

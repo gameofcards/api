@@ -4,8 +4,4 @@ import GameConfigurationResolver from './GameConfiguration.resolver';
 
 const GameConfigurationModel = getModelForClass(GameConfiguration);
 
-export { 
-  GameConfiguration,
-  GameConfigurationModel,
-  GameConfigurationResolver
-}
+export { GameConfiguration, GameConfigurationModel, GameConfigurationResolver };
