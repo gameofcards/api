@@ -14,59 +14,78 @@ import resolvers from './modules/resolvers';
 
 const port = process.env.PORT || 3000;
 
-(async () => {
-  try {
-    console.log('[Application] starting up!');
-    await db.connect();
+class Application {
+  private app: Koa;
+  private router: Router;
+  private pubsub: PubSub;
+  private schema: GraphQLSchema;
+  private apollo: ApolloServer;
+  private server: Server;
 
-    console.log('[Application] setting up Koa...');
-    const app: Koa = new Koa();
+  constructor() {
+    this.app = new Koa();
+    this.router = new Router();
+    this.pubsub = new PubSub();
+    this.schema = null;
+    this.apollo = null;
+    this.server = null;
+  };
 
-    console.log('[Application] setting up Router...');
-    const router: Router = new Router();
+  public async start() {
+   await this.initializeApolloServer();
+   this.initializeGraphiql();
+   this.initializeHttpServer();
+  }
 
-    console.log('[Application] setting up PubSub...');
-    const pubsub: PubSub = new PubSub();
-
-    console.log('[Application] building graphql schema...');
+  private async initializeApolloServer() {
+    const { app, pubsub } = this;
     const schema: GraphQLSchema = await buildSchema({
       resolvers,
       emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
       scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
     });
-
-    console.log('[Application] setting up Apollo Server...');
-    const server: ApolloServer = new ApolloServer({
+    this.apollo = new ApolloServer({
       schema,
       extensions: [() => new ApolloLogExtension({ level: 'debug', timestamp: true, prefix: 'apollo' })],
       engine: {
         reportSchema: true,
       },
-      context: async ({ req, connection }) => ({ pubsub }),
+      context: async ({ req, connection }) => ({ pubsub })
     });
+    this.apollo.applyMiddleware({ app });
+  }
 
-    console.log('[Application] connecting Koa and Apollo Server...');
-    server.applyMiddleware({ app });
-
-    console.log('[Application] setting up graphiql...');
-    router.all(
+  private initializeGraphiql() {
+    const { schema } = this;
+    this.router.all(
       '/graphql',
       graphqlHTTP({
         schema,
         graphiql: true,
       })
     );
+  }
 
-    console.log('[Application] creating server...');
-    const httpServer: Server = createServer(app.callback());
-    server.installSubscriptionHandlers(httpServer);
-    httpServer.timeout = 5000;
+  private initializeHttpServer() {
+    this.server = createServer(this.app.callback());
+    this.apollo.installSubscriptionHandlers(this.server);
+    this.server.timeout = 5000;
 
-    httpServer.listen({ port }, () =>
-      console.log(`[Application] 🚀 GraphQL Server running at http://localhost:${port}${server.graphqlPath}`)
+    this.server.listen({ port }, () =>
+      console.log(`[Application] apollo running at http://localhost:${port}${this.apollo.graphqlPath}`)
     );
+  }
+}
+
+(async () => {
+  try {
+    console.log('[Application] starting up!');
+    await db.connect();
+    const app = new Application();
+    await app.start();
+
   } catch (err) {
-    console.log('[Application] Startup failed.');
+    console.log('[Application] startup failed.');
     console.log(err);
     await db.disconnect();
   }

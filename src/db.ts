@@ -11,9 +11,9 @@ export default class Connection {
     };
     try {
       await mongoose.connect(url, options);
-      console.log('[Database] connected to mongodb.');
+      console.log('[Database] connected to mongodb');
     } catch (err) {
-      console.log('[Database] failed to connect to mongodb.');
+      console.log('[Database] failed to connect to mongodb');
       console.log(`[Database] error: ${err}`);
     }
   }
@@ -21,9 +21,9 @@ export default class Connection {
   static async disconnect() {
     try {
       await mongoose.connection.close();
-      console.log('[Database] disconnected from mongodb.');
+      console.log('[Database] disconnected from mongodb');
     } catch (err) {
-      console.log('[Database] failed to disconnect from mongodb.');
+      console.log('[Database] failed to disconnect from mongodb');
       console.log(`[Database] error: ${err}`);
     }
   }
