@@ -6,7 +6,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "resolveJsonModule": true
   },
   "include": ["./src/**/*", "jest.config.js"]
 }

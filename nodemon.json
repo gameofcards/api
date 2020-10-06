@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "ignore": ["src/**/*.spec.ts"],
-  "exec": "export APOLLO_KEY=service:alwaysblue:LPErLvSYYDwF7_aK3FkSVw;  ts-node ./src/app.ts"
+  "ignore": ["src/**/*.test.ts"],
+  "exec": "export APOLLO_KEY=service:alwaysblue:LPErLvSYYDwF7_aK3FkSVw;  ts-node ./src/index.ts"
 }
