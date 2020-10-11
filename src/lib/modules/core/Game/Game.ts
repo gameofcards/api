@@ -22,6 +22,7 @@ import { Utils } from '../../modules.utils';
 @Plugin(autopopulate)
 export default class Game implements Instance {
   public _id!: InstanceId;
+  public id!: string;
 
   get displayId() {
     return this.name;
@@ -43,13 +44,13 @@ export default class Game implements Instance {
   @Field()
   public finishedAt?: Date;
 
-  @Property({ autopopulate: true, ref: 'GameStatus' })
+  @Property({ required: true, type: GameStatus })
   @Field((type) => GameStatus)
-  public status!: Ref<GameStatus>;
+  public status!: GameStatus;
 
-  @Property({ autopopulate: true, ref: 'GameConfiguration' })
+  @Property({ required: true, type: GameConfiguration })
   @Field((type) => GameConfiguration)
-  public config!: Ref<GameConfiguration>;
+  public config!: GameConfiguration;
 
   @Property({ required: true, ref: 'User' })
   @Field((type) => ID)

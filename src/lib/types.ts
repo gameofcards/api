@@ -1,4 +1,7 @@
+import { Card, CardRank, Deck, GameConfiguration, Suit, User } from './modules/core';
+import { DocumentType, Ref } from '@typegoose/typegoose';
 import { GraphQLScalarType, Kind } from 'graphql';
+
 import { ObjectId } from 'mongodb';
 
 export const ObjectIdScalar = new GraphQLScalarType({
@@ -42,8 +45,7 @@ export enum GameEvents {
 
 export interface PresidentsGameInput {
   name: string;
-  config: ObjectId;
-  createdByUser: ObjectId;
+  createdByUser: Ref<User>;
 }
 
 export interface CreateUserInput {
@@ -55,8 +57,9 @@ export interface CreateUserInput {
 
 export interface CreateCardInput {
   shortHand: string;
-  cardRank: ObjectId;
-  suit: ObjectId;
+  character: string;
+  cardRank: CardRank;
+  suit: Suit;
 }
 
 export interface CreateCardRankInput {
@@ -67,14 +70,14 @@ export interface CreateCardRankInput {
 
 export interface CreateDeckInput {
   name: string;
-  cards: InstanceId[];
+  cards: Card[];
 }
 
 export interface CreateGameConfigurationInput {
   name: string;
   maxPlayers: number;
   minPlayers: number;
-  deck: InstanceId[];
+  deck: Deck;
   numDecks: number
 }
 
@@ -86,6 +89,7 @@ export interface CreateSuitInput {
   name: string;
   character: string;
   value: number;
+  color: string;
 }
 
 export interface CreateSecurityDomainInput {
@@ -96,6 +100,17 @@ export interface CreateSecurityDomainInput {
 export interface CreatePoliticalRankInput {
   name: string;
   value: number;
+}
+
+export interface CreatePresidentsPlayerInput {
+  user: Ref<User>;
+  game: InstanceId;
+  seatPosition: number;
+}
+
+export interface CreatePresidentsRoundInput {
+  game: InstanceId;
+  number: number;
 }
 
 export type NonEmptyArray<TItem> = readonly [TItem, ...TItem[]] | [TItem, ...TItem[]];

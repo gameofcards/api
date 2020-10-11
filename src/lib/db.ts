@@ -4,7 +4,8 @@ import * as mongoose from 'mongoose';
 
 import { logger } from './logger';
 
-export default class Connection {
+export default class DatabaseConnection {
+
   static async connect() {
     const url = process.env.MONGODB_URL;
     const options = {
@@ -25,6 +26,26 @@ export default class Connection {
   static async disconnect() {
     try {
       await mongoose.connection.close();
+      logger.info('[Database] disconnected from mongodb');
+    } catch (err) {
+      logger.error('[Database] failed to disconnect from mongodb');
+      logger.error(`[Database] error: ${err}`);
+    }
+  }
+
+  static async drop() {
+    try {
+      const url = process.env.MONGODB_URL;
+      const options = {
+        useCreateIndex: true,
+        bufferMaxEntries: 0,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      };
+      await mongoose.connect(url, options, function() {
+        mongoose.connection.db.dropDatabase();
+      });
+      await DatabaseConnection.disconnect();
       logger.info('[Database] disconnected from mongodb');
     } catch (err) {
       logger.error('[Database] failed to disconnect from mongodb');

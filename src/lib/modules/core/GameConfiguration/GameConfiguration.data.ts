@@ -30,8 +30,9 @@ export const createGameConfigurations = async () => {
     const pokerConfig = { ...GameConfigurations[1] };
     pokerConfig.deck = standardDeck;
     const configs = [presidentsConfig, pokerConfig];
-    let instances = configs.map((config) => GameConfigurationModel.createInstance(config));
-    await Promise.all(instances);
+    let instancePromises = configs.map((config) => GameConfigurationModel.createInstance(config));
+    let instances = await Promise.all(instancePromises);
+    // logger.info(JSON.stringify(instances))
   } catch (err) {
     logger.error('[UPLOAD] Failed.');
     logger.error(err);

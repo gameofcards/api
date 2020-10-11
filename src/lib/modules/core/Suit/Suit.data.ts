@@ -34,6 +34,6 @@ export const createSuits = async () => {
     await Promise.all(instances);
   } catch (err) {
     logger.error('[UPLOAD] Failed to create Suits.');
-    logger.error(err);
+    logger.error(err.message);
   }
 };

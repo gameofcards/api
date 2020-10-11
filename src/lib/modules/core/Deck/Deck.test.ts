@@ -10,40 +10,35 @@ import { createCards } from '../Card/Card.data';
 import { createStandardDeck } from './Deck.data';
 import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
+import { logger } from './../../../logger';
 
-export const DeckTests = () => {
+describe('Deck Model Tests', function() {
 
-  describe('Deck Model Tests', function() {
+  beforeAll(async () => {
+    await db.connect();
+    await createSuits();
+    await createCardRanks();
+    await createCards();
+  })
 
-    beforeAll(async () => {
-      await db.connect();
-      await createSuits();
-      await createCardRanks();
-      await createCards();
-    })
+  afterAll(async () => {
+    await DeckModel.deleteMany({});
+    await SuitModel.deleteMany({});
+    await CardRankModel.deleteMany({});
+    await CardModel.deleteMany({});
+    await db.disconnect();
+  })
 
-    afterAll(async () => {
-      await DeckModel.deleteMany({});
-      await SuitModel.deleteMany({});
-      await CardRankModel.deleteMany({});
-      await CardModel.deleteMany({});
-      await db.disconnect();
-    })
+  describe('@createStandardDeck()', function() {
 
-    describe('@createStandardDeck()', function() {
+    it('should initialize 1 instances', async function() {    
+      await createStandardDeck();
+      const instance = await DeckModel.findOne({name: 'Standard Deck'});
+      expect(instance.cards.length).toBe(52);
+      expect(instance.cards[0].cardRank.value).toBeGreaterThanOrEqual(2);
+      expect(instance.cards[0].suit.value).toBeGreaterThanOrEqual(0);
+    });
 
-      it('should initialize 1 instances', async function() {    
-        await createStandardDeck();
-        const instances = await DeckModel.find({});
-        expect(instances.length).toBe(1);
-      });
+  })
 
-    })
-
-    describe('#createInstance()', function() {
-      it('should create an instance', async function() {    
-        expect(1).toEqual(1)
-      })
-    })
-
-})};
+});

@@ -1,7 +1,6 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
-import { Card, Game, GameConfiguration, GameStatus, Player, User } from '../../../core';
-import { CardModel, GameConfigurationModel, GameStatusModel, UserModel } from '../../../core';
+import { Card, CardModel, Game, GameConfiguration, GameConfigurationModel, GameStatus, GameStatusModel, Player, User, UserModel } from '../../../core';
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -11,22 +10,16 @@ import {
   ReturnModelType,
   getName,
 } from '@typegoose/typegoose';
-import { DrinkRequest, PresidentsDeck, PresidentsPlayer, PresidentsRound, PresidentsTurn } from '..';
-import {
-  DrinkRequestModel,
-  PresidentsDeckModel,
-  PresidentsGameModel,
-  PresidentsPlayerModel,
-  PresidentsRoundModel,
-  PresidentsTurnModel,
-} from '..';
+import { DrinkRequest, DrinkRequestModel } from '../DrinkRequest';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { GameStatusText, PresidentsGameInput, PresidentsTurnInput } from '../../../../types';
+import { PresidentsPlayer, PresidentsPlayerModel } from '../PresidentsPlayer';
+import { PresidentsRound, PresidentsRoundModel } from '../PresidentsRound';
+import { PresidentsTurn, PresidentsTurnModel } from '../PresidentsTurn';
 
 import DealerUtils from '../DealerUtils';
 import Instance from '../../../core/Instance';
 import { InstanceId } from '../../../../types';
-import { Types } from 'mongoose';
 import { Utils } from '../../../modules.utils';
 
 /**
@@ -40,12 +33,13 @@ import { Utils } from '../../../modules.utils';
 @ObjectType({ implements: [Instance, Game] })
 export default class PresidentsGame extends Game {
   public _id!: InstanceId;
+  public id!: string;
   public name!: string;
   public createdAt!: Date;
   public startedAt?: Date;
   public finishedAt?: Date;
-  public status!: Ref<GameStatus>;
-  public config!: Ref<GameConfiguration>;
+  public status!: GameStatus;
+  public config!: GameConfiguration;
   public createdByUser!: Ref<User>;
   public currentPlayer?: Ref<Player>;
 
@@ -53,30 +47,26 @@ export default class PresidentsGame extends Game {
   @Field((type) => ID)
   public winningPlayer?: Ref<PresidentsPlayer>;
 
-  @Property({ autopopulate: true, ref: 'PresidentsTurn' })
+  @Property({ type: PresidentsTurn })
   @Field((type) => PresidentsTurn)
-  public turnToBeat?: Ref<PresidentsTurn>;
+  public turnToBeat?: PresidentsTurn;
 
-  @Property({ autopopulate: true, ref: 'PresidentsRound' })
+  @Property({ type: PresidentsRound, required: true })
   @Field((type) => [PresidentsRound])
-  public rounds?: Ref<PresidentsRound>[];
+  public rounds!: PresidentsRound[];
 
-  @Property({ autopopulate: true, ref: 'PresidentsPlayer' })
+  @Property({ type: PresidentsPlayer, required: true })
   @Field((type) => [PresidentsPlayer])
-  public players?: Ref<PresidentsPlayer>[];
+  public players!: PresidentsPlayer[];
 
-  @Property({ autopopulate: true, ref: 'PresidentsDeck', required: true })
-  @Field((type) => PresidentsDeck)
-  public deck!: Ref<PresidentsDeck>;
-
-  @Property({ autopopulate: true, ref: 'DrinkRequest', required: true })
+  @Property({ type: DrinkRequest, required: true })
   @Field((type) => [DrinkRequest])
-  public drinkRequests?: Ref<DrinkRequest>;
+  public drinkRequests!: DrinkRequest[];
 
-//   public static async CreateGameAndAddPlayer(this: ReturnModelType<typeof PresidentsGame>, input: PresidentsGameInput) {
-//     const game = await PresidentsGame.createInstance(input);
-//     return await game.addPlayerFromUserId(input.createdByUser);
-//   }
+  public static async CreateGameAndAddPlayer(this: ReturnModelType<typeof PresidentsGame>, input: PresidentsGameInput) {
+    const game = await this.createInstance(input);
+    return await game.addPlayerFromUserId(input.createdByUser);
+  }
 
   /**
    * This method will create a PresidentsGame instance.
@@ -88,91 +78,96 @@ export default class PresidentsGame extends Game {
    * 
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsGame>, input: PresidentsGameInput) {
-    let { name } = input;
-    const config = await GameConfigurationModel.findById(input.config);
-    const createdByUser = await UserModel.findById(input.createdByUser);
     const status = await GameStatusModel.findByValue(GameStatusText.NotStarted);
-    const deck = await PresidentsDeckModel.findOne({ name: 'Standard Presidents Deck' });
-    const createdAt = Utils.getDate();
+    const config = await GameConfigurationModel.findOne({ name: 'Presidents' });
     const game = {
-      name,
+      name: input.name,
+      createdByUser: input.createdByUser,
       config,
-      createdByUser,
       status,
-      deck,
-      createdAt
+      createdAt: Utils.getDate(),
+      drinkRequests: [],
+      players: [],
+      rounds: []
     };
     const instance = await this.create(game);
     return instance;
   }
 
-//   public async addPlayerFromUserId(this: DocumentType<typeof PresidentsGame>, userId: string) {
-//     const user = await UserModel.findById(userId);
-//     const player = await PresidentsPlayerModel.createInstance(user);
-//     return await this.addPlayer(player);
-//   }
+  public async addPlayerFromUserId(this: DocumentType<PresidentsGame>, userId: Ref<User>) {
+    const player = await PresidentsPlayerModel.createInstance({
+      user: userId, 
+      game: this._id,
+      seatPosition: this.players.length
+    });
+    return this.addPlayer(player);
+  }
 
-//   public async addPlayer(this: DocumentType<typeof PresidentsGame>, player: DocumentType<typeof PresidentsPlayer>) {
-//     this.players.push(player);
-//     return await this.save();
-//   }
+  public async addPlayer(this: DocumentType<PresidentsGame>, player: DocumentType<PresidentsPlayer>) {
+    this.players.push(player);
+    await this.save();
+    return this;
+  }
 
-//   public static async StartGame(this: ReturnModelType<typeof PresidentsGame>, id: string) {
-//     let game = await PresidentsGameModel.findById(id);
-//     game = await game.initialize();
-//     return await game.initializeNextRound();
-//   }
+  public static async StartGame(this: ReturnModelType<typeof PresidentsGame>, id: string) {
+    let game = await this.findById(id);
+    game = await game.initialize();
+    return game.initializeNextRound();
+  }
 
-//   public async initialize(this: DocumentType<typeof PresidentsGame>) {
-//     if (this.status.value === GameStatusText.InProgress) {
-//       return Promise.reject(new Error('Unable to start game. It is already in progress.'));
-//     }
+  public async initialize(this: DocumentType<PresidentsGame>) {
+    if (this.status.value === GameStatusText.InProgress) {
+      return Promise.reject(new Error('Unable to start game. It is already in progress.'));
+    }
 
-//     if (this.status.value === GameStatusText.Finalized) {
-//       return Promise.reject(new Error('Unable to start game. It has already finished.'));
-//     }
+    if (this.status.value === GameStatusText.Finalized) {
+      return Promise.reject(new Error('Unable to start game. It has already finished.'));
+    }
 
-//     if (this.players.length < this.config.minPlayers) {
-//       return Promise.reject(new Error(`Unable to start game. Minimum number of players is ${this.config.minPlayers}}.`));
-//     }
+    if (this.players.length < this.config.minPlayers) {
+      return Promise.reject(new Error(`Unable to start game. Minimum number of players is ${this.config.minPlayers}}.`));
+    }
 
-//     if (this.players.length === this.config.maxPlayers) {
-//       return Promise.reject(
-//         new Error(`Unable to start game. The maximum amount of players (${this.config.maxPlayers}) has been reached.`)
-//       );
-//     }
+    if (this.players.length === this.config.maxPlayers) {
+      return Promise.reject(
+        new Error(`Unable to start game. The maximum amount of players (${this.config.maxPlayers}) has been reached.`)
+      );
+    }
 
-//     let { deck } = this.config;
-//     let shuffledDeck = DealerUtils.Shuffle(deck.cards);
-//     const numPlayers = this.players.length;
-//     let dealtCards = DealerUtils.Deal(numPlayers, shuffledDeck);
-//     this.players.forEach((player) => (player.hand = DealerUtils.SortCards(dealtCards[player.seatPosition])));
-//     const seatPositionWith3Clubs = DealerUtils.Find3Clubs(dealtCards);
-//     const playerWith3Clubs = this.players.find((player) => player.seatPosition === seatPositionWith3Clubs);
-//     this.currentPlayer = playerWith3Clubs.user;
-//     this.drinks = [];
+    let { deck } = this.config;
+    let shuffledDeck = DealerUtils.Shuffle(deck.cards);
+    const numPlayers = this.players.length;
+    let dealtCards = DealerUtils.Deal(numPlayers, shuffledDeck);
+    this.players.forEach((player) => (player.cards = DealerUtils.SortCards(dealtCards[player.seatPosition])));
+    const seatPositionWith3Clubs = DealerUtils.Find3Clubs(dealtCards);
+    const playerWith3Clubs = this.players.find((player) => player.seatPosition === seatPositionWith3Clubs);
+    this.currentPlayer = playerWith3Clubs._id;
 
-//     return this.save();
-//   }
+    await this.save();
+    return this;
+  }
 
-//   public async initializeNextRound(this: DocumentType<typeof PresidentsGame>) {
-//     if (this.status.value === GameStatusText.Finalized) {
-//       return Promise.reject(new Error('Unable to start next round. The game is finalized.'));
-//     }
-//     if (this.status.value === GameStatusText.InProgress) {
-//       if (this.turnToBeat) {
-//         this.turnToBeat.remove();
-//       }
-//     }
-//     if (this.status.value === GameStatusText.NotStarted) {
-//       this.startedAt = Utils.getDate();
-//       this.status = await GameStatusTextModel.findOne({ value: GameStatusText.InProgress });
-//     }
+  public async initializeNextRound(this: DocumentType<PresidentsGame>) {
+    if (this.status.value === GameStatusText.Finalized) {
+      return Promise.reject(new Error('Unable to start next round. The game is finalized.'));
+    }
+    if (this.status.value === GameStatusText.InProgress) {
+      if (this.turnToBeat) {
+        this.turnToBeat = undefined;
+      }
+    }
+    if (this.status.value === GameStatusText.NotStarted) {
+      this.startedAt = Utils.getDate();
+      this.status = await GameStatusModel.findOne({ value: GameStatusText.InProgress });
+    }
 
-//     const round = await PresidentsRoundModel.createInstance(this);
-//     this.rounds.push(round);
-//     return this.save();
-//   }
+    const roundInput = { game: this._id, number: this.rounds.length }
+    const roundInstance = await PresidentsRoundModel.createInstance(roundInput);
+    this.rounds.push(roundInstance);
+
+    await this.save();
+    return this;
+  }
 
 //   public static async JoinGame(this: ReturnModelType<typeof PresidentsGame>, id: string, userId: string) {
 //     const game = await PresidentsGameModel.findById(id);

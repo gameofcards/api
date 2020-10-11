@@ -64,6 +64,6 @@ export const createUsers = async () => {
     await Promise.all(userPromises);
   } catch (err) {
     logger.error('[UPLOAD] Failed.');
-    logger.error(err);
+    logger.error(err.message);
   }
 };

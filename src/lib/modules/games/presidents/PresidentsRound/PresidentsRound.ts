@@ -1,3 +1,5 @@
+import * as autopopulate from 'mongoose-autopopulate';
+
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -9,6 +11,7 @@ import {
 } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
 
+import { CreatePresidentsRoundInput } from './../../../../types';
 import Instance from '../../../core/Instance';
 import { InstanceId } from '../../../../types';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
@@ -23,9 +26,18 @@ import { Utils } from '../../../modules.utils';
  * 
  */
 @ModelOptions(Utils.getModelOptions())
+@Plugin(autopopulate)
 @ObjectType({ implements: Instance })
-export default class PresidentsRound {
+export default class PresidentsRound implements Instance {
   public _id!: InstanceId;
+  public id!: string;
+  public get displayId() {
+    return ''
+  }
+
+  @Property({ required: true })
+  @Field()
+  public number!: number;
 
   @Property({ required: true, default: Date.now })
   @Field()
@@ -48,11 +60,12 @@ export default class PresidentsRound {
    * @static
    * 
    */
-  public static async createInstance(this: ReturnModelType<typeof PresidentsRound>, game: DocumentType<PresidentsGame>) {
+  public static async createInstance(this: ReturnModelType<typeof PresidentsRound>, input: CreatePresidentsRoundInput) {
     const round = {
       startedAt: Utils.getDate(),
-      game,
+      game: input.game,
       turns: [],
+      number: input.number
     };
     return this.create(round);
   }

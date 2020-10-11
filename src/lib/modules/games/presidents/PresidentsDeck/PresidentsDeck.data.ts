@@ -3,7 +3,6 @@ import { PresidentsDeckModel } from '.';
 import { logger } from '../../../../logger';
 
 export const createPresidentsDeck = async () => {
-  logger.error('[UPLOAD]  Deck');
   try {
     let cards = await CardModel.find({});
     const deck = {
@@ -12,7 +11,7 @@ export const createPresidentsDeck = async () => {
     };
     let instance = await PresidentsDeckModel.createInstance(deck);
   } catch (err) {
-    logger.error('[UPLOAD] Failed.');
-    logger.error(err);
+    logger.error('[UPLOAD] Presidents Deck Failed.');
+    logger.error(err.message);
   }
 };

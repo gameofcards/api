@@ -36,12 +36,11 @@ const PoliticalRanks = [
 ];
 
 export const createPoliticalRanks = async () => {
-  console.log('[UPLOAD] Political Rank');
   try {
     const instances = PoliticalRanks.map((rank) => PoliticalRankModel.createInstance(rank));
     await Promise.all(instances);
   } catch (err) {
-    console.log('[UPLOAD] Failed.');
+    console.log('[UPLOAD] Political Rank Failed.');
     console.log(err);
   }
 };

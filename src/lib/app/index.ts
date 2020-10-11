@@ -6,6 +6,7 @@ import { ApolloServer, PubSub } from 'apollo-server-koa';
 import { Server, createServer } from 'http';
 
 import { ApolloLogExtension } from 'apollo-log';
+import { ApplicationError } from './errors';
 import { GraphQLSchema } from 'graphql';
 import { ObjectId } from 'mongodb';
 import { ObjectIdScalar } from '../types';
@@ -18,6 +19,7 @@ import resolvers from '../modules/modules.resolvers';
 const port = process.env.PORT || 3000;
 
 export class Application {
+  private static instance: Application;
   private app: Koa;
   private router: Router;
   private pubsub: PubSub;
@@ -25,7 +27,16 @@ export class Application {
   private apollo: ApolloServer;
   private server: Server;
 
-  constructor() {
+  public static GetInstance() {
+    if (!Application.instance) {
+      Application.instance = new Application();
+    } else {
+      throw new ApplicationError('Application already initialized')
+    }
+    return Application.instance;
+  }
+
+  private constructor() {
     this.app = new Koa();
     this.router = new Router();
     this.pubsub = new PubSub();

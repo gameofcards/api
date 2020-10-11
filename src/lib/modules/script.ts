@@ -2,17 +2,17 @@ import Connection from '../db';
 import { logger } from '../logger';
 
 (async () => {
-  await Connection.connect();
+  // await Connection.connect();
   logger.info('[TEST] starting test');
 
   try {
-
+    await Connection.drop()
 
     
   } catch (err) {
-    logger.info('[TEST] test failed.');
+    logger.error('[TEST] test failed.');
   }
 
-  logger.error('[TEST] test complete.');
-  await Connection.disconnect();
+  logger.info('[TEST] test complete.');
+  // await Connection.disconnect();
 })();

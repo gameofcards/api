@@ -7,6 +7,7 @@ import Card from '../Card/Card';
 import Game from '../Game/Game';
 import Instance from '../Instance';
 import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import User from '../User/User';
 import { Utils } from '../../modules.utils';
 
@@ -15,10 +16,14 @@ import { Utils } from '../../modules.utils';
 @InterfaceType({ implements: [Instance] })
 export default class Player implements Instance {
   public _id!: InstanceId;
+  public id!: string;
+  public get displayId() {
+    return ''
+  }
 
   @Property({ required: true, maxlength: 20 })
   @Field()
-  public displayId!: string;
+  public gameDisplayId!: string;
 
   @Property({ ref: 'User' })
   @Field((type) => ID)
@@ -26,13 +31,13 @@ export default class Player implements Instance {
 
   @Property()
   @Field((type) => Int)
-  public seatPosition?: number;
+  public seatPosition!: number;
 
-  @Property({ autopopulate: true, ref: 'Card' })
+  @Property({ type: Card })
   @Field((type) => [Card])
-  public cards?: Ref<Card>[];
+  public cards!: Card[];
 
-  @Property({ ref: 'Game', required: true })
+  @Property({ required: true })
   @Field((type) => ID)
-  public game!: Ref<Game>;
+  public game!: ObjectId;
 }

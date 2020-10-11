@@ -3,16 +3,10 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-input AddPresidentsTurnInput {
-  cardsPlayed: [ID!]!
-  forPlayer: ID!
-  id: ID!
-  wasPassed: Boolean!
-}
-
 type Card implements Instance {
   _id: ID!
   cardRank: CardRank!
+  id: String!
   shortHand: String!
   suit: Suit!
 }
@@ -20,6 +14,7 @@ type Card implements Instance {
 type CardRank implements Instance {
   _id: ID!
   character: String!
+  id: String!
   name: String!
   value: Int!
 }
@@ -32,12 +27,14 @@ scalar DateTime
 type Deck implements DeckInterface & Instance {
   _id: ID!
   cards: [Card!]!
+  id: String!
   name: String!
 }
 
 interface DeckInterface implements Instance {
   _id: ID!
   cards: [Card!]!
+  id: String!
   name: String!
 }
 
@@ -47,6 +44,7 @@ type DrinkRequest implements Instance {
   fulfilled: Boolean!
   fulfilledAt: DateTime!
   game: ID!
+  id: String!
   sentAt: DateTime!
   toPlayer: ID!
 }
@@ -58,6 +56,7 @@ interface Game implements Instance {
   createdByUser: ID!
   currentPlayer: ID!
   finishedAt: DateTime!
+  id: String!
   name: String!
   startedAt: DateTime!
   status: GameStatus!
@@ -66,6 +65,7 @@ interface Game implements Instance {
 type GameConfiguration implements Instance {
   _id: ID!
   deck: Deck!
+  id: String!
   maxPlayers: Int!
   minPlayers: Int!
   name: String!
@@ -74,29 +74,13 @@ type GameConfiguration implements Instance {
 
 type GameStatus implements Instance & Status {
   _id: ID!
+  id: String!
   value: String!
-}
-
-input IdInput {
-  id: ID!
 }
 
 interface Instance {
   _id: ID!
-}
-
-input JoinPresidentsGameInput {
-  id: ID!
-  userId: ID!
-}
-
-type Mutation {
-  addPresidentsTurn(input: AddPresidentsTurnInput!): PresidentsGame!
-  createGameAndAddUser(input: PresidentsGameInput!): PresidentsGame!
-  fulfillDrinkRequest(input: IdInput!): PresidentsGame!
-  joinGame(input: JoinPresidentsGameInput!): PresidentsGame!
-  rematch(input: IdInput!): PresidentsGame!
-  sendDrinkRequest(input: IdInput!): PresidentsGame!
+  id: String!
 }
 
 """Mongo object id scalar type"""
@@ -105,22 +89,18 @@ scalar ObjectId
 interface Player implements Instance {
   _id: ID!
   cards: [Card!]!
-  displayId: String!
   game: ID!
+  gameDisplayId: String!
+  id: String!
   seatPosition: Int!
   user: ID!
 }
 
 type PoliticalRank implements Instance {
   _id: ID!
+  id: String!
   name: String!
   value: Int!
-}
-
-type PresidentsDeck implements DeckInterface & Instance {
-  _id: ID!
-  cards: [Card!]!
-  name: String!
 }
 
 type PresidentsGame implements Game & Instance {
@@ -129,9 +109,9 @@ type PresidentsGame implements Game & Instance {
   createdAt: DateTime!
   createdByUser: ID!
   currentPlayer: ID!
-  deck: PresidentsDeck!
   drinkRequests: [DrinkRequest!]!
   finishedAt: DateTime!
+  id: String!
   name: String!
   players: [PresidentsPlayer!]!
   rounds: [PresidentsRound!]!
@@ -141,20 +121,15 @@ type PresidentsGame implements Game & Instance {
   winningPlayer: ID!
 }
 
-input PresidentsGameInput {
-  config: ID!
-  createdByUser: ID!
-  name: String!
-}
-
 type PresidentsPlayer implements Instance & Player {
   _id: ID!
   cards: [Card!]!
-  displayId: String!
   drinkRequestsReceived: [DrinkRequest!]!
   drinkRequestsSent: [DrinkRequest!]!
   drinksDrunk: Int!
   game: ID!
+  gameDisplayId: String!
+  id: String!
   nextGameRank: PoliticalRank!
   politicalRank: PoliticalRank!
   seatPosition: Int!
@@ -165,6 +140,7 @@ type PresidentsPlayer implements Instance & Player {
 type PresidentsRound implements Instance {
   _id: ID!
   game: ID!
+  id: String!
   startedAt: DateTime!
   turns: [PresidentsTurn!]!
 }
@@ -175,6 +151,7 @@ type PresidentsTurn implements Instance {
   didCauseSkips: Boolean!
   endedRound: Boolean!
   forPlayer: ID!
+  id: String!
   skipsRemaining: Int!
   takenAt: DateTime!
   wasPassed: Boolean!
@@ -192,8 +169,6 @@ type Query {
   gameConfigurations: [GameConfiguration!]!
   gameStatus(id: ObjectId!): GameStatus!
   gameStatuses: [GameStatus!]!
-  player(id: ObjectId!): Player!
-  players: [Player!]!
   presidentsGame(id: ObjectId!): PresidentsGame!
   presidentsGames: [PresidentsGame!]!
   securityDomain(id: ObjectId!): SecurityDomain!
@@ -209,28 +184,21 @@ type Query {
 type SecurityDomain implements Instance {
   _id: ID!
   clearanceLevel: Int!
+  id: String!
   name: String!
 }
 
 interface Status implements Instance {
   _id: ID!
+  id: String!
   value: String!
-}
-
-type Subscription {
-  drinkRequestFulfilled: PresidentsGame!
-  drinkRequestSent: PresidentsGame!
-  gameEnded: PresidentsGame!
-  gameStarted: PresidentsGame!
-  playerJoined: PresidentsGame!
-  rematchStarted: PresidentsGame!
-  turnTaken: PresidentsGame!
 }
 
 type Suit implements Instance {
   _id: ID!
   character: String!
   color: String!
+  id: String!
   name: String!
   value: Int!
 }
@@ -239,6 +207,7 @@ type User implements Instance {
   _id: ID!
   displayName: String!
   email: String!
+  id: String!
   password: String!
   playerRecords: [ID!]!
   security: SecurityDomain!

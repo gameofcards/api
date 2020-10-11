@@ -20,8 +20,12 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @Plugin(autopopulate)
 @ObjectType({ implements: Instance })
-export default class DrinkRequest {
+export default class DrinkRequest implements Instance {
   public _id!: InstanceId;
+  public id!: string;
+  public get displayId() {
+    return ''
+  }
 
   @Property({ required: true, ref: 'PresidentsPlayer' })
   @Field((type) => ID)

@@ -1,6 +1,7 @@
-import { defaultClasses, prop as Property, plugin as Plugin } from '@typegoose/typegoose';
-import { InterfaceType, Field, ID } from 'type-graphql';
-import { ObjectId } from 'mongoose';
+import { Field, ID, InterfaceType } from 'type-graphql';
+import { plugin as Plugin, prop as Property, defaultClasses } from '@typegoose/typegoose';
+
+import { ObjectId } from 'mongodb';
 
 /**
  * This abstract class defines some base fields/methods, and all classes representing
@@ -17,6 +18,10 @@ export default abstract class Instance extends defaultClasses.Base {
   @Property()
   @Field((type) => ID)
   public _id!: ObjectId;
+
+  @Property()
+  @Field()
+  public id!: string;
 
   abstract get displayId() 
 }

@@ -75,6 +75,6 @@ export const createCardRanks = async () => {
     await Promise.all(instances);
   } catch (err) {
     logger.error('[UPLOAD] Failed to create Card Rank.');
-    logger.error(err);
+    logger.error(err.message);
   }
 };

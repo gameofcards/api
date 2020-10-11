@@ -11,7 +11,7 @@ export const createStandardDeck = async () => {
     };
     let instance = await DeckModel.createInstance(deck);
   } catch (err) {
-    logger.error('[UPLOAD] Failed to create Deck.');
-    logger.error(err);
+    logger.error('[UPLOAD] Standard Deck Failed.');
+    logger.error(err.message);
   }
 };

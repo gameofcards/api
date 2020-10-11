@@ -18,10 +18,11 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @Plugin(autopopulate)
 @ObjectType({ implements: [Instance, DeckInterface] })
-export default class PresidentsDeck extends Deck {
+export default class PresidentsDeck extends Deck implements Instance {
   public _id!: InstanceId;
+  public id!: string;
   public name!: string;
-  public cards!: Ref<Card>[];
+  public cards!: Card[];
 
   public get displayId() {
     return `PresidentsDeck - name: ${this.name}`;

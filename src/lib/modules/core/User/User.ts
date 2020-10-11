@@ -28,20 +28,21 @@ import { Utils } from '../../modules.utils';
 @ObjectType({ implements: Instance })
 export default class User implements Instance {
   public _id!: InstanceId;
+  public id!: string;
 
   get displayId() {
     return this.displayName;
   }
 
-  @Property({ required: true, unique: true, maxlength: 20 })
+  @Property({ required: true, unique: true, maxlength: 30 })
   @Field()
   public username!: string;
 
-  @Property({ required: true, unique: true, maxlength: 40 })
+  @Property({ required: true, unique: true, maxlength: 50 })
   @Field()
   public email!: string;
 
-  @Property({ required: true, maxlength: 20 })
+  @Property({ required: true, maxlength: 30 })
   @Field()
   public displayName!: string;
 
@@ -53,9 +54,9 @@ export default class User implements Instance {
   @Field()
   public token?: string;
 
-  @Property({ autopopulate: true, ref: 'SecurityDomain' })
+  @Property({ type: SecurityDomain })
   @Field((type) => SecurityDomain)
-  public security!: Ref<SecurityDomain>;
+  public security!: SecurityDomain;
 
   @Property({ ref: 'Player' })
   @Field((type) => [ID])
@@ -90,7 +91,7 @@ export default class User implements Instance {
    * @async
    * 
    */
-  public async addPlayerRecord(this: DocumentType<User>, playerRecord: DocumentType<Player>) {
+  public async addPlayerRecord(this: DocumentType<User>, playerRecord: Ref<Player>) {
     this.playerRecords.push(playerRecord);
     await this.save();
     return this;

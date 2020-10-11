@@ -26,6 +26,6 @@ export class Utils {
   }
 
   static getObjectId() {
-    return Types.ObjectId()
+    return Types.ObjectId();
   }
 }

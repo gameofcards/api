@@ -19,14 +19,18 @@ import { Utils } from '../../../modules.utils';
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
-export default class PoliticalRank {
+export default class PoliticalRank implements Instance{
   public _id!: InstanceId;
+  public id!: string;
+  public get displayId() {
+    return this.name
+  }
 
-  @Property({ required: true, unique: true, maxlength: 30 })
+  @Property({ required: true, maxlength: 50 })
   @Field()
   public name!: string;
 
-  @Property({ required: true, unique: true })
+  @Property({ required: true })
   @Field((type) => Int)
   public value!: number;
 

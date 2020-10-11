@@ -1,6 +1,7 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
 import { Card, Game, User } from '../../../core';
+import { CreatePresidentsPlayerInput, InstanceId } from '../../../../types';
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -13,10 +14,11 @@ import { Field, ID, Int, ObjectType } from 'type-graphql';
 
 import DrinkRequest from '../DrinkRequest/DrinkRequest';
 import Instance from '../../../core/Instance';
-import { InstanceId } from '../../../../types';
+import { ObjectId } from 'mongodb';
 import Player from '../../../core/Player/Player';
 import PoliticalRank from '../PoliticalRank/PoliticalRank';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
+import { UserModel } from '../../../core';
 import { Utils } from '../../../modules.utils';
 
 /**
@@ -28,36 +30,43 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @Plugin(autopopulate)
 @ObjectType({ implements: [Instance, Player] })
-export default class PresidentsPlayer extends Player {
+export default class PresidentsPlayer extends Player implements Instance{
   public _id!: InstanceId;
-
-  @Property({ ref: 'PresidentsGame', required: true })
+  public id!: string;
+  public gameDisplayId!: string;
+  public user!: Ref<User>;
+  public seatPosition!: number;
+  public cards!: Card[];
+  public get displayId() {
+    return ''
+  }
+  @Property({ required: true })
   @Field((type) => ID)
-  public game!: Ref<PresidentsGame>;
+  public game!: ObjectId;
 
   @Property()
   @Field()
   public wonTheGame?: boolean;
 
-  @Property({ autopopulate: true, ref: 'PoliticalRank' })
+  @Property({ type: PoliticalRank })
   @Field((type) => PoliticalRank)
-  public politicalRank!: Ref<PoliticalRank>;
+  public politicalRank?: PoliticalRank;
 
-  @Property({ autopopulate: true, ref: 'PoliticalRank' })
+  @Property({ type: PoliticalRank })
   @Field((type) => PoliticalRank)
-  public nextGameRank!: Ref<PoliticalRank>;
+  public nextGameRank?: PoliticalRank;
 
   @Property({ required: true })
   @Field((type) => Int)
   public drinksDrunk!: number;
 
-  @Property({ autopopulate: true, ref: 'DrinkRequest' })
+  @Property({ type: DrinkRequest })
   @Field((type) => [DrinkRequest])
-  public drinkRequestsSent!: Ref<DrinkRequest>[];
+  public drinkRequestsSent!: DrinkRequest[];
 
-  @Property({ autopopulate: true, ref: 'DrinkRequest' })
+  @Property({ type: DrinkRequest })
   @Field((type) => [DrinkRequest])
-  public drinkRequestsReceived!: Ref<DrinkRequest>[];
+  public drinkRequestsReceived!: DrinkRequest[];
 
 
   /**
@@ -73,36 +82,36 @@ export default class PresidentsPlayer extends Player {
     return this;
   }
 
-  /**
-   * This method will add a drinkRequest to the drinkRequestsSent collection on the player instance.
-   * @param request The reqest to add.
-   * @returns DocumentType<PresidentsPlayer>
-   * @public
-   * @async
-   * 
-   */
-  public async addDrinkRequestSent(this: DocumentType<PresidentsPlayer>, request: DocumentType<DrinkRequest>) {
-    this.drinkRequestsSent.push(request);
-    await this.save();
-    return this;
-  }
+  // /**
+  //  * This method will add a drinkRequest to the drinkRequestsSent collection on the player instance.
+  //  * @param request The reqest to add.
+  //  * @returns DocumentType<PresidentsPlayer>
+  //  * @public
+  //  * @async
+  //  * 
+  //  */
+  // public async addDrinkRequestSent(this: DocumentType<PresidentsPlayer>, request: DocumentType<DrinkRequest>) {
+  //   this.drinkRequestsSent.push(request);
+  //   await this.save();
+  //   return this;
+  // }
 
-  /**
-   * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
-   * @param request The request to add.
-   * @returns DocumentType<PresidentsPlayer>
-   * @public
-   * @async
-   * 
-   */
-  public async addDrinkRequestReceived(
-    this: DocumentType<PresidentsPlayer>,
-    request: DocumentType<DrinkRequest>
-  ) {
-    this.drinkRequestsReceived.push(request);
-    await this.save();
-    return this;
-  }
+  // /**
+  //  * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
+  //  * @param request The request to add.
+  //  * @returns DocumentType<PresidentsPlayer>
+  //  * @public
+  //  * @async
+  //  * 
+  //  */
+  // public async addDrinkRequestReceived(
+  //   this: DocumentType<PresidentsPlayer>,
+  //   request: DocumentType<DrinkRequest>
+  // ) {
+  //   this.drinkRequestsReceived.push(request);
+  //   await this.save();
+  //   return this;
+  // }
 
     /**
    * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
@@ -114,31 +123,26 @@ export default class PresidentsPlayer extends Player {
    * @static
    * 
    */
-  public static async createInstance(this: ReturnModelType<typeof PresidentsPlayer>, 
-    user: DocumentType<User>, game: Ref<PresidentsGame>) {
-    const displayId = '';
-    const seatPosition = 0;
+  public static async createInstance(this: ReturnModelType<typeof PresidentsPlayer>, input: CreatePresidentsPlayerInput) {
+    const { user, game, seatPosition } = input;
+    const gameDisplayId = 'id';
     const drinksDrunk = 0;
     const cards = [];
-    const politicalRank = null;
-    const nextGameRank = null;
     const drinkRequestsSent = [];
     const drinkRequestsReceived = [];
     const presidentsPlayer = {
-      displayId,
+      gameDisplayId,
       user,
       seatPosition,
       drinksDrunk,
       cards,
       game,
-      politicalRank,
-      nextGameRank,
       drinkRequestsSent,
       drinkRequestsReceived,
     };
     const instance = await this.create(presidentsPlayer);
-    await user.addPlayerRecord(instance);
-    await instance.save();
+    const userInstance = await UserModel.findById(user);
+    await userInstance.addPlayerRecord(instance);
     return instance;
   }
 }

@@ -1,6 +1,6 @@
 import Player from './Player';
-import { getModelForClass } from '@typegoose/typegoose';
 import PlayerResolver from './Player.resolver';
+import { getModelForClass } from '@typegoose/typegoose';
 
 const PlayerModel = getModelForClass(Player);
 

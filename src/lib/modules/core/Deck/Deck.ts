@@ -8,6 +8,13 @@ import Card from '../Card/Card';
 import Instance from '../Instance';
 import { Utils } from '../../modules.utils';
 
+/**
+ * This class is an interface we can implement other Deck types with
+ * for GraphQL types.
+ * @extends Instance
+ * @public
+ * 
+ */
 @InterfaceType({ implements: [Instance] })
 export class DeckInterface {
   public _id!: InstanceId;
@@ -16,7 +23,7 @@ export class DeckInterface {
   public name!: string;
 
   @Field((type) => [Card])
-  public cards!: Ref<Card>[];
+  public cards!: Card[];
 }
 
 /**
@@ -26,19 +33,18 @@ export class DeckInterface {
  * 
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: [Instance, DeckInterface] })
 export default class Deck implements Instance {
-
   public _id!: InstanceId;
+  public id!: string;
 
-  @Property({ required: true, unique: true, maxlength: 30 })
+  @Property({ required: true, maxlength: 30 })
   @Field()
   public name!: string;
 
-  @Property({ autopopulate: true, ref: 'Card' })
+  @Property({ required: true, type: Card })
   @Field((type) => [Card])
-  public cards!: Ref<Card>[];
+  public cards!: Card[];
 
   public get displayId() {
     return `${this.name}`;

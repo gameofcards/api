@@ -16,6 +16,7 @@ import { Utils } from '../../modules.utils';
 @ObjectType({ implements: Instance })
 export default class SecurityDomain implements Instance {
   public _id!: InstanceId;
+  public id!: string;
 
   @Property({ required: true, maxlength: 30 })
   @Field()

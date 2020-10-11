@@ -81,7 +81,7 @@ class Logger {
   }
 
   /**
-   * This method will return the transports. It conditionally adds an output
+   * This method will return the transports for the data. It conditionally adds an output
    * directory if the user requested it.
    * @private
    */
@@ -90,7 +90,7 @@ class Logger {
     let ports: winston.transport[] = [ 
       new transports.Console({
         level: 'info',
-        silent: env === 'test',
+        silent: env !== 'test',
         format: format.combine(
           format.colorize(),
           format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`),

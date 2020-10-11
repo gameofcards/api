@@ -27,8 +27,9 @@ import { Utils } from '../../modules.utils';
 @ObjectType({ implements: Instance })
 export default class GameConfiguration implements Instance {
   public _id!: InstanceId;
+  public id!: string;
 
-  @Property({ required: true, unique: true, maxlength: 30 })
+  @Property({ required: true, maxlength: 30 })
   @Field()
   public name!: string;
 
@@ -56,9 +57,9 @@ export default class GameConfiguration implements Instance {
   @Field((type) => Int)
   public minPlayers!: number;
 
-  @Property({ autopopulate: true, ref: 'Deck', required: true })
+  @Property({ required: true, type: Deck })
   @Field((type) => Deck)
-  public deck!: Ref<Deck>;
+  public deck!: Deck;
 
   @Property({ required: true })
   @Field((type) => Int)

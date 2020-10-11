@@ -15,8 +15,9 @@ import { Utils } from '../../modules.utils';
 @InterfaceType({ implements: Instance })
 export default class Status implements Instance {
   public _id!: InstanceId;
+  public id!: string;
 
-  @Property({ required: true, unique: true, uppercase: true, maxlength: 30 })
+  @Property({ required: true, uppercase: true, maxlength: 30 })
   @Field()
   public value!: string;
 

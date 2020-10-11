@@ -14,9 +14,13 @@ import { Utils } from '../../modules.utils';
  */
 @modelOptions(Utils.getDisciminatorModelOptions())
 @ObjectType({ implements: [Instance, Status] })
-export default class GameStatus extends Status {
+export default class GameStatus extends Status implements Instance {
   public _id!: InstanceId;
+  public id!: string;
   public value!: string;
+  public get displayId() {
+    return this.value;
+  }
 
   /**
    * This method will create a GameStatus instance.

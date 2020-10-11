@@ -1,5 +1,6 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
+import { Card, CardModel } from '../../../core'
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import {
   modelOptions as ModelOptions,
@@ -10,7 +11,6 @@ import {
   defaultClasses,
 } from '@typegoose/typegoose';
 
-import Card from '../../../core/Card/Card';
 import Instance from '../../../core/Instance';
 import { InstanceId } from '../../../../types';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
@@ -24,10 +24,13 @@ import { Utils } from '../../../modules.utils';
  * 
  */
 @ModelOptions(Utils.getModelOptions())
-@Plugin(autopopulate)
-@ObjectType({ implements: Instance })
-export default class PresidentsTurn {
+@ObjectType({ implements: [Instance] })
+export default class PresidentsTurn implements Instance {
   public _id: InstanceId;
+  public id!: string;
+  public get displayId() {
+    return `${this.id}-${this.forPlayer}`;
+  }
 
   @Property({ ref: 'PresidentsPlayer' })
   @Field((type) => ID)
@@ -37,9 +40,9 @@ export default class PresidentsTurn {
   @Field()
   public takenAt!: Date;
 
-  @Property({ autopopulate: true, ref: 'Card' })
+  @Property({ type: Card })
   @Field((type) => [Card])
-  public cardsPlayed!: Ref<Card>[];
+  public cardsPlayed!: Card[];
 
   @Property({ required: true })
   @Field()
@@ -71,7 +74,9 @@ export default class PresidentsTurn {
    * 
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsTurn>, input: PresidentsTurnInput) {
-    let { forPlayer, cardsPlayed, wasPassed } = input;
+    let { forPlayer, wasPassed } = input;
+
+    const cardsPlayed = await CardModel.findManyByIds(input.cardsPlayed);
 
     const turn = {
       forPlayer,

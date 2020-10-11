@@ -21,16 +21,17 @@ import { Utils } from '../../modules.utils';
 @ObjectType({ implements: Instance })
 export default class Suit implements Instance {
   public _id!: InstanceId;
+  public id!: string;
 
-  @Property({ required: true, unique: true, maxlength: 10 })
+  @Property({ required: true, maxlength: 10 })
   @Field()
   public name!: string;
 
-  @Property({ required: true, unique: true, maxlength: 10 })
+  @Property({ required: true, maxlength: 10 })
   @Field()
   public character!: string;
 
-  @Property({ required: true, unique: true })
+  @Property({ required: true })
   @Field((type) => Int)
   public value!: number;
 

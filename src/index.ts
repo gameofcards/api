@@ -6,12 +6,12 @@ import { logger } from './lib/logger';
   try {
     logger.info('[Application] starting up!');
     await db.connect();
-    const app = new Application();
+    const app = Application.GetInstance();
     await app.start();
 
   } catch (err) {
-    logger.error('[Application] startup failed.');
-    logger.error(err);
+    logger.error('[Application] startup failed');
+    logger.error(err.message);
     await db.disconnect();
   }
 })();

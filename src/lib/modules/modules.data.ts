@@ -86,15 +86,16 @@ const initAll = async () => {
 };
 
 (async () => {
+  logger.info('[UPLOAD] starting')
   await Connection.connect();
 
   try {
     await dropAll();
-    await initAll();
+    // await initAll();
   } catch (err) {
-    logger.error('[UPLOAD] Data upload failed.');
+    logger.error('[UPLOAD] failed.');
   }
 
-  logger.info('[UPLOAD] Data upload complete.');
+  logger.info('[UPLOAD] complete.');
   await Connection.disconnect();
 })();

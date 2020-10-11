@@ -1,7 +1,7 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
 import { CreateCardInput, InstanceId } from '../../../types';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, ID, InterfaceType, ObjectType } from 'type-graphql';
 import { modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 
 import CardRank from '../CardRank/CardRank';
@@ -18,22 +18,22 @@ import { Utils } from '../../modules.utils';
  * 
  */
 @ModelOptions(Utils.getModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: Instance })
 export default class Card implements Instance {
   public _id!: InstanceId;
+  public id!: string;
 
-  @Property({ required: true, unique: true, maxlength: 10 })
+  @Property({ required: true, maxlength: 20 })
   @Field()
   public shortHand!: string;
 
-  @Property({ autopopulate: true, ref: 'CardRank', required: true })
+  @Property({ required: true, type: CardRank })
   @Field((type) => CardRank)
-  public cardRank!: Ref<CardRank>;
+  public cardRank!: CardRank;
 
-  @Property({ autopopulate: true, ref: 'Suit', required: true })
+  @Property({ required: true, type: Suit })
   @Field((type) => Suit)
-  public suit!: Ref<Suit>;
+  public suit!: Suit;
 
   public get displayId() {
     return this.shortHand;
@@ -64,4 +64,20 @@ export default class Card implements Instance {
   public static async findManyByIds(this: ReturnModelType<typeof Card>, ids: InstanceId[]): Promise<Card[]> {
     return this.find({ _id: { $in: ids } });
   }
+}
+
+
+/**
+ * This class is an interface we can implement other Deck types with
+ * for GraphQL types.
+ * @extends Instance
+ * @public
+ * 
+ */
+@InterfaceType({ implements: [Instance] })
+export class CardInstance extends Card {
+  public _id!: InstanceId;
+  public shortHand!: string;
+  public cardRank!: CardRank;
+  public suit!: Suit;
 }
