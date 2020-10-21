@@ -3,6 +3,8 @@ import { DocumentType, Ref } from '@typegoose/typegoose';
 import { GraphQLScalarType, Kind } from 'graphql';
 
 import { ObjectId } from 'mongodb';
+import { PresidentsGame } from './modules/games';
+import { PresidentsPlayer } from './modules/games/presidents/PresidentsPlayer';
 
 export const ObjectIdScalar = new GraphQLScalarType({
   name: 'ObjectId',
@@ -22,7 +24,7 @@ export const ObjectIdScalar = new GraphQLScalarType({
 });
 
 export interface PresidentsTurnInput {
-  forPlayer: ObjectId;
+  forPlayer: Ref<PresidentsPlayer>;
   cardsPlayed: ObjectId[];
   wasPassed: boolean;
 }
@@ -46,6 +48,11 @@ export enum GameEvents {
 export interface PresidentsGameInput {
   name: string;
   createdByUser: Ref<User>;
+}
+
+export interface JoinPresidentsGameInput {
+  game: Ref<PresidentsGame>;
+  user: Ref<User>;
 }
 
 export interface CreateUserInput {
@@ -111,6 +118,18 @@ export interface CreatePresidentsPlayerInput {
 export interface CreatePresidentsRoundInput {
   game: InstanceId;
   number: number;
+}
+
+export interface SendDrinkRequestInput {
+  id: string;
+  fromPlayer: string;
+  toPlayer: string;
+}
+
+export interface CreateDrinkRequestInput {
+  fromPlayer: Ref<PresidentsPlayer>;
+  toPlayer: Ref<PresidentsPlayer>;
+  game: InstanceId;
 }
 
 export type NonEmptyArray<TItem> = readonly [TItem, ...TItem[]] | [TItem, ...TItem[]];

@@ -65,19 +65,3 @@ export default class Card implements Instance {
     return this.find({ _id: { $in: ids } });
   }
 }
-
-
-/**
- * This class is an interface we can implement other Deck types with
- * for GraphQL types.
- * @extends Instance
- * @public
- * 
- */
-@InterfaceType({ implements: [Instance] })
-export class CardInstance extends Card {
-  public _id!: InstanceId;
-  public shortHand!: string;
-  public cardRank!: CardRank;
-  public suit!: Suit;
-}

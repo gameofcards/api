@@ -82,36 +82,49 @@ export default class PresidentsPlayer extends Player implements Instance{
     return this;
   }
 
-  // /**
-  //  * This method will add a drinkRequest to the drinkRequestsSent collection on the player instance.
-  //  * @param request The reqest to add.
-  //  * @returns DocumentType<PresidentsPlayer>
-  //  * @public
-  //  * @async
-  //  * 
-  //  */
-  // public async addDrinkRequestSent(this: DocumentType<PresidentsPlayer>, request: DocumentType<DrinkRequest>) {
-  //   this.drinkRequestsSent.push(request);
-  //   await this.save();
-  //   return this;
-  // }
+  /**
+   * This method will set the cards on the player instance.
+   * @returns DocumentType<PresidentsPlayer>
+   * @public
+   * @async
+   * 
+   */
+  public async setCards(this: DocumentType<PresidentsPlayer>, cards: Card[]) {
+    this.cards = cards;
+    await this.save();
+    return this;
+  }
 
-  // /**
-  //  * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
-  //  * @param request The request to add.
-  //  * @returns DocumentType<PresidentsPlayer>
-  //  * @public
-  //  * @async
-  //  * 
-  //  */
-  // public async addDrinkRequestReceived(
-  //   this: DocumentType<PresidentsPlayer>,
-  //   request: DocumentType<DrinkRequest>
-  // ) {
-  //   this.drinkRequestsReceived.push(request);
-  //   await this.save();
-  //   return this;
-  // }
+  /**
+   * This method will add a drinkRequest to the drinkRequestsSent collection on the player instance.
+   * @param request The reqest to add.
+   * @returns DocumentType<PresidentsPlayer>
+   * @public
+   * @async
+   * 
+   */
+  public async addDrinkRequestSent(this: DocumentType<PresidentsPlayer>, request: DocumentType<DrinkRequest>) {
+    this.drinkRequestsSent.push(request);
+    await this.save();
+    return this;
+  }
+
+  /**
+   * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
+   * @param request The request to add.
+   * @returns DocumentType<PresidentsPlayer>
+   * @public
+   * @async
+   * 
+   */
+  public async addDrinkRequestReceived(
+    this: DocumentType<PresidentsPlayer>,
+    request: DocumentType<DrinkRequest>
+  ) {
+    this.drinkRequestsReceived.push(request);
+    await this.save();
+    return this;
+  }
 
     /**
    * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.

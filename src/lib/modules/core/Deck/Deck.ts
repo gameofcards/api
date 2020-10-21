@@ -1,8 +1,8 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
 import { CreateDeckInput, InstanceId } from '../../../types';
+import { DocumentType, modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, InterfaceType, ObjectType } from 'type-graphql';
-import { modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 
 import Card from '../Card/Card';
 import Instance from '../Instance';
@@ -74,5 +74,27 @@ export default class Deck implements Instance {
    */
   public static async getByName(this: ReturnModelType<typeof Deck>, name: string) {
     return this.find({ name });
+  }
+
+  /**
+   * Utility method to return an array of shuffled cards.
+   * @returns Card[]
+   * @public
+   * @async
+   * 
+   */
+  public getShuffledCards(this: DocumentType<Deck>): Card[] {
+    return Utils.shuffle(this.cards);
+  }
+
+  /**
+   * Utility method to deal an array of shuffled cards.
+   * @returns Card[]
+   * @public
+   * @async
+   * 
+   */
+  public deal(this: DocumentType<Deck>, numPlayers: number, shuffled: Card[]) {
+    return Utils.deal(numPlayers, shuffled);
   }
 }

@@ -1,11 +1,12 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
+import { CreateDrinkRequestInput, InstanceId } from '../../../../types';
 import { DocumentType, modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
 
 import { DrinkRequestModel } from '.';
 import Instance from '../../../core/Instance';
-import { InstanceId } from '../../../../types';
+import { ObjectId } from 'mongodb';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
 import { Utils } from '../../../modules.utils';
@@ -35,9 +36,9 @@ export default class DrinkRequest implements Instance {
   @Field((type) => ID)
   public toPlayer!: Ref<PresidentsPlayer>;
 
-  @Property({ required: true, ref: 'PresidentsGame' })
+  @Property({ })
   @Field((type) => ID)
-  public game!: Ref<PresidentsGame>;
+  public game!: ObjectId;
 
   @Property({ required: true, default: Utils.getDate() })
   @Field()
@@ -62,18 +63,16 @@ export default class DrinkRequest implements Instance {
    */
   public static async createInstance(
     this: ReturnModelType<typeof DrinkRequest>,
-    fromPlayer: DocumentType<PresidentsPlayer>,
-    toPlayer: DocumentType<PresidentsPlayer>,
-    game: DocumentType<PresidentsGame>
+    input: CreateDrinkRequestInput
   ) {
-    const request = {
-      fromPlayer,
-      toPlayer,
-      game,
+    const drinkRequestInput = {
+      fromPlayer: input.fromPlayer,
+      toPlayer: input.toPlayer,
+      game: input.game,
       sentAt: new Date(),
       fulfilled: false,
     };
-    return this.create(request);
+    return this.create(drinkRequestInput);
   }
 
   /**

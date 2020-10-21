@@ -2,8 +2,8 @@ import * as autopopulate from 'mongoose-autopopulate';
 
 import { Card, Deck } from '../../../core';
 import { CreateDeckInput, InstanceId } from '../../../../types';
+import { DocumentType, modelOptions as ModelOptions, plugin as Plugin, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, ObjectType } from 'type-graphql';
-import { modelOptions as ModelOptions, plugin as Plugin, Ref, ReturnModelType } from '@typegoose/typegoose';
 
 import { DeckInterface } from '../../../core/Deck/Deck';
 import Instance from '../../../core/Instance';
@@ -39,5 +39,16 @@ export default class PresidentsDeck extends Deck implements Instance {
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsDeck>, input: CreateDeckInput) {
     return this.create(input);
+  }
+
+  /**
+   * Utility method to find the index of the stack with the 3 Clubs.
+   * @returns Card[]
+   * @public
+   * @async
+   * 
+   */
+  public find3ClubsIndex(this: DocumentType<PresidentsDeck>, shuffledStacks: Card[][]) {
+    return Utils.find3Clubs(shuffledStacks);
   }
 }

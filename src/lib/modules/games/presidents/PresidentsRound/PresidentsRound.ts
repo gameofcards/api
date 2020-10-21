@@ -45,11 +45,11 @@ export default class PresidentsRound implements Instance {
 
   @Property({ ref: 'PresidentsGame' })
   @Field((type) => ID)
-  public game!: Ref<PresidentsGame>;
+  public game!: InstanceId;
 
-  @Property({ autopopulate: true, ref: 'PresidentsTurn' })
+  @Property({ type: PresidentsTurn })
   @Field((type) => [PresidentsTurn])
-  public turns!: Ref<PresidentsTurn>[];
+  public turns!: PresidentsTurn[];
 
   /**
    * This method will increment PresidentsRound.

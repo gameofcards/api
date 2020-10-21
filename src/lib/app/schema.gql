@@ -141,6 +141,7 @@ type PresidentsRound implements Instance {
   _id: ID!
   game: ID!
   id: String!
+  number: Float!
   startedAt: DateTime!
   turns: [PresidentsTurn!]!
 }
