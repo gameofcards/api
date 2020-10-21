@@ -1,5 +1,6 @@
 #config
 src/lib/config/config.json
+src/lib/config/index.js
 
 # Logs
 logs
