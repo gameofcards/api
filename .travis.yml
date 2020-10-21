@@ -8,5 +8,4 @@ install:
 script:
 - npm test
 notifications:
-  rooms:
-	  - game-of-cards:WeOslcGnVR6duEm3MEfknHUT#api
+  slack: game-of-cards:WeOslcGnVR6duEm3MEfknHUT
