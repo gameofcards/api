@@ -7,7 +7,7 @@ const { createLogger, format, transports } = winston;
 const env = process.env.NODE_ENV || 'dev';
 
 interface Options {
-  dir?: string;
+  dir: string;
 };
 
 /**
@@ -43,7 +43,7 @@ class Logger {
   private constructor(options?: Options) {
     this.logger = null;
     this.filename = '';
-    if (options?.dir) {
+    if (options) {
       this.setupDirectory(options);
     }
     this.initialize();
