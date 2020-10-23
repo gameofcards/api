@@ -57,31 +57,18 @@ export default class Deck implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation Desk.test.ts #createStandardDeck
    */
   public static async createInstance(this: ReturnModelType<typeof Deck>, input: CreateDeckInput) {
     return this.create(input);
   }
-
-  /**
-   * Utility method to return a Deck by name.
-   * @param character The name of the Deck
-   * @returns Promise<Deck>
-   * @public
-   * @static
-   * @async
-   * 
-   */
-  public static async getByName(this: ReturnModelType<typeof Deck>, name: string) {
-    return this.find({ name });
-  }
-
+  
   /**
    * Utility method to return an array of shuffled cards.
    * @returns Card[]
    * @public
    * @async
-   * 
+   * @automation Desk.test.ts #getShuffledCards
    */
   public getShuffledCards(this: DocumentType<Deck>): Card[] {
     return Utils.shuffle(this.cards);
@@ -92,7 +79,7 @@ export default class Deck implements Instance {
    * @returns Card[]
    * @public
    * @async
-   * 
+   * @automation Desk.test.ts #deal
    */
   public deal(this: DocumentType<Deck>, numPlayers: number, shuffled: Card[]) {
     return Utils.deal(numPlayers, shuffled);

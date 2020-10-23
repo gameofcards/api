@@ -71,7 +71,7 @@ export default class PresidentsTurn implements Instance {
    * @public
    * @async
    * @static
-   * 
+   * @automation
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsTurn>, input: PresidentsTurnInput) {
     let { forPlayer, wasPassed } = input;

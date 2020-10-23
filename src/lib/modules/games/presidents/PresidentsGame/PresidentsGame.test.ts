@@ -420,4 +420,141 @@ describe('Presidents Game', function() {
 
   });
 
+  describe.skip('#calculateSkips', function() {
+
+    it('should return 0 if there is no turn to beat', async () => {
+
+      const skips = 0;
+      expect(skips).toEqual(0);
+    });
+
+    it('should return 0 if the new turn to beat has cards of of a different rank', async () => {
+
+      const skips = 0;
+      expect(skips).toEqual(0);
+    });
+
+    it('should return 1 for single skip', async () => {
+
+      const skips = 0;
+      expect(skips).toEqual(1);
+    });
+
+    it('should return 2 for double skip', async () => {
+      const skips = 0;
+      expect(skips).toEqual(1);
+    });
+
+    it('should return 3 for triple skip', async () => {
+      const skips = 0;
+      expect(skips).toEqual(1);
+    });
+
+    it('should return 4 for quadruple skip', async () => {
+      const skips = 0;
+      expect(skips).toEqual(1);
+    });
+
+  })
+
+  describe.skip('#AddPresidentsTurn', function() {
+  });
+
+  describe.skip('#isValidTurn', function() {
+  });
+
+  describe.skip('#areCardsValid', function() {
+
+    describe('true cases', async function () {
+  
+      it('cards are of the same rank', async function() {  
+
+      });
+  
+    });
+  
+    describe('false cases', async function () {
+    
+      it('cards are not of the same rank', async function() {  
+
+      });
+  
+    });
+
+  });
+
+  describe.skip('#areCardsBetter', function() {
+    describe('true cases', async function () {
+
+      it('current hand has more cards', async function() {
+        
+      });
+  
+      it('current hand has equal number of cards with same rank', async function() {  
+        
+      });
+  
+      it('current hand has equal number of cards with a better rank', async function() {  
+        
+      });
+  
+      it('current hand has fewer cards but contains a two', async function() {  
+        
+      });
+  
+    });
+  
+    describe('false cases', async function () {
+  
+      it('current turn\'s rank does not beat previous turn\'s rank', async function() {  
+        
+      });
+  
+      it('not enough cards selected (and no 2 included)', async function() {  
+
+      });
+  
+    });
+  });
+
+  describe.skip('#didCurrentPlayersLastTurnEndTheRound', function() {
+
+    it('true', async function() {  
+
+    });
+      
+    it('false - they skipped', async function() {  
+  
+    });
+  
+    it('false - they passed', async function() { 
+
+    });
+  
+    it('false - someone played a better hand', async function() {  
+
+    });
+
+  });
+
+  describe.skip('#getNextPlayer', function() {
+
+    it('when called 8 times it wraps around the players array', async function() {  
+      
+    });
+
+  });
+
+  describe.skip('#Rematch', function() {
+  });
+
+  describe.skip('#FulfillDrinkRequest', function() {
+  });
+
+  describe.skip('#SendDrinkRequest', function() {
+  });
+
+  describe.skip('#FulfillDrinkRequest', function() {
+  });
+
 });

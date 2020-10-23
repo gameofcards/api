@@ -41,36 +41,9 @@ export default class PoliticalRank implements Instance{
    * @public
    * @static
    * @async
-   * 
    */
   public static async createInstance(this: ReturnModelType<typeof PoliticalRank>, input: CreatePoliticalRankInput) {
     return this.create(input);
-  }
-
-  /**
-   * Utility method to find a PoliticalRank instance by name.
-   * @param name The name of the PoliticalRank.
-   * @returns Promise<PoliticalRank>
-   * @public
-   * @static
-   * @async
-   * 
-   */
-  public static async findByName(this: ReturnModelType<typeof PoliticalRank>, name: string) {
-    return this.findOne({ name });
-  }
-
-  /**
-   * Utility method to find a PoliticalRank instance by value.
-   * @param value The value of the PoliticalRank.
-   * @returns Promise<PoliticalRank>
-   * @public
-   * @static
-   * @async
-   * 
-   */
-  public static async findByValue(this: ReturnModelType<typeof PoliticalRank>, value: number) {
-    return this.findOne({ value });
   }
 
   /**

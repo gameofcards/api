@@ -36,7 +36,7 @@ describe('Presidents Deck Model Tests', function() {
     await db.disconnect();
   })
 
-  describe('@createStandardDeck()', function() {
+  describe('@createPresidentsDeck()', function() {
 
     it('should initialize 1 instances', async function() {    
       await createPresidentsDeck();

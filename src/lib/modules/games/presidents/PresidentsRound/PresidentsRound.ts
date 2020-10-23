@@ -58,7 +58,7 @@ export default class PresidentsRound implements Instance {
    * @public
    * @async
    * @static
-   * 
+   * @automation PresidentsRound.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsRound>, input: CreatePresidentsRoundInput) {
     const round = {

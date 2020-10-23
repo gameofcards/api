@@ -54,7 +54,6 @@ export default class Player implements Instance {
    * @public
    * @static
    * @async
-   * 
    */
   public static async findManyByIds(this: ReturnModelType<typeof Player>, ids: InstanceId[]): Promise<Player[]> {
     return this.find({ _id: { $in: ids } });

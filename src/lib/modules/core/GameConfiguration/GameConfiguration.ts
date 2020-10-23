@@ -76,7 +76,7 @@ export default class GameConfiguration implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation Desk.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof GameConfiguration>, input: CreateGameConfigurationInput) {
     return this.create(input);
@@ -89,7 +89,6 @@ export default class GameConfiguration implements Instance {
    * @public
    * @static
    * @async
-   * 
    */
   public static async findByName(this: ReturnModelType<typeof GameConfiguration>, name: string) {
     return this.findOne({ name });

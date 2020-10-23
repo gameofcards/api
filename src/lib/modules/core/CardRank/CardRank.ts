@@ -41,7 +41,7 @@ export default class CardRank implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation CardRank.test.ts #createCardRanks
    */
   public static async createInstance(this: ReturnModelType<typeof CardRank>, input: CreateCardRankInput): Promise<CardRank> {
     return this.create(input);
@@ -54,7 +54,6 @@ export default class CardRank implements Instance {
    * @public
    * @static
    * @async
-   * 
    */
   public static async findByChar(this: ReturnModelType<typeof CardRank>, character: string): Promise<CardRank> {
     return this.findOne({ character });

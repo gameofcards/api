@@ -35,7 +35,7 @@ export default class PresidentsDeck extends Deck implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation Deck.test.ts #createPresidentsDeck
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsDeck>, input: CreateDeckInput) {
     return this.create(input);
@@ -46,7 +46,7 @@ export default class PresidentsDeck extends Deck implements Instance {
    * @returns Card[]
    * @public
    * @async
-   * 
+   * @automation PresidentsDeck.test.ts #find3ClubsIndex
    */
   public find3ClubsIndex(this: DocumentType<PresidentsDeck>, shuffledStacks: Card[][]) {
     return Utils.find3Clubs(shuffledStacks);

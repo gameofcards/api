@@ -37,7 +37,7 @@ export default class SecurityDomain implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation SecurityDomain.test.ts #createSecurityDomains
    */
   public static async createInstance(this: ReturnModelType<typeof SecurityDomain>, input: CreateSecurityDomainInput) {
     return this.create(input);

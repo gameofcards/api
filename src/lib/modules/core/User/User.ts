@@ -69,7 +69,7 @@ export default class User implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation User.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof User>, input: CreateUserInput) {
     const security = await SecurityDomainModel.findOne({ name: 'user' });
@@ -89,7 +89,7 @@ export default class User implements Instance {
    * @returns Promise<User>
    * @public
    * @async
-   * 
+   * @automation User.test.ts #addPlayerRecord
    */
   public async addPlayerRecord(this: DocumentType<User>, playerRecord: Ref<Player>) {
     this.playerRecords.push(playerRecord);

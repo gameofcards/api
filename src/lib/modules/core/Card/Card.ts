@@ -46,7 +46,7 @@ export default class Card implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation Card.test.ts #createCardRanks
    */
   public static async createInstance(this: ReturnModelType<typeof Card>, input: CreateCardInput): Promise<Card> {
     return this.create(input);
@@ -59,7 +59,6 @@ export default class Card implements Instance {
    * @public
    * @static
    * @async
-   * 
    */
   public static async findManyByIds(this: ReturnModelType<typeof Card>, ids: InstanceId[]): Promise<Card[]> {
     return this.find({ _id: { $in: ids } });

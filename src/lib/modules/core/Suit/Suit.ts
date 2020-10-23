@@ -50,7 +50,7 @@ export default class Suit implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation Suit.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof Suit>, input: CreateSuitInput) {
     return this.create(input);
@@ -63,7 +63,6 @@ export default class Suit implements Instance {
    * @public
    * @static
    * @async
-   * 
    */
   public static async findByName(this: ReturnModelType<typeof Suit>, name: string) {
     return this.findOne({ name });

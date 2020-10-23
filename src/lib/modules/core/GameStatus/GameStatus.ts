@@ -29,7 +29,7 @@ export default class GameStatus extends Status implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation GameStatus.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof GameStatus>, input: CreateGameStatusInput) {
     return this.create(input);

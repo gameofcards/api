@@ -32,7 +32,6 @@ export default class Status implements Instance {
    * @public
    * @static
    * @async
-   * 
    */
   public static async findByValue(this: ReturnModelType<typeof Status>, value: string) {
     return this.findOne({ value });

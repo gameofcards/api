@@ -96,4 +96,12 @@ describe('Presidents Player', function() {
     // expect(result.drinksDrunk).toEqual(1);
   });
 
+  test.skip('#addDrinkRequestSent', async () => {
+
+  });
+
+  test.skip('#addDrinkRequestReceived', async () => {
+
+  });
+
 });

@@ -59,12 +59,8 @@ export default class DrinkRequest implements Instance {
    * @public
    * @static
    * @async
-   * 
    */
-  public static async createInstance(
-    this: ReturnModelType<typeof DrinkRequest>,
-    input: CreateDrinkRequestInput
-  ) {
+  public static async createInstance(this: ReturnModelType<typeof DrinkRequest>, input: CreateDrinkRequestInput) {
     const drinkRequestInput = {
       fromPlayer: input.fromPlayer,
       toPlayer: input.toPlayer,
@@ -82,7 +78,7 @@ export default class DrinkRequest implements Instance {
    * @public
    * @static
    * @async
-   * 
+   * @automation 
    */
   public async fulfill(this: DocumentType<DrinkRequest>) {
     this.fulfilled = true;
