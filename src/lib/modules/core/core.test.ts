@@ -1,4 +1,4 @@
-import './CardRank/CardRank.test' ;
+import './CardRank/CardRank.test';
 import './Card/Card.test';
 import './Deck/Deck.test';
 import './GameConfiguration/GameConfiguration.test';

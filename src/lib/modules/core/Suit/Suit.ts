@@ -15,7 +15,7 @@ import { Utils } from '../../modules.utils';
  * This class represents a Suit.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
@@ -56,7 +56,7 @@ export default class Suit implements Instance {
     return this.create(input);
   }
 
-   /**
+  /**
    * Utility method to find a Suit by name.
    * @param name The name of the Suit.
    * @returns Promise<Suit>

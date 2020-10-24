@@ -13,7 +13,7 @@ import { Utils } from '../../../modules.utils';
  * This class represents a PresidentsDeck.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @Plugin(autopopulate)

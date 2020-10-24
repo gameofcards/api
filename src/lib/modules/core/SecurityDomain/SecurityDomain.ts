@@ -10,7 +10,7 @@ import { Utils } from '../../modules.utils';
  * clearance to see data or run operations in the application.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })

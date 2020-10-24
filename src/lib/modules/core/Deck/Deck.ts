@@ -1,7 +1,14 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
 import { CreateDeckInput, InstanceId } from '../../../types';
-import { DocumentType, modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
+import {
+  DocumentType,
+  modelOptions as ModelOptions,
+  plugin as Plugin,
+  prop as Property,
+  Ref,
+  ReturnModelType,
+} from '@typegoose/typegoose';
 import { Field, InterfaceType, ObjectType } from 'type-graphql';
 
 import Card from '../Card/Card';
@@ -13,7 +20,7 @@ import { Utils } from '../../modules.utils';
  * for GraphQL types.
  * @extends Instance
  * @public
- * 
+ *
  */
 @InterfaceType({ implements: [Instance] })
 export class DeckInterface {
@@ -30,7 +37,7 @@ export class DeckInterface {
  * This class represents a standard deck of 52 cards.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @ObjectType({ implements: [Instance, DeckInterface] })
@@ -62,7 +69,7 @@ export default class Deck implements Instance {
   public static async createInstance(this: ReturnModelType<typeof Deck>, input: CreateDeckInput) {
     return this.create(input);
   }
-  
+
   /**
    * Utility method to return an array of shuffled cards.
    * @returns Card[]

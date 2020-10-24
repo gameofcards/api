@@ -1,14 +1,13 @@
 import { Types } from 'mongoose';
 
 export class Utils {
-
   static getModelOptions() {
     return {
       schemaOptions: {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
-      }
-    }
+      },
+    };
   }
 
   static getDisciminatorModelOptions() {
@@ -18,7 +17,7 @@ export class Utils {
         toObject: { virtuals: true },
         discriminatorKey: 'type',
       },
-    }
+    };
   }
 
   static getDate() {

@@ -86,7 +86,7 @@ const initAll = async () => {
 };
 
 (async () => {
-  logger.info('[UPLOAD] starting')
+  logger.info('[UPLOAD] starting');
   await Connection.connect();
 
   try {

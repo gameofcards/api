@@ -10,7 +10,7 @@ import { Utils } from '../../modules.utils';
  * This class represents a GameStatus.
  * @extends Instance
  * @public
- * 
+ *
  */
 @modelOptions(Utils.getDisciminatorModelOptions())
 @ObjectType({ implements: [Instance, Status] })
@@ -34,6 +34,4 @@ export default class GameStatus extends Status implements Instance {
   public static async createInstance(this: ReturnModelType<typeof GameStatus>, input: CreateGameStatusInput) {
     return this.create(input);
   }
-
-  
 }

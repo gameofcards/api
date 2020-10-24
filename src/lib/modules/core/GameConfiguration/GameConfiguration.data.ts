@@ -20,7 +20,6 @@ const GameConfigurations = [
   },
 ];
 
-
 export const createGameConfigurations = async () => {
   try {
     const presidentsDeck = await PresidentsDeckModel.findOne({ name: 'Standard Presidents Deck' });

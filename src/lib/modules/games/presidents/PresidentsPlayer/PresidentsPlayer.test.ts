@@ -1,7 +1,16 @@
 import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
-import { CardModel, CardRankModel, DeckModel, GameConfigurationModel, GameStatusModel, SecurityDomainModel, SuitModel, UserModel } from '../../../core';
+import {
+  CardModel,
+  CardRankModel,
+  DeckModel,
+  GameConfigurationModel,
+  GameStatusModel,
+  SecurityDomainModel,
+  SuitModel,
+  UserModel,
+} from '../../../core';
 
 import { PoliticalRankModel } from '../PoliticalRank';
 import { PresidentsGameModel } from '..';
@@ -19,16 +28,14 @@ import { createSuits } from '../../../core/Suit/Suit.data';
 import { createUsers } from './../../../core/User/User.data';
 import db from '../../../../db';
 
-describe('Presidents Player', function() {
-
-
+describe('Presidents Player', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();
     await createCardRanks();
     await createCards();
     await createUsers();
-  })
+  });
 
   afterAll(async () => {
     await CardModel.deleteMany({});
@@ -37,15 +44,15 @@ describe('Presidents Player', function() {
     await PresidentsPlayerModel.deleteMany({});
     await UserModel.deleteMany({});
     await db.disconnect();
-  })
+  });
 
   test('#createInstance', async () => {
     const id = Types.ObjectId();
-    let user = await UserModel.findOne({username: 'tommypastrami'});
+    let user = await UserModel.findOne({ username: 'tommypastrami' });
     const player = {
       user: user._id,
       game: id,
-      seatPosition: 0
+      seatPosition: 0,
     };
     const instance = await PresidentsPlayerModel.createInstance(player);
 
@@ -61,18 +68,18 @@ describe('Presidents Player', function() {
     expect(instance.drinkRequestsReceived).toBeDefined();
     expect(instance.drinkRequestsSent).toBeDefined();
 
-    user = await UserModel.findOne({username: 'tommypastrami'});
+    user = await UserModel.findOne({ username: 'tommypastrami' });
     expect(user.playerRecords.length).toEqual(1);
     expect(user.playerRecords[0]).toEqual(instance._id);
   });
 
   test('#drinkDrink', async () => {
     const id = Types.ObjectId();
-    const user = await UserModel.findOne({username: 'tommypastrami'});
+    const user = await UserModel.findOne({ username: 'tommypastrami' });
     const player = {
       user: user._id,
       game: id,
-      seatPosition: 0
+      seatPosition: 0,
     };
     const instance = await PresidentsPlayerModel.createInstance(player);
     expect(instance.drinksDrunk).toEqual(0);
@@ -96,12 +103,7 @@ describe('Presidents Player', function() {
     // expect(result.drinksDrunk).toEqual(1);
   });
 
-  test.skip('#addDrinkRequestSent', async () => {
+  test.skip('#addDrinkRequestSent', async () => {});
 
-  });
-
-  test.skip('#addDrinkRequestReceived', async () => {
-
-  });
-
+  test.skip('#addDrinkRequestReceived', async () => {});
 });

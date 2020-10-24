@@ -25,12 +25,12 @@ import { Utils } from '../../../modules.utils';
  * This class represents a PresidentsPlayer.
  * @extends Player
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @Plugin(autopopulate)
 @ObjectType({ implements: [Instance, Player] })
-export default class PresidentsPlayer extends Player implements Instance{
+export default class PresidentsPlayer extends Player implements Instance {
   public _id!: InstanceId;
   public id!: string;
   public gameDisplayId!: string;
@@ -38,7 +38,7 @@ export default class PresidentsPlayer extends Player implements Instance{
   public seatPosition!: number;
   public cards!: Card[];
   public get displayId() {
-    return ''
+    return '';
   }
   @Property({ required: true })
   @Field((type) => ID)
@@ -68,16 +68,16 @@ export default class PresidentsPlayer extends Player implements Instance{
   @Field((type) => [DrinkRequest])
   public drinkRequestsReceived!: DrinkRequest[];
 
-/**
- * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
- * @param user The user who this player is for
- * @param game The game this player is in
- * @returns DocumentType<PresidentsPlayer>
- * @public
- * @async
- * @static
- * @automation PresidentsPlayer.test.ts #createInstance
- */
+  /**
+   * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
+   * @param user The user who this player is for
+   * @param game The game this player is in
+   * @returns DocumentType<PresidentsPlayer>
+   * @public
+   * @async
+   * @static
+   * @automation PresidentsPlayer.test.ts #createInstance
+   */
   public static async createInstance(this: ReturnModelType<typeof PresidentsPlayer>, input: CreatePresidentsPlayerInput) {
     const { user, game, seatPosition } = input;
     const gameDisplayId = 'id';
@@ -100,7 +100,6 @@ export default class PresidentsPlayer extends Player implements Instance{
     await userInstance.addPlayerRecord(instance);
     return instance;
   }
-
 
   /**
    * This method will increment drinksDrink on the player instance.
@@ -155,5 +154,4 @@ export default class PresidentsPlayer extends Player implements Instance{
     await this.save();
     return this;
   }
-
 }

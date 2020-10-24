@@ -1,7 +1,16 @@
 import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
-import { CardModel, CardRankModel, DeckModel, GameConfigurationModel, GameStatusModel, SecurityDomainModel, SuitModel, UserModel } from '../../../core';
+import {
+  CardModel,
+  CardRankModel,
+  DeckModel,
+  GameConfigurationModel,
+  GameStatusModel,
+  SecurityDomainModel,
+  SuitModel,
+  UserModel,
+} from '../../../core';
 
 import { PresidentsRoundModel } from '..';
 import { Types } from 'mongoose';
@@ -17,9 +26,7 @@ import { createUsers } from '../../../core/User/User.data';
 import db from '../../../../db';
 import { logger } from '../../../../logger';
 
-describe('Presidents Round', function() {
-
-
+describe('Presidents Round', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();
@@ -31,7 +38,7 @@ describe('Presidents Round', function() {
     await createGameStatuses();
     await createSecurityDomains();
     await createUsers();
-  })
+  });
 
   afterAll(async () => {
     await CardModel.deleteMany({});
@@ -43,7 +50,7 @@ describe('Presidents Round', function() {
     await SecurityDomainModel.deleteMany({});
     await UserModel.deleteMany({});
     await db.disconnect();
-  })
+  });
 
   test('#createInstance', async () => {
     const id = Types.ObjectId();
@@ -57,7 +64,6 @@ describe('Presidents Round', function() {
     expect(instance.startedAt).toBeDefined();
     expect(instance.turns).toBeDefined();
     expect(instance.turns.length).toEqual(0);
-    logger.info(JSON.stringify(instance, null, 2))
+    logger.info(JSON.stringify(instance, null, 2));
   });
-
 });

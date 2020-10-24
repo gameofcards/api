@@ -85,7 +85,7 @@ export interface CreateGameConfigurationInput {
   maxPlayers: number;
   minPlayers: number;
   deck: Deck;
-  numDecks: number
+  numDecks: number;
 }
 
 export interface CreateGameStatusInput {

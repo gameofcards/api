@@ -1,6 +1,6 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
-import { Card, CardModel } from '../../../core'
+import { Card, CardModel } from '../../../core';
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import {
   modelOptions as ModelOptions,
@@ -21,7 +21,7 @@ import { Utils } from '../../../modules.utils';
  * This class represents a PresidentsTurn.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: [Instance] })

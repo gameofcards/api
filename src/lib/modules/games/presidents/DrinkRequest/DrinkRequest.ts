@@ -1,7 +1,14 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
 import { CreateDrinkRequestInput, InstanceId } from '../../../../types';
-import { DocumentType, modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
+import {
+  DocumentType,
+  modelOptions as ModelOptions,
+  plugin as Plugin,
+  prop as Property,
+  Ref,
+  ReturnModelType,
+} from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
 
 import { DrinkRequestModel } from '.';
@@ -16,7 +23,7 @@ import { Utils } from '../../../modules.utils';
  * one player to another. This records who sent it and to whom.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @Plugin(autopopulate)
@@ -25,7 +32,7 @@ export default class DrinkRequest implements Instance {
   public _id!: InstanceId;
   public id!: string;
   public get displayId() {
-    return ''
+    return '';
   }
 
   @Property({ required: true, ref: 'PresidentsPlayer' })
@@ -36,7 +43,7 @@ export default class DrinkRequest implements Instance {
   @Field((type) => ID)
   public toPlayer!: Ref<PresidentsPlayer>;
 
-  @Property({ })
+  @Property({})
   @Field((type) => ID)
   public game!: ObjectId;
 
@@ -78,7 +85,7 @@ export default class DrinkRequest implements Instance {
    * @public
    * @static
    * @async
-   * @automation 
+   * @automation
    */
   public async fulfill(this: DocumentType<DrinkRequest>) {
     this.fulfilled = true;

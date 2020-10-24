@@ -13,7 +13,6 @@ const GameStatuses = [
   },
 ];
 
-
 export const createGameStatuses = async () => {
   try {
     const instances = GameStatuses.map((status) => GameStatusModel.createInstance(status));

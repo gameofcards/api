@@ -14,8 +14,7 @@ import { createStandardDeck } from '../Deck/Deck.data';
 import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
 
-describe('Game Configuration Model Tests', function() {
-
+describe('Game Configuration Model Tests', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();
@@ -23,7 +22,7 @@ describe('Game Configuration Model Tests', function() {
     await createCards();
     await createStandardDeck();
     await createPresidentsDeck();
-  })
+  });
 
   afterAll(async () => {
     await DeckModel.deleteMany({});
@@ -32,45 +31,40 @@ describe('Game Configuration Model Tests', function() {
     await CardModel.deleteMany({});
     await GameConfigurationModel.deleteMany({});
     await db.disconnect();
-  })
+  });
 
-
-  describe('@createGameConfigurations()', function() {
-
-    it('should initialize 2 instances', async function() {    
+  describe('@createGameConfigurations()', function () {
+    it('should initialize 2 instances', async function () {
       await createGameConfigurations();
       const instances = await GameConfigurationModel.find({});
       expect(instances.length).toBe(2);
     });
+  });
 
-  })
-
-
-  describe('validations', function() {    
-
-    it('name is required', async function() {
+  describe('validations', function () {
+    it('name is required', async function () {
       const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
       const config = {
         maxPlayers: 1,
         minPlayers: 1,
         deck: standardDeck,
-        numDecks: 1
+        numDecks: 1,
       };
       try {
         const instance = await GameConfigurationModel.createInstance(config as any);
       } catch (err) {
-        expect(err.message).toEqual('GameConfiguration validation failed: name: Path `name` is required.')
+        expect(err.message).toEqual('GameConfiguration validation failed: name: Path `name` is required.');
       }
     });
 
-    it('name must be unique', async function() {
+    it('name must be unique', async function () {
       const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
       const config = {
         name: 'Presidents',
         maxPlayers: 1,
         minPlayers: 1,
         deck: standardDeck,
-        numDecks: 1
+        numDecks: 1,
       };
       try {
         const instance = await GameConfigurationModel.createInstance(config as any);
@@ -79,83 +73,81 @@ describe('Game Configuration Model Tests', function() {
       }
     });
 
-    it('maxPlayers is required', async function() {    
+    it('maxPlayers is required', async function () {
       const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
       const config = {
         name: 'name',
         minPlayers: 1,
         deck: standardDeck,
-        numDecks: 1
+        numDecks: 1,
       };
       try {
         const instance = await GameConfigurationModel.createInstance(config as any);
       } catch (err) {
-        expect(err.message).toContain('GameConfiguration validation failed: maxPlayers: Path `maxPlayers` is required.')
+        expect(err.message).toContain('GameConfiguration validation failed: maxPlayers: Path `maxPlayers` is required.');
       }
     });
 
-    it('maxPlayers must be >= minPlayers', async function() {    
+    it('maxPlayers must be >= minPlayers', async function () {
       const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
       const config = {
         name: 'maxplayersgame',
         deck: standardDeck,
         numDecks: 1,
         maxPlayers: 0,
-        minPlayers: 1
+        minPlayers: 1,
       };
       try {
         const instance = await GameConfigurationModel.createInstance(config);
       } catch (err) {
-        expect(err.message).toContain('A value for maxPlayers must be greater than or equal to minPlayers.')
+        expect(err.message).toContain('A value for maxPlayers must be greater than or equal to minPlayers.');
       }
     });
 
-    it('minPlayers must be <= maxPlayers', async function() {    
+    it('minPlayers must be <= maxPlayers', async function () {
       const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
       const config = {
         name: 'name',
         deck: standardDeck,
         numDecks: 1,
         maxPlayers: 1,
-        minPlayers: 2
+        minPlayers: 2,
       };
       try {
         const instance = await GameConfigurationModel.createInstance(config);
       } catch (err) {
-        expect(err.message).toContain('A value for minPlayers must be less than or equal to maxPlayers.')
+        expect(err.message).toContain('A value for minPlayers must be less than or equal to maxPlayers.');
       }
     });
 
-    it('deck is required', async function() {  
-      const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' }); 
+    it('deck is required', async function () {
+      const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
       const config = {
         name: 'name',
         numDecks: 1,
         maxPlayers: 2,
-        minPlayers: 1
+        minPlayers: 1,
       };
       try {
         const instance = await GameConfigurationModel.createInstance(config as any);
       } catch (err) {
-        expect(err.message).toEqual('GameConfiguration validation failed: deck: Path `deck` is required.')
+        expect(err.message).toEqual('GameConfiguration validation failed: deck: Path `deck` is required.');
       }
     });
 
-    it('numDecks is required', async function() {  
-      const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' }); 
+    it('numDecks is required', async function () {
+      const standardDeck = await DeckModel.findOne({ name: 'Standard Deck' });
       const config = {
         name: 'name',
         maxPlayers: 1,
         minPlayers: 1,
-        deck: standardDeck
+        deck: standardDeck,
       };
       try {
         const instance = await GameConfigurationModel.createInstance(config as any);
       } catch (err) {
-        expect(err.message).toEqual('GameConfiguration validation failed: numDecks: Path `numDecks` is required.')
+        expect(err.message).toEqual('GameConfiguration validation failed: numDecks: Path `numDecks` is required.');
       }
     });
-    
   });
-
 });

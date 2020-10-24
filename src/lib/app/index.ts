@@ -31,7 +31,7 @@ export class Application {
     if (!Application.instance) {
       Application.instance = new Application();
     } else {
-      throw new ApplicationError('Application already initialized')
+      throw new ApplicationError('Application already initialized');
     }
     return Application.instance;
   }
@@ -43,12 +43,12 @@ export class Application {
     this.schema = null;
     this.apollo = null;
     this.server = null;
-  };
+  }
 
   public async start() {
-   await this.initializeApolloServer();
-   this.initializeGraphiql();
-   this.initializeHttpServer();
+    await this.initializeApolloServer();
+    this.initializeGraphiql();
+    this.initializeHttpServer();
   }
 
   private async initializeApolloServer() {
@@ -64,7 +64,7 @@ export class Application {
       engine: {
         reportSchema: true,
       },
-      context: async ({ req, connection }) => ({ pubsub })
+      context: async ({ req, connection }) => ({ pubsub }),
     });
     this.apollo.applyMiddleware({ app });
   }

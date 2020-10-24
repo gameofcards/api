@@ -6,9 +6,7 @@ import { logger } from '../logger';
   logger.info('[TEST] starting test');
 
   try {
-    await Connection.drop()
-
-    
+    await Connection.drop();
   } catch (err) {
     logger.error('[TEST] test failed.');
   }

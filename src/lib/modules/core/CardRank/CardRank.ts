@@ -10,7 +10,7 @@ import { Utils } from '../../modules.utils';
  * Ranks: [2, 3, 4, 5, 6, 7, 8, 9, J, Q, K, A]
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })

@@ -7,7 +7,7 @@ import {
   prop as Property,
   Ref,
   ReturnModelType,
-  defaultClasses
+  defaultClasses,
 } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
 
@@ -23,7 +23,7 @@ import { Utils } from '../../../modules.utils';
  * This class represents a PresidentsRound.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @Plugin(autopopulate)
@@ -32,7 +32,7 @@ export default class PresidentsRound implements Instance {
   public _id!: InstanceId;
   public id!: string;
   public get displayId() {
-    return ''
+    return '';
   }
 
   @Property({ required: true })
@@ -65,7 +65,7 @@ export default class PresidentsRound implements Instance {
       startedAt: Utils.getDate(),
       game: input.game,
       turns: [],
-      number: input.number
+      number: input.number,
     };
     return this.create(round);
   }

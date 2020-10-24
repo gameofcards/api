@@ -20,7 +20,7 @@ import { Utils } from '../../modules.utils';
  * details for their game.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @Plugin(autopopulate)
@@ -33,27 +33,27 @@ export default class GameConfiguration implements Instance {
   @Field()
   public name!: string;
 
-  @Property({ 
+  @Property({
     required: true,
     validate: {
-      validator: function(maxPlayers) {
+      validator: function (maxPlayers) {
         return maxPlayers >= this.minPlayers;
       },
-      message: 'A value for maxPlayers must be greater than or equal to minPlayers.'
-    }
-   })
+      message: 'A value for maxPlayers must be greater than or equal to minPlayers.',
+    },
+  })
   @Field((type) => Int)
   public maxPlayers!: number;
 
-  @Property({ 
+  @Property({
     required: true,
     validate: {
-      validator: function(minPlayers) {
+      validator: function (minPlayers) {
         return minPlayers <= this.maxPlayers;
       },
-      message: 'A value for minPlayers must be less than or equal to maxPlayers.'
-    }
-   })
+      message: 'A value for minPlayers must be less than or equal to maxPlayers.',
+    },
+  })
   @Field((type) => Int)
   public minPlayers!: number;
 

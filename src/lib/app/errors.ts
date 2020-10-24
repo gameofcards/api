@@ -1,6 +1,6 @@
 export class ApplicationError extends Error {
   constructor(message?: string) {
-    super(message); 
-    this.name = 'ApplicationError'
+    super(message);
+    this.name = 'ApplicationError';
   }
 }

@@ -12,10 +12,10 @@ import User from '../User/User';
 import { Utils } from '../../modules.utils';
 
 /**
- * This class represents a Game. 
+ * This class represents a Game.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @InterfaceType({ implements: Instance })

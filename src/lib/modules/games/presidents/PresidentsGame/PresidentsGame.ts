@@ -1,7 +1,18 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
 import { AddPresidentsTurnInput, JoinPresidentsGameInput } from './PresidentsGame.inputs';
-import { Card, CardModel, Game, GameConfiguration, GameConfigurationModel, GameStatus, GameStatusModel, Player, User, UserModel } from '../../../core';
+import {
+  Card,
+  CardModel,
+  Game,
+  GameConfiguration,
+  GameConfigurationModel,
+  GameStatus,
+  GameStatusModel,
+  Player,
+  User,
+  UserModel,
+} from '../../../core';
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -30,7 +41,7 @@ import { logger } from './../../../../logger';
  * This class represents a PresidentsGame.
  * @extends Game
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @Plugin(autopopulate)
@@ -67,7 +78,6 @@ export default class PresidentsGame extends Game {
   @Field((type) => [DrinkRequest])
   public drinkRequests!: DrinkRequest[];
 
-
   /**
    * This method will create a PresidentsGame instance.
    * @param input PresidentsGameInput
@@ -88,13 +98,12 @@ export default class PresidentsGame extends Game {
       createdAt: Utils.getDate(),
       drinkRequests: [],
       players: [],
-      rounds: []
+      rounds: [],
     };
     const instance = await this.create(game);
     return instance;
   }
 
-  
   /**
    * This method will add a PresidentsPlayer to the game from their user ID.
    * @param input userId: Ref<User>
@@ -105,9 +114,9 @@ export default class PresidentsGame extends Game {
    */
   public async addPlayerFromUserId(this: DocumentType<PresidentsGame>, userId: Ref<User>) {
     const player = await PresidentsPlayerModel.createInstance({
-      user: userId, 
+      user: userId,
       game: this._id,
-      seatPosition: this.players.length
+      seatPosition: this.players.length,
     });
     return this.addPlayer(player);
   }
@@ -140,8 +149,8 @@ export default class PresidentsGame extends Game {
     return await game.addPlayerFromUserId(input.createdByUser);
   }
 
-   /**
-   * This method will add a user to the game by creating a PresidentsPlayer instance and 
+  /**
+   * This method will add a user to the game by creating a PresidentsPlayer instance and
    * adding it to the game.
    * @param input JoinGame
    * @returns DocumentType<PresidentsGame>
@@ -152,20 +161,20 @@ export default class PresidentsGame extends Game {
    */
   public static async JoinGame(this: ReturnModelType<typeof PresidentsGame>, input: JoinPresidentsGameInput) {
     const game = await this.findById(input.id);
-  
+
     if (game.status.value === 'IN_PROGRESS') {
-      return Promise.reject(new PresidentsGameError('Cannot join game. It\`s in progress.'));
+      return Promise.reject(new PresidentsGameError('Cannot join game. It`s in progress.'));
     }
-    
+
     if (game.status.value === 'FINALIZED') {
-      return Promise.reject(new PresidentsGameError('Cannot join game. It\`s finished.'));
+      return Promise.reject(new PresidentsGameError('Cannot join game. It`s finished.'));
     }
-  
+
     if (game.players.length === game.config.maxPlayers) {
       return Promise.reject(new PresidentsGameError('Cannot join game. It is already full.'));
     }
-  
-    const hasUserJoined = game.players.find(player => player._id === input.userId);
+
+    const hasUserJoined = game.players.find((player) => player._id === input.userId);
     if (hasUserJoined) {
       return Promise.reject(new PresidentsGameError('User has already joined the game.'));
     }
@@ -189,11 +198,15 @@ export default class PresidentsGame extends Game {
       return Promise.reject(new PresidentsGameError('Unable to start game. It has already finished.'));
     }
     if (this.players.length < this.config.minPlayers) {
-      return Promise.reject(new PresidentsGameError(`Unable to start game. Minimum number of players is ${this.config.minPlayers}.`));
+      return Promise.reject(
+        new PresidentsGameError(`Unable to start game. Minimum number of players is ${this.config.minPlayers}.`)
+      );
     }
     if (this.players.length === this.config.maxPlayers) {
       return Promise.reject(
-        new PresidentsGameError(`Unable to start game. The maximum amount of players (${this.config.maxPlayers}) has been reached.`)
+        new PresidentsGameError(
+          `Unable to start game. The maximum amount of players (${this.config.maxPlayers}) has been reached.`
+        )
       );
     }
 
@@ -203,9 +216,9 @@ export default class PresidentsGame extends Game {
     const numPlayers = this.players.length;
     const dealtCards = deckInstance.deal(numPlayers, shuffledCards);
     const indexOf3Clubs = deckInstance.find3ClubsIndex(dealtCards);
-    const players  = await PresidentsPlayerModel.findManyByIds(this.getOrderedPlayers());
+    const players = await PresidentsPlayerModel.findManyByIds(this.getOrderedPlayers());
     // are they really ordered though?
-    const playerUpdatePromises = players.map((player: DocumentType<PresidentsPlayer>, idx) => player.setCards(dealtCards[idx]))
+    const playerUpdatePromises = players.map((player: DocumentType<PresidentsPlayer>, idx) => player.setCards(dealtCards[idx]));
     const playerInstances = await Promise.all(playerUpdatePromises);
     this.players = playerInstances;
     const currentPlayer = this.findPlayerBySeatPosition(indexOf3Clubs);
@@ -236,7 +249,7 @@ export default class PresidentsGame extends Game {
       this.status = await GameStatusModel.findOne({ value: GameStatusText.InProgress });
     }
 
-    const roundInput = { game: this._id, number: this.rounds.length }
+    const roundInput = { game: this._id, number: this.rounds.length };
     const roundInstance = await PresidentsRoundModel.createInstance(roundInput);
     this.rounds.push(roundInstance);
 
@@ -266,9 +279,7 @@ export default class PresidentsGame extends Game {
    * @automation PresidentsGame.test.ts #StartGame
    */
   private getOrderedPlayers(this: DocumentType<PresidentsGame>) {
-    return this.players
-      .sort((a, b) => (a.seatPosition > b.seatPosition ? 1 : -1))
-      .map(player => player._id);
+    return this.players.sort((a, b) => (a.seatPosition > b.seatPosition ? 1 : -1)).map((player) => player._id);
   }
 
   /**
@@ -324,7 +335,6 @@ export default class PresidentsGame extends Game {
     return 0;
   }
 
-
   /**
    * This method will create a PresidentsTurn instance.
    * @param input PresidentsTurnInput
@@ -369,7 +379,7 @@ export default class PresidentsGame extends Game {
       endedRound: false,
       wasSkipped: true,
       didCauseSkips: false,
-      skipsRemaining
+      skipsRemaining,
     };
     const presidentsTurnInstance = await PresidentsTurnModel.createInstance(skipTurn);
     return presidentsTurnInstance;
@@ -387,9 +397,8 @@ export default class PresidentsGame extends Game {
   public static async AddPresidentsTurn(this: ReturnModelType<typeof PresidentsGame>, id: string, turn: PresidentsTurnInput) {
     let game = await this.findById(id);
     const validTurn = await game.isValidTurn(turn);
-    
-    if (validTurn) {
 
+    if (validTurn) {
       const presidentsTurnInstance = await game.createPresidentsTurn(turn);
       const currentRoundIndex = game.rounds.length - 1;
       game.rounds[currentRoundIndex].turns.push(presidentsTurnInstance);
@@ -397,11 +406,11 @@ export default class PresidentsGame extends Game {
 
       if (presidentsTurnInstance.didCauseSkips) {
         let { skipsRemaining } = presidentsTurnInstance;
-         while (skipsRemaining) {
-           skipsRemaining--;
-           const skipTurn = await game.createSkipTurn(skipsRemaining)
-           game.rounds[currentRoundIndex].turns.push(skipTurn);
-           game.currentPlayer = game.getNextPlayerId();
+        while (skipsRemaining) {
+          skipsRemaining--;
+          const skipTurn = await game.createSkipTurn(skipsRemaining);
+          game.rounds[currentRoundIndex].turns.push(skipTurn);
+          game.currentPlayer = game.getNextPlayerId();
         }
       }
 
@@ -417,7 +426,6 @@ export default class PresidentsGame extends Game {
     }
   }
 
-  
   /**
    * This method will validate the turn submitted.
    * @param turn PresidentsTurnInput
@@ -465,7 +473,9 @@ export default class PresidentsGame extends Game {
         if (areCardsBetter) {
           return Promise.resolve(true);
         } else {
-          return Promise.reject(new PresidentsGameError(`Cannot process an invalid turn. Your cards are not better than the last hand.`));
+          return Promise.reject(
+            new PresidentsGameError(`Cannot process an invalid turn. Your cards are not better than the last hand.`)
+          );
         }
       }
     }
@@ -523,15 +533,14 @@ export default class PresidentsGame extends Game {
       } else {
         return Promise.reject(new PresidentsGameError(`The rank of the selected cards does not beat the previous turns.`));
       }
-    }
-    else { 
+    } else {
       return Promise.reject(new PresidentsGameError(`The rank of the selected cards does not beat the previous turns.`));
     }
   }
 
   /**
    * This method will determine if the current player's last turn ended the round.
-   * We do this when, for example, everyone passes after a players turn and it's now 
+   * We do this when, for example, everyone passes after a players turn and it's now
    * their turn again. We need to know this so we can add a new round.
    * @returns Promise<boolean>
    * @public
@@ -561,7 +570,7 @@ export default class PresidentsGame extends Game {
       }
     }
 
-    if (turn.cardsPlayed.find(card => card.cardRank.value === 2)) {
+    if (turn.cardsPlayed.find((card) => card.cardRank.value === 2)) {
       return true;
     }
     if (!foundLastTurn) {
@@ -699,10 +708,7 @@ export default class PresidentsGame extends Game {
     const toPlayerInstance = await PresidentsPlayerModel.findById(input.toPlayer);
 
     // TODO -- validate()
-    if (
-      !fromPlayerInstance.politicalRank ||
-      !toPlayerInstance.politicalRank
-    ) {
+    if (!fromPlayerInstance.politicalRank || !toPlayerInstance.politicalRank) {
       return Promise.reject(new PresidentsGameError('you must wait til all players have ranks to give drinks out'));
     }
     const doesGiverOutRankReceiver = fromPlayerInstance.politicalRank.value < fromPlayerInstance.politicalRank.value;
@@ -721,9 +727,9 @@ export default class PresidentsGame extends Game {
     }
 
     const requestInstance = await DrinkRequestModel.createInstance({
-      fromPlayer: input.fromPlayer, 
-      toPlayer: input.toPlayer, 
-      game: game._id
+      fromPlayer: input.fromPlayer,
+      toPlayer: input.toPlayer,
+      game: game._id,
     });
 
     await fromPlayerInstance.addDrinkRequestSent(requestInstance);

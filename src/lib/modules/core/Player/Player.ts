@@ -1,6 +1,13 @@
 import * as autopopulate from 'mongoose-autopopulate';
 
-import { DocumentType, modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
+import {
+  DocumentType,
+  modelOptions as ModelOptions,
+  plugin as Plugin,
+  prop as Property,
+  Ref,
+  ReturnModelType,
+} from '@typegoose/typegoose';
 import { Field, ID, Int, InterfaceType, ObjectType } from 'type-graphql';
 
 import Card from '../Card/Card';
@@ -18,7 +25,7 @@ export default class Player implements Instance {
   public _id!: InstanceId;
   public id!: string;
   public get displayId() {
-    return ''
+    return '';
   }
 
   @Property({ required: true, maxlength: 20 })

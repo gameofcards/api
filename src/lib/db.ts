@@ -5,7 +5,6 @@ import * as mongoose from 'mongoose';
 import { logger } from './logger';
 
 export default class DatabaseConnection {
-
   static async connect() {
     const url = process.env.MONGODB_URL;
     const options = {
@@ -42,7 +41,7 @@ export default class DatabaseConnection {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       };
-      await mongoose.connect(url, options, function() {
+      await mongoose.connect(url, options, function () {
         mongoose.connection.db.dropDatabase();
       });
       await DatabaseConnection.disconnect();

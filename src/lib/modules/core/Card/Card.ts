@@ -15,7 +15,7 @@ import { Utils } from '../../modules.utils';
  * instead of IDs.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })

@@ -8,7 +8,6 @@ import { logger } from './lib/logger';
     await db.connect();
     const app = Application.GetInstance();
     await app.start();
-
   } catch (err) {
     logger.error('[Application] startup failed');
     logger.error(err.message);

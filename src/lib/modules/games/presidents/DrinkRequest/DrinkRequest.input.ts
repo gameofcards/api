@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { InputType, Field, ID,  } from 'type-graphql';
+import { InputType, Field, ID } from 'type-graphql';
 
 @InputType()
 export class SendDrinkRequestInput {

@@ -15,15 +15,15 @@ import { Utils } from '../../../modules.utils';
  * This class represents a PoliticalRank.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
-export default class PoliticalRank implements Instance{
+export default class PoliticalRank implements Instance {
   public _id!: InstanceId;
   public id!: string;
   public get displayId() {
-    return this.name
+    return this.name;
   }
 
   @Property({ required: true, maxlength: 50 })
@@ -53,7 +53,7 @@ export default class PoliticalRank implements Instance{
    * @public
    * @static
    * @async
-   * 
+   *
    */
   public static async getRanks(this: ReturnModelType<typeof PoliticalRank>, howMany: number) {
     return this.find({ value: { $gt: 0, $lt: howMany + 1 } });

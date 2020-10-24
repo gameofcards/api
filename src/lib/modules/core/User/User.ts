@@ -21,7 +21,7 @@ import { Utils } from '../../modules.utils';
  * This class represents a User.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getModelOptions())
 @Plugin(autopopulate)
@@ -77,7 +77,7 @@ export default class User implements Instance {
       ...input,
       security,
       token: '',
-      playerRecords: []
+      playerRecords: [],
     };
     const instance = await this.create(user);
     return instance;

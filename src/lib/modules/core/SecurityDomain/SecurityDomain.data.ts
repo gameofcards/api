@@ -12,7 +12,6 @@ const SecurityDomains = [
   },
 ];
 
-
 export const createSecurityDomains = async () => {
   try {
     let instances = SecurityDomains.map((domain) => SecurityDomainModel.createInstance(domain));

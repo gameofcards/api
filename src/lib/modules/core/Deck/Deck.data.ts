@@ -7,7 +7,7 @@ export const createStandardDeck = async () => {
     let cards = await CardModel.find({});
     const deck = {
       name: 'Standard Deck',
-      cards
+      cards,
     };
     let instance = await DeckModel.createInstance(deck);
   } catch (err) {

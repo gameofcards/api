@@ -1,7 +1,16 @@
 import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
-import { CardModel, CardRankModel, DeckModel, GameConfigurationModel, GameStatusModel, SecurityDomainModel, SuitModel, UserModel } from '../../../core';
+import {
+  CardModel,
+  CardRankModel,
+  DeckModel,
+  GameConfigurationModel,
+  GameStatusModel,
+  SecurityDomainModel,
+  SuitModel,
+  UserModel,
+} from '../../../core';
 
 import { GameStatusText } from './../../../../types';
 import { PresidentsDeckModel } from '.';
@@ -19,14 +28,13 @@ import { createUsers } from './../../../core/User/User.data';
 import db from '../../../../db';
 import { logger } from './../../../../logger';
 
-describe('Presidents Deck Model Tests', function() {
-
+describe('Presidents Deck Model Tests', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();
     await createCardRanks();
     await createCards();
-  })
+  });
 
   afterAll(async () => {
     await DeckModel.deleteMany({});
@@ -34,18 +42,15 @@ describe('Presidents Deck Model Tests', function() {
     await CardRankModel.deleteMany({});
     await CardModel.deleteMany({});
     await db.disconnect();
-  })
+  });
 
-  describe('@createPresidentsDeck()', function() {
-
-    it('should initialize 1 instances', async function() {    
+  describe('@createPresidentsDeck()', function () {
+    it('should initialize 1 instances', async function () {
       await createPresidentsDeck();
-      const instance = await PresidentsDeckModel.findOne({name: 'Standard Presidents Deck'});
+      const instance = await PresidentsDeckModel.findOne({ name: 'Standard Presidents Deck' });
       expect(instance.cards.length).toBe(52);
       expect(instance.cards[0].cardRank.value).toBeGreaterThanOrEqual(2);
       expect(instance.cards[0].suit.value).toBeGreaterThanOrEqual(0);
     });
-
   });
-
 });

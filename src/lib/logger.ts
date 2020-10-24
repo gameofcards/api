@@ -8,14 +8,14 @@ const env = process.env.NODE_ENV || 'dev';
 
 interface Options {
   dir: string;
-};
+}
 
 /**
  * Small wrapper class to setup winston logger. Constructor provides the
  * option for outputting the results to a directory.
  * @public
  * @param options { dir?: string }
- * 
+ *
  */
 class Logger {
   private logger: winston.Logger;
@@ -62,7 +62,7 @@ class Logger {
     this.filename = path.join(options.dir, 'debug.log');
   }
 
-   /**
+  /**
    * This method will initialize the logger.
    * @private
    */
@@ -72,11 +72,11 @@ class Logger {
       level: env === 'dev' ? 'debug' : 'info',
       format: format.combine(
         format.timestamp({
-          format: 'YYYY-MM-DD HH:mm:ss'
+          format: 'YYYY-MM-DD HH:mm:ss',
         }),
-        format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+        format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
       ),
-      transports: this.getTransports()
+      transports: this.getTransports(),
     });
   }
 
@@ -87,22 +87,21 @@ class Logger {
    */
   private getTransports() {
     const { filename } = this;
-    let ports: winston.transport[] = [ 
+    let ports: winston.transport[] = [
       new transports.Console({
         level: 'info',
         silent: env !== 'test',
         format: format.combine(
           format.colorize(),
-          format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`),
-        )
-      })];
+          format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+        ),
+      }),
+    ];
     if (filename) {
-      ports.push(new transports.File({ filename }))
+      ports.push(new transports.File({ filename }));
     }
     return ports;
   }
-
 }
 
 export const logger = Logger.GetInstance();
-

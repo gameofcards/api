@@ -9,7 +9,7 @@ import { Utils } from '../../modules.utils';
  * This class represents a Status.
  * @extends Instance
  * @public
- * 
+ *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @InterfaceType({ implements: Instance })
@@ -25,7 +25,7 @@ export default class Status implements Instance {
     return this.value;
   }
 
-   /**
+  /**
    * This method will find a Status instance by value.
    * @param value The value of the Status.
    * @returns Promise<Status>
