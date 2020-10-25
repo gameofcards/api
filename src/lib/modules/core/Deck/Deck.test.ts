@@ -10,9 +10,9 @@ import { createCards } from '../Card/Card.data';
 import { createStandardDeck } from './Deck.data';
 import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
-import { logger } from './../../../logger';
+import { logger } from '../../../logger';
 
-describe.skip('Deck Model Tests', function () {
+describe.skip('Deck', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();

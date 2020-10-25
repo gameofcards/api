@@ -1,4 +1,5 @@
 import { CardModel } from '../../../core';
+import { DeckNames } from './../../../../types';
 import { PresidentsDeckModel } from '.';
 import { logger } from '../../../../logger';
 
@@ -6,7 +7,7 @@ export const createPresidentsDeck = async () => {
   try {
     let cards = await CardModel.find({});
     const deck = {
-      name: 'Standard Presidents Deck',
+      name: DeckNames.StandardPresidentsDeck,
       cards,
     };
     let instance = await PresidentsDeckModel.createInstance(deck);

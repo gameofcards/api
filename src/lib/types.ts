@@ -1,10 +1,6 @@
-import { Card, CardRank, Deck, GameConfiguration, Suit, User } from './modules/core';
-import { DocumentType, Ref } from '@typegoose/typegoose';
 import { GraphQLScalarType, Kind } from 'graphql';
 
 import { ObjectId } from 'mongodb';
-import { PresidentsGame } from './modules/games';
-import { PresidentsPlayer } from './modules/games/presidents/PresidentsPlayer';
 
 export const ObjectIdScalar = new GraphQLScalarType({
   name: 'ObjectId',
@@ -23,16 +19,12 @@ export const ObjectIdScalar = new GraphQLScalarType({
   },
 });
 
-export interface PresidentsTurnInput {
-  forPlayer: Ref<PresidentsPlayer>;
-  cardsPlayed: ObjectId[];
-  wasPassed: boolean;
-}
-
-export enum GameStatusText {
+export enum StatusValues {
   InProgress = 'IN_PROGRESS',
   Finalized = 'FINALIZED',
   NotStarted = 'NOT_STARTED',
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
 }
 
 export enum GameEvents {
@@ -45,91 +37,49 @@ export enum GameEvents {
   RematchStarted = 'RematchStarted',
 }
 
-export interface PresidentsGameInput {
-  name: string;
-  createdByUser: Ref<User>;
+export enum RoleNames {
+  User = 'User',
+  Administrator = 'Administrator',
+  Developer = 'Developer',
 }
 
-export interface JoinPresidentsGameInput {
-  game: Ref<PresidentsGame>;
-  user: Ref<User>;
+export enum UITaskNames {
+  CreateUser = 'Create User',
+  CreatePresidentsGame = 'Create Presidents Game',
+  PlayPresidentsGame = 'Play Presidents Game',
 }
 
-export interface CreateUserInput {
-  username: string;
-  email: string;
-  displayName: string;
-  password: string;
+export enum SecuirtyPolicyNames {
+  GamePlayersGameTasksAllPermissions = 'Game Players - Game Tasks - All Permissions',
+  AdministratorsGameTasksAllPermissions = 'Administrators - Game Tasks - All Permissions',
+  DevelopersGameTasksAllPermissions = 'Developers - Game Tasks - All Permissions',
 }
 
-export interface CreateCardInput {
-  shortHand: string;
-  character: string;
-  cardRank: CardRank;
-  suit: Suit;
+export enum SecurityGroupNames {
+  GamePlayers = 'Game Players',
+  Administrators = 'Administrators',
+  Developers = 'Developers',
 }
 
-export interface CreateCardRankInput {
-  name: string;
-  character: string;
-  value: number;
+export enum PermissionNames {
+  GamePlayersCreatePresidentsGame = 'Game Players - Create Presidents Game',
+  GamePlayersPlayPresidentsGame = 'Game Players - Play Presidents Game',
+  AdministratorsCreatePresidentsGame = 'Administrators - Create Presidents Game',
+  AdministratorsPlayPresidentsGame = 'Administrators - Play Presidents Game',
 }
 
-export interface CreateDeckInput {
-  name: string;
-  cards: Card[];
+export enum DomainNames {
+  GameData = 'Game Data',
 }
 
-export interface CreateGameConfigurationInput {
-  name: string;
-  maxPlayers: number;
-  minPlayers: number;
-  deck: Deck;
-  numDecks: number;
+export enum DeckNames {
+  StandardDeck = 'Standard Deck',
+  StandardPresidentsDeck = 'Standard Presidents Deck',
 }
 
-export interface CreateGameStatusInput {
-  value: string;
-}
-
-export interface CreateSuitInput {
-  name: string;
-  character: string;
-  value: number;
-  color: string;
-}
-
-export interface CreateSecurityDomainInput {
-  name: string;
-  clearanceLevel: number;
-}
-
-export interface CreatePoliticalRankInput {
-  name: string;
-  value: number;
-}
-
-export interface CreatePresidentsPlayerInput {
-  user: Ref<User>;
-  game: InstanceId;
-  seatPosition: number;
-}
-
-export interface CreatePresidentsRoundInput {
-  game: InstanceId;
-  number: number;
-}
-
-export interface SendDrinkRequestInput {
-  id: string;
-  fromPlayer: string;
-  toPlayer: string;
-}
-
-export interface CreateDrinkRequestInput {
-  fromPlayer: Ref<PresidentsPlayer>;
-  toPlayer: Ref<PresidentsPlayer>;
-  game: InstanceId;
+export enum GameConfigurationNames {
+  Presidents = 'Presidents',
+  Poker = 'Poker,'
 }
 
 export type NonEmptyArray<TItem> = readonly [TItem, ...TItem[]] | [TItem, ...TItem[]];

@@ -5,7 +5,6 @@ import {
   GameConfigurationModel,
   GameModel,
   PlayerModel,
-  SecurityDomainModel,
   StatusModel,
   SuitModel,
   UserModel,
@@ -27,7 +26,6 @@ import { createGameConfigurations } from './core/GameConfiguration/GameConfigura
 import { createGameStatuses } from './core/GameStatus/GameStatus.data';
 import { createPoliticalRanks } from './games/presidents/PoliticalRank/PoliticalRank.data';
 import { createPresidentsDeck } from './games/presidents/PresidentsDeck/PresidentsDeck.data';
-import { createSecurityDomains } from './core/SecurityDomain/SecurityDomain.data';
 import { createStandardDeck } from './core/Deck/Deck.data';
 import { createSuits } from './core/Suit/Suit.data';
 import { createUsers } from './core/User/User.data';
@@ -43,7 +41,6 @@ const dropAll = async () => {
       GameModel.deleteMany({}),
       GameConfigurationModel.deleteMany({}),
       PlayerModel.deleteMany({}),
-      SecurityDomainModel.deleteMany({}),
       StatusModel.deleteMany({}),
       SuitModel.deleteMany({}),
       UserModel.deleteMany({}),
@@ -71,7 +68,6 @@ const initAll = async () => {
     await createSuits();
     await createCardRanks();
     await createCards();
-    await createSecurityDomains();
     await createStandardDeck();
     await createPresidentsDeck();
     await createGameConfigurations();

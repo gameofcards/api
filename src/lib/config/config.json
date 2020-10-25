@@ -1,11 +1,14 @@
 {
   "test": {
-
+    "MONGODB_URL": "mongodb+srv://root:root@cluster0.cq4v2.mongodb.net/game-of-cards-test?retryWrites=true&w=majority",
+    "JWT_SECRET": "1234"
   },
   "dev": {
-    
+    "MONGODB_URL": "mongodb+srv://root:root@cluster0.cq4v2.mongodb.net/game-of-cards-dev?retryWrites=true&w=majority",
+    "JWT_SECRET": "1234"
   },
   "prod": {
-    
+    "MONGODB_URL": "mongodb+srv://root:root@cluster0.cq4v2.mongodb.net/game-of-cards-prod?retryWrites=true&w=majority",
+    "JWT_SECRET": "1234"
   }
 }

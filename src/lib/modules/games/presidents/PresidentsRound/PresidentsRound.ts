@@ -1,5 +1,3 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -11,8 +9,8 @@ import {
 } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
 
-import { CreatePresidentsRoundInput } from './../../../../types';
-import Instance from '../../../core/Instance';
+import { CreatePresidentsRoundInput } from './PresidentsRound.input';
+import {Instance} from '../../../core';
 import { InstanceId } from '../../../../types';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
 import { PresidentsRoundModel } from '.';
@@ -26,7 +24,6 @@ import { Utils } from '../../../modules.utils';
  *
  */
 @ModelOptions(Utils.getModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: Instance })
 export default class PresidentsRound implements Instance {
   public _id!: InstanceId;

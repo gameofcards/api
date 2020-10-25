@@ -8,9 +8,9 @@ import { createCardRanks } from '../CardRank/CardRank.data';
 import { createCards } from './Card.data';
 import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
-import { logger } from './../../../logger';
+import { logger } from '../../../logger';
 
-describe('Card Model Tests', function () {
+describe('Card', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();

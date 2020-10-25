@@ -1,6 +1,3 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
-import { CreateGameConfigurationInput, InstanceId } from '../../../types';
 import { Field, Int, ObjectType } from 'type-graphql';
 import {
   modelOptions as ModelOptions,
@@ -11,8 +8,10 @@ import {
   defaultClasses,
 } from '@typegoose/typegoose';
 
+import { CreateGameConfigurationInput } from './GameConfiguration.input';
 import Deck from '../Deck/Deck';
-import Instance from '../Instance';
+import {Instance} from '../Instance';
+import { InstanceId } from '../../../types';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -23,7 +22,6 @@ import { Utils } from '../../modules.utils';
  *
  */
 @ModelOptions(Utils.getModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: Instance })
 export default class GameConfiguration implements Instance {
   public _id!: InstanceId;
@@ -80,17 +78,5 @@ export default class GameConfiguration implements Instance {
    */
   public static async createInstance(this: ReturnModelType<typeof GameConfiguration>, input: CreateGameConfigurationInput) {
     return this.create(input);
-  }
-
-  /**
-   * Utility method to return a GameConfiguration by name.
-   * @param name The name of the GameConfiguration
-   * @returns Promise<GameConfiguration>
-   * @public
-   * @static
-   * @async
-   */
-  public static async findByName(this: ReturnModelType<typeof GameConfiguration>, name: string) {
-    return this.findOne({ name });
   }
 }

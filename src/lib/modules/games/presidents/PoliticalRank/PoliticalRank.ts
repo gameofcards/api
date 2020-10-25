@@ -1,4 +1,3 @@
-import { CreatePoliticalRankInput, InstanceId } from '../../../../types';
 import { Field, Int, ObjectType } from 'type-graphql';
 import {
   modelOptions as ModelOptions,
@@ -8,7 +7,9 @@ import {
   defaultClasses,
 } from '@typegoose/typegoose';
 
-import Instance from '../../../core/Instance';
+import { CreatePoliticalRankInput } from './PoliticalRank.input'
+import {Instance} from '../../../core';
+import { InstanceId } from '../../../../types';
 import { Utils } from '../../../modules.utils';
 
 /**

@@ -72,4 +72,8 @@ export class Utils {
     // should never reach here
     throw new Error('3 of Clubs was not in the deck.');
   }
+
+  static convertArrayOfObjectsToOneObject(objs) {
+    return Object.assign({}, ...(objs.map(item => ({ [item.name]: item }) )));
+  }
 }

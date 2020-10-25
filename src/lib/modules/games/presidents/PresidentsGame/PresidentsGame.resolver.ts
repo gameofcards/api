@@ -2,8 +2,9 @@ import { ObjectId } from 'mongodb';
 import { PubSubEngine } from 'graphql-subscriptions';
 import { Resolver, Query, Mutation, Subscription, Arg, PubSub, Root } from 'type-graphql';
 import { PresidentsGame, PresidentsGameModel } from '.';
-import { ObjectIdScalar, GameEvents, GameStatusText } from '../../../../types';
-import { PresidentsGameInput, JoinPresidentsGameInput, AddPresidentsTurnInput, IdInput } from './PresidentsGame.inputs';
+import { ObjectIdScalar, GameEvents, StatusValues } from '../../../../types';
+import { PresidentsGameInput, AddPresidentsTurnInput, IdInput } from './PresidentsGame.inputs';
+import { JoinPresidentsGameInput } from './PresidentsGame.inputs';
 
 @Resolver((of) => PresidentsGame)
 export default class PresidentsGameResolver {
@@ -39,7 +40,7 @@ export default class PresidentsGameResolver {
   //   const presidentsTurn = { forPlayer, cardsPlayed, wasPassed };
   //   const game = await PresidentsGameModel.AddPresidentsTurn(id, presidentsTurn);
   //   await pubSub.publish(GameEvents.TurnTaken, game);
-  //   if (game.status.value === GameStatusText.Finalized) {
+  //   if (game.status.value === StatusValues.Finalized) {
   //     await pubSub.publish(GameEvents.GameEnded, game);
   //   }
   //   return game;

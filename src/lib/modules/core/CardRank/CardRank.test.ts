@@ -5,7 +5,7 @@ import { CardRankModel } from '.';
 import { createCardRanks } from './CardRank.data';
 import db from '../../../db';
 
-describe('Card Rank Model Tests', function () {
+describe('Card Rank', function () {
   beforeAll(async () => {
     await db.connect();
   });

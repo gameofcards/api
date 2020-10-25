@@ -1,15 +1,16 @@
 import { GameStatusModel } from '.';
+import { StatusValues } from './../../../types';
 import { logger } from '../../../logger';
 
 const GameStatuses = [
   {
-    value: 'NOT_STARTED',
+    value: StatusValues.NotStarted,
   },
   {
-    value: 'IN_PROGRESS',
+    value: StatusValues.InProgress,
   },
   {
-    value: 'FINALIZED',
+    value: StatusValues.Finalized,
   },
 ];
 

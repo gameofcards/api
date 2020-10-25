@@ -1,12 +1,11 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
 import { Card, Deck } from '../../../core';
-import { CreateDeckInput, InstanceId } from '../../../../types';
 import { DocumentType, modelOptions as ModelOptions, plugin as Plugin, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, ObjectType } from 'type-graphql';
 
+import { CreateDeckInput } from './../../../core/Deck/Deck.input';
 import { DeckInterface } from '../../../core/Deck/Deck';
-import Instance from '../../../core/Instance';
+import {Instance} from '../../../core';
+import { InstanceId } from '../../../../types';
 import { Utils } from '../../../modules.utils';
 
 /**
@@ -16,7 +15,6 @@ import { Utils } from '../../../modules.utils';
  *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: [Instance, DeckInterface] })
 export default class PresidentsDeck extends Deck implements Instance {
   public _id!: InstanceId;

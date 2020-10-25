@@ -1,5 +1,3 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -9,10 +7,10 @@ import {
   ReturnModelType,
 } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { SecurityDomain, SecurityDomainModel } from '../SecurityDomain';
+import { Role, RoleModel } from '../Role';
 
-import { CreateUserInput } from '../../../types';
-import Instance from '../Instance';
+import { CreateUserInput } from './User.input';
+import {Instance} from '../Instance';
 import { InstanceId } from '../../../types';
 import Player from '../Player/Player';
 import { Utils } from '../../modules.utils';
@@ -24,7 +22,6 @@ import { Utils } from '../../modules.utils';
  *
  */
 @ModelOptions(Utils.getModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: Instance })
 export default class User implements Instance {
   public _id!: InstanceId;
@@ -54,9 +51,9 @@ export default class User implements Instance {
   @Field()
   public token?: string;
 
-  @Property({ type: SecurityDomain })
-  @Field((type) => SecurityDomain)
-  public security!: SecurityDomain;
+  @Property({ required: true, type: Role })
+  @Field((type) => Role)
+  public role!: Role;
 
   @Property({ ref: 'Player' })
   @Field((type) => [ID])
@@ -72,10 +69,8 @@ export default class User implements Instance {
    * @automation User.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof User>, input: CreateUserInput) {
-    const security = await SecurityDomainModel.findOne({ name: 'user' });
     const user = {
       ...input,
-      security,
       token: '',
       playerRecords: [],
     };

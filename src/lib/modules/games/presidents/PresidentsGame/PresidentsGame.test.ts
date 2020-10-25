@@ -8,24 +8,34 @@ import {
   GameConfigurationModel,
   GameModel,
   GameStatusModel,
-  SecurityDomainModel,
+  StatusModel,
   SuitModel,
   UserModel,
 } from '../../../core';
 
-import { GameStatusText } from './../../../../types';
+import { DomainModel } from '../../../security/Domain';
+import { PermissionModel } from '../../../security/Permission';
 import { PresidentsGameModel } from '..';
 import { PresidentsPlayerModel } from '../PresidentsPlayer';
-import { Types } from 'mongoose';
+import { RoleModel } from '../../../core/Role';
+import { SecurityGroupModel } from '../../../security/SecurityGroup';
+import { SecurityPolicyModel } from '../../../security/SecurityPolicy';
+import { StatusValues } from './../../../../types';
+import { UITaskModel } from '../../../security/UITask';
 import { Utils } from './../../../modules.utils';
 import { createCardRanks } from '../../../core/CardRank/CardRank.data';
 import { createCards } from '../../../core/Card/Card.data';
 import { createGameConfigurations } from '../../../core/GameConfiguration/GameConfiguration.data';
+import { createGameDataDomain } from './../../../security/Domain/Domain.data';
 import { createGameStatuses } from '../../../core/GameStatus/GameStatus.data';
+import { createPermissions } from './../../../security/Permission/Permission.data';
 import { createPresidentsDeck } from '../PresidentsDeck/PresidentsDeck.data';
-import { createSecurityDomains } from '../../../core/SecurityDomain/SecurityDomain.data';
-import { createStandardDeck } from './../../../core/Deck/Deck.data';
+import { createRoles } from './../../../core/Role/Role.data';
+import { createSecurityGroups } from './../../../security/SecurityGroup/SecurityGroup.data';
+import { createStandardDeck } from '../../../core/Deck/Deck.data';
+import { createStatuses } from './../../../core/Status/Status.data';
 import { createSuits } from '../../../core/Suit/Suit.data';
+import { createUITasks } from './../../../security/UITask/UITask.data';
 import { createUsers } from './../../../core/User/User.data';
 import db from '../../../../db';
 import { logger } from './../../../../logger';
@@ -40,8 +50,13 @@ describe('Presidents Game', function () {
     await createPresidentsDeck();
     await createGameConfigurations();
     await createGameStatuses();
-    await createSecurityDomains();
+    await createStatuses();
+    await createRoles();
     await createUsers();
+    await createUITasks();
+    await createGameDataDomain()
+    await createSecurityGroups();
+    await createPermissions();
   });
 
   afterAll(async () => {
@@ -50,11 +65,18 @@ describe('Presidents Game', function () {
     await SuitModel.deleteMany({});
     await DeckModel.deleteMany({});
     await GameConfigurationModel.deleteMany({});
-    await GameStatusModel.deleteMany({});
     await PresidentsPlayerModel.deleteMany({});
-    await SecurityDomainModel.deleteMany({});
+    await StatusModel.deleteMany({});
+
     await UserModel.deleteMany({});
-    await GameModel.deleteMany({});
+    await RoleModel.deleteMany({});
+
+    await UITaskModel.deleteMany({});
+    await DomainModel.deleteMany({});
+    await SecurityGroupModel.deleteMany({});
+    await PermissionModel.deleteMany({});
+    await SecurityPolicyModel.deleteMany({});
+
     await db.disconnect();
   });
 
@@ -75,7 +97,7 @@ describe('Presidents Game', function () {
       expect(instance.createdAt).toBeDefined();
       expect(instance.startedAt).toBeFalsy();
       expect(instance.finishedAt).toBeFalsy();
-      expect(instance.status.value).toEqual(GameStatusText.NotStarted);
+      expect(instance.status.value).toEqual(StatusValues.NotStarted);
       expect(instance.config.name).toEqual('Presidents');
       expect(instance.createdByUser).toEqual(gameInput.createdByUser);
       expect(instance.currentPlayer).toBeFalsy();
@@ -301,7 +323,7 @@ describe('Presidents Game', function () {
       game = await game.initialize();
       game = await game.initializeNextRound();
 
-      expect(game.status.value).toEqual(GameStatusText.InProgress);
+      expect(game.status.value).toEqual(StatusValues.InProgress);
     });
 
     it('should have one round', async function () {
@@ -404,7 +426,7 @@ describe('Presidents Game', function () {
       expect(game.players[1].cards.length).toBeGreaterThan(0);
       expect(game.currentPlayer).toBeDefined();
       expect(game.startedAt).toBeDefined();
-      expect(game.status.value).toEqual(GameStatusText.InProgress);
+      expect(game.status.value).toEqual(StatusValues.InProgress);
       expect(game.rounds.length).toEqual(1);
 
       try {
@@ -452,17 +474,17 @@ describe('Presidents Game', function () {
   describe.skip('#isValidTurn', function () {});
 
   describe.skip('#areCardsValid', function () {
-    describe('true cases', async function () {
+    describe('true cases', function () {
       it('cards are of the same rank', async function () {});
     });
 
-    describe('false cases', async function () {
+    describe('false cases', function () {
       it('cards are not of the same rank', async function () {});
     });
   });
 
   describe.skip('#areCardsBetter', function () {
-    describe('true cases', async function () {
+    describe('true cases', function () {
       it('current hand has more cards', async function () {});
 
       it('current hand has equal number of cards with same rank', async function () {});
@@ -472,7 +494,7 @@ describe('Presidents Game', function () {
       it('current hand has fewer cards but contains a two', async function () {});
     });
 
-    describe('false cases', async function () {
+    describe('false cases', function () {
       it("current turn's rank does not beat previous turn's rank", async function () {});
 
       it('not enough cards selected (and no 2 included)', async function () {});

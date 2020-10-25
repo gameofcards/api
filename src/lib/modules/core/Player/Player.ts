@@ -1,5 +1,3 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -12,14 +10,13 @@ import { Field, ID, Int, InterfaceType, ObjectType } from 'type-graphql';
 
 import Card from '../Card/Card';
 import Game from '../Game/Game';
-import Instance from '../Instance';
+import {Instance} from '../Instance';
 import { InstanceId } from '../../../types';
 import { ObjectId } from 'mongodb';
 import User from '../User/User';
 import { Utils } from '../../modules.utils';
 
 @ModelOptions(Utils.getDisciminatorModelOptions())
-@Plugin(autopopulate)
 @InterfaceType({ implements: [Instance] })
 export default class Player implements Instance {
   public _id!: InstanceId;

@@ -1,8 +1,9 @@
-import { CreateCardRankInput, InstanceId } from '../../../types';
 import { Field, Int, ObjectType } from 'type-graphql';
 import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from '@typegoose/typegoose';
 
-import Instance from '../Instance';
+import { CreateCardRankInput } from './CardRank.input';
+import {Instance} from '../Instance';
+import { InstanceId } from '../../../types';
 import { Utils } from '../../modules.utils';
 
 /**

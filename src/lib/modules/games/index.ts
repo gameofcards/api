@@ -1,1 +1,1 @@
-export { PresidentsGame, PresidentsGameModel, PresidentsGameResolver } from './presidents';
+export * from './presidents';

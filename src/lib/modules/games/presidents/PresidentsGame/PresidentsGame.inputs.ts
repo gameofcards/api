@@ -1,28 +1,29 @@
+import { DocumentType, Ref } from '@typegoose/typegoose';
+import { Field, ID, InputType, Int } from 'type-graphql';
+
 import { ObjectId } from 'mongodb';
-import { InputType, Field, ID, Int } from 'type-graphql';
-import { MaxLength } from 'class-validator';
+import { PresidentsGame } from '../PresidentsGame';
+import { Role } from '../../../core/Role';
+import { User } from '../../../core';
 
 @InputType()
 export class PresidentsGameInput {
   @Field()
-  @MaxLength(30)
   name: string;
 
   @Field((type) => ID)
-  config: ObjectId;
-
-  @Field((type) => ID)
-  createdByUser: ObjectId;
+  createdByUser: Ref<User>;
 }
 
 @InputType()
 export class JoinPresidentsGameInput {
   @Field((type) => ID)
-  id: ObjectId;
+  id: Ref<PresidentsGame>;
 
   @Field((type) => ID)
-  userId: ObjectId;
+  userId: Ref<User>;
 }
+
 
 @InputType()
 export class AddPresidentsTurnInput {

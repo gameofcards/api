@@ -1,5 +1,3 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
 import { Card, CardModel } from '../../../core';
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import {
@@ -11,10 +9,10 @@ import {
   defaultClasses,
 } from '@typegoose/typegoose';
 
-import Instance from '../../../core/Instance';
+import {Instance} from '../../../core';
 import { InstanceId } from '../../../../types';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
-import { PresidentsTurnInput } from '../../../../types';
+import { PresidentsTurnInput } from './PresidentsTurn.input';
 import { Utils } from '../../../modules.utils';
 
 /**

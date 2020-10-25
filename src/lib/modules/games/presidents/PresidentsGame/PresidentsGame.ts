@@ -1,5 +1,3 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
 import { AddPresidentsTurnInput, JoinPresidentsGameInput } from './PresidentsGame.inputs';
 import {
   Card,
@@ -9,6 +7,7 @@ import {
   GameConfigurationModel,
   GameStatus,
   GameStatusModel,
+  Instance,
   Player,
   User,
   UserModel,
@@ -24,16 +23,17 @@ import {
 } from '@typegoose/typegoose';
 import { DrinkRequest, DrinkRequestModel } from '../DrinkRequest';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { GameStatusText, PresidentsGameInput, PresidentsTurnInput } from '../../../../types';
 import { PresidentsDeck, PresidentsDeckModel } from '../PresidentsDeck';
 import { PresidentsPlayer, PresidentsPlayerModel } from '../PresidentsPlayer';
 import { PresidentsRound, PresidentsRoundModel } from '../PresidentsRound';
 import { PresidentsTurn, PresidentsTurnModel } from '../PresidentsTurn';
 
-import Instance from '../../../core/Instance';
 import { InstanceId } from '../../../../types';
 import { PresidentsGameError } from './errors';
+import { PresidentsGameInput } from './PresidentsGame.inputs';
+import { PresidentsTurnInput } from '../PresidentsTurn/PresidentsTurn.input';
 import { SendDrinkRequestInput } from './../DrinkRequest/DrinkRequest.input';
+import { StatusValues } from '../../../../types';
 import { Utils } from '../../../modules.utils';
 import { logger } from './../../../../logger';
 
@@ -44,7 +44,6 @@ import { logger } from './../../../../logger';
  *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: [Instance, Game] })
 export default class PresidentsGame extends Game {
   public _id!: InstanceId;
@@ -88,7 +87,7 @@ export default class PresidentsGame extends Game {
    * @automation PresidentsGame.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsGame>, input: PresidentsGameInput) {
-    const status = await GameStatusModel.findByValue(GameStatusText.NotStarted);
+    const status = await GameStatusModel.findByValue(StatusValues.NotStarted);
     const config = await GameConfigurationModel.findOne({ name: 'Presidents' });
     const game = {
       name: input.name,
@@ -191,10 +190,10 @@ export default class PresidentsGame extends Game {
    * @automation PresidentsGame.test.ts #initialize
    */
   public async initialize(this: DocumentType<PresidentsGame>) {
-    if (this.status.value === GameStatusText.InProgress) {
+    if (this.status.value === StatusValues.InProgress) {
       return Promise.reject(new PresidentsGameError('Unable to start game. It is already in progress.'));
     }
-    if (this.status.value === GameStatusText.Finalized) {
+    if (this.status.value === StatusValues.Finalized) {
       return Promise.reject(new PresidentsGameError('Unable to start game. It has already finished.'));
     }
     if (this.players.length < this.config.minPlayers) {
@@ -236,17 +235,17 @@ export default class PresidentsGame extends Game {
    * @automation PresidentsGame.test.ts #initializeNextRound
    */
   public async initializeNextRound(this: DocumentType<PresidentsGame>) {
-    if (this.status.value === GameStatusText.Finalized) {
+    if (this.status.value === StatusValues.Finalized) {
       return Promise.reject(new PresidentsGameError('Unable to start next round. The game is finalized.'));
     }
-    if (this.status.value === GameStatusText.InProgress) {
+    if (this.status.value === StatusValues.InProgress) {
       if (this.turnToBeat) {
         this.turnToBeat = undefined;
       }
     }
-    if (this.status.value === GameStatusText.NotStarted) {
+    if (this.status.value === StatusValues.NotStarted) {
       this.startedAt = Utils.getDate();
-      this.status = await GameStatusModel.findOne({ value: GameStatusText.InProgress });
+      this.status = await GameStatusModel.findOne({ value: StatusValues.InProgress });
     }
 
     const roundInput = { game: this._id, number: this.rounds.length };
@@ -414,7 +413,7 @@ export default class PresidentsGame extends Game {
         }
       }
 
-      if (game.status.value === GameStatusText.InProgress) {
+      if (game.status.value === StatusValues.InProgress) {
         let didCurrentPlayersLastTurnEndTheRound = game.didCurrentPlayersLastTurnEndTheRound();
         if (didCurrentPlayersLastTurnEndTheRound) {
           await game.initializeNextRound();

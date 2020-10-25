@@ -1,23 +1,24 @@
 import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
-import { SecurityDomainModel } from '../SecurityDomain';
+import { RoleModel } from '../Role';
+import { RoleNames } from './../../../types';
 import { UserModel } from '.';
 import { Utils } from './../../modules.utils';
-import { createSecurityDomains } from '../SecurityDomain/SecurityDomain.data';
+import { createRoles } from './../Role/Role.data';
 import { createUsers } from './User.data';
 import db from '../../../db';
 import { logger } from './../../../logger';
 
-describe('User Model Tests', function () {
+describe('User', function () {
   beforeAll(async () => {
     await db.connect();
-    await createSecurityDomains();
+    await createRoles();
   });
 
   afterAll(async () => {
     await UserModel.deleteMany({});
-    await SecurityDomainModel.deleteMany({});
+    await RoleModel.deleteMany({});
     await db.disconnect();
   });
 
@@ -40,11 +41,14 @@ describe('User Model Tests', function () {
   });
 
   describe('validations', function () {
+
     it('username is required', async function () {
+      const userRole = await RoleModel.findOne({ name: RoleNames.User });
       const user = {
         email: 'email',
         displayName: 'displayName',
         password: 'password',
+        role: userRole
       };
       try {
         const instance = await UserModel.createInstance(user as any);
@@ -54,11 +58,13 @@ describe('User Model Tests', function () {
     });
 
     it('username must be unique', async function () {
+      const userRole = await RoleModel.findOne({ name: RoleNames.User });
       const user = {
         username: 'jethro',
         email: 'email',
         displayName: 'displayName',
         password: 'password',
+        role: userRole
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -68,10 +74,12 @@ describe('User Model Tests', function () {
     });
 
     it('email is required', async function () {
+      const userRole = await RoleModel.findOne({ name: RoleNames.User });
       const user = {
         username: 'tester',
         displayName: 'displayName',
         password: 'password',
+        role: userRole
       };
       try {
         const instance = await UserModel.createInstance(user as any);
@@ -81,11 +89,13 @@ describe('User Model Tests', function () {
     });
 
     it('email must be unique', async function () {
+      const userRole = await RoleModel.findOne({ name: RoleNames.User });
       const user = {
         username: 'tester',
         email: 'jethro@gmail.com',
         displayName: 'displayName',
         password: 'password',
+        role: userRole
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -95,15 +105,32 @@ describe('User Model Tests', function () {
     });
 
     it('password is required', async function () {
+      const userRole = await RoleModel.findOne({ name: RoleNames.User });
       const user = {
         username: 'tester',
         email: 'email',
         displayName: 'displayName',
+        role: userRole
       };
       try {
         const instance = await UserModel.createInstance(user as any);
       } catch (err) {
         expect(err.message).toEqual('User validation failed: password: Path `password` is required.');
+      }
+    });
+
+    it('role is required', async function () {
+      const userRole = await RoleModel.findOne({ name: RoleNames.User });
+      const user = {
+        username: 'tester',
+        email: 'email',
+        displayName: 'displayName',
+        password: 'past'
+      };
+      try {
+        const instance = await UserModel.createInstance(user as any);
+      } catch (err) {
+        expect(err.message).toEqual('User validation failed: role: Path `role` is required.');
       }
     });
   });

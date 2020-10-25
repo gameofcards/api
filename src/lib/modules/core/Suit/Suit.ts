@@ -1,4 +1,3 @@
-import { CreateSuitInput, InstanceId } from '../../../types';
 import { Field, Int, ObjectType } from 'type-graphql';
 import {
   modelOptions as ModelOptions,
@@ -8,7 +7,9 @@ import {
   defaultClasses,
 } from '@typegoose/typegoose';
 
-import Instance from '../Instance';
+import { CreateSuitInput } from './Suit.input';
+import {Instance} from '../Instance';
+import { InstanceId } from '../../../types';
 import { Utils } from '../../modules.utils';
 
 /**

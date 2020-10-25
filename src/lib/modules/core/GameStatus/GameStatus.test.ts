@@ -5,7 +5,7 @@ import { GameStatusModel } from '.';
 import { createGameStatuses } from './GameStatus.data';
 import db from '../../../db';
 
-describe('Game Status Model Tests', function () {
+describe('Game Status', function () {
   beforeAll(async () => {
     await db.connect();
   });

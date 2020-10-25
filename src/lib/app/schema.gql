@@ -72,7 +72,7 @@ type GameConfiguration implements Instance {
   numDecks: Int!
 }
 
-type GameStatus implements Instance & Status {
+type GameStatus implements Instance & StatusInterface {
   _id: ID!
   id: String!
   value: String!
@@ -172,8 +172,6 @@ type Query {
   gameStatuses: [GameStatus!]!
   presidentsGame(id: ObjectId!): PresidentsGame!
   presidentsGames: [PresidentsGame!]!
-  securityDomain(id: ObjectId!): SecurityDomain!
-  securityDomains: [SecurityDomain!]!
   status(id: ObjectId!): Status!
   statuses: [Status!]!
   suit(id: ObjectId!): Suit!
@@ -182,14 +180,19 @@ type Query {
   users: [User!]!
 }
 
-type SecurityDomain implements Instance {
+type Role implements Instance {
   _id: ID!
-  clearanceLevel: Int!
   id: String!
   name: String!
 }
 
-interface Status implements Instance {
+type Status implements Instance & StatusInterface {
+  _id: ID!
+  id: String!
+  value: String!
+}
+
+interface StatusInterface implements Instance {
   _id: ID!
   id: String!
   value: String!
@@ -211,7 +214,7 @@ type User implements Instance {
   id: String!
   password: String!
   playerRecords: [ID!]!
-  security: SecurityDomain!
+  role: Role!
   token: String!
   username: String!
 }

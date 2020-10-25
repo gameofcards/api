@@ -14,7 +14,7 @@ import { createStandardDeck } from '../Deck/Deck.data';
 import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
 
-describe('Game Configuration Model Tests', function () {
+describe('Game Configuration', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();

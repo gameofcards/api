@@ -1,18 +1,19 @@
 import { DeckModel } from '..';
 import { GameConfigurationModel } from '.';
+import { GameConfigurationNames } from './../../../types';
 import { PresidentsDeckModel } from '../../games/presidents/PresidentsDeck';
 import { logger } from '../../../logger';
 
 const GameConfigurations = [
   {
-    name: 'Presidents',
+    name: GameConfigurationNames.Presidents,
     maxPlayers: 8,
     minPlayers: 2,
     numDecks: 1,
     deck: null,
   },
   {
-    name: 'Poker',
+    name: GameConfigurationNames.Poker,
     maxPlayers: 5,
     minPlayers: 2,
     numDecks: 2,

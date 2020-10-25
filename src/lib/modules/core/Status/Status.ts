@@ -1,9 +1,27 @@
-import { Field, InterfaceType } from 'type-graphql';
+import { Field, InterfaceType, ObjectType } from 'type-graphql';
 import { modelOptions as ModelOptions, prop as Property, ReturnModelType, defaultClasses } from '@typegoose/typegoose';
 
-import Instance from '../Instance';
+import { CreateStatusInput } from './Status.input';
+import {Instance} from '../Instance';
 import { InstanceId } from '../../../types';
+import {InstanceOperations} from '../InstanceOperations';
 import { Utils } from '../../modules.utils';
+
+/**
+ * This class is an interface we can implement other Status types with
+ * for GraphQL types.
+ * @extends Instance
+ * @public
+ *
+ */
+@InterfaceType({ implements: [Instance] })
+export class StatusInterface {
+  public _id!: InstanceId;
+  public id!: string;
+
+  @Field()
+  public value!: string;
+}
 
 /**
  * This class represents a Status.
@@ -11,9 +29,9 @@ import { Utils } from '../../modules.utils';
  * @public
  *
  */
-@ModelOptions(Utils.getDisciminatorModelOptions())
-@InterfaceType({ implements: Instance })
-export default class Status implements Instance {
+@ModelOptions(Utils.getModelOptions())
+@ObjectType({ implements: [Instance, StatusInterface] })
+export default class Status extends InstanceOperations implements Instance {
   public _id!: InstanceId;
   public id!: string;
 
@@ -26,14 +44,15 @@ export default class Status implements Instance {
   }
 
   /**
-   * This method will find a Status instance by value.
-   * @param value The value of the Status.
-   * @returns Promise<Status>
+   * This method will create a Role.
+   * @param input CreateRoleInput
+   * @returns Promise<RUle>
    * @public
    * @static
    * @async
+   * @automation Role.test.ts #createInstance
    */
-  public static async findByValue(this: ReturnModelType<typeof Status>, value: string) {
-    return this.findOne({ value });
+  public static async createInstance(this: ReturnModelType<typeof Status>, input: CreateStatusInput) {
+    return this.create(input);
   }
 }

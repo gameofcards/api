@@ -1,7 +1,4 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
 import { Card, Game, User } from '../../../core';
-import { CreatePresidentsPlayerInput, InstanceId } from '../../../../types';
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -11,14 +8,14 @@ import {
   ReturnModelType,
 } from '@typegoose/typegoose';
 import { Field, ID, Int, ObjectType } from 'type-graphql';
+import { Instance, UserModel } from '../../../core';
 
+import { CreatePresidentsPlayerInput } from './PresidentsPlayer.input';
 import DrinkRequest from '../DrinkRequest/DrinkRequest';
-import Instance from '../../../core/Instance';
+import { InstanceId } from '../../../../types';
 import { ObjectId } from 'mongodb';
 import Player from '../../../core/Player/Player';
 import PoliticalRank from '../PoliticalRank/PoliticalRank';
-import PresidentsGame from '../PresidentsGame/PresidentsGame';
-import { UserModel } from '../../../core';
 import { Utils } from '../../../modules.utils';
 
 /**
@@ -28,7 +25,6 @@ import { Utils } from '../../../modules.utils';
  *
  */
 @ModelOptions(Utils.getDisciminatorModelOptions())
-@Plugin(autopopulate)
 @ObjectType({ implements: [Instance, Player] })
 export default class PresidentsPlayer extends Player implements Instance {
   public _id!: InstanceId;

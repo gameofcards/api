@@ -1,6 +1,3 @@
-import * as autopopulate from 'mongoose-autopopulate';
-
-import { CreateDeckInput, InstanceId } from '../../../types';
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -12,7 +9,9 @@ import {
 import { Field, InterfaceType, ObjectType } from 'type-graphql';
 
 import Card from '../Card/Card';
-import Instance from '../Instance';
+import { CreateDeckInput } from './Deck.input';
+import {Instance} from '../Instance';
+import { InstanceId } from '../../../types';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -25,6 +24,7 @@ import { Utils } from '../../modules.utils';
 @InterfaceType({ implements: [Instance] })
 export class DeckInterface {
   public _id!: InstanceId;
+  public id!: string;
 
   @Field()
   public name!: string;

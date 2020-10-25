@@ -5,7 +5,7 @@ import { SuitModel } from '.';
 import { createSuits } from './Suit.data';
 import db from '../../../db';
 
-describe('Suit Model Tests', function () {
+describe('Suit', function () {
   beforeAll(async () => {
     await db.connect();
   });

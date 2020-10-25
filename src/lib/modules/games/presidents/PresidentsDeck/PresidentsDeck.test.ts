@@ -7,14 +7,13 @@ import {
   DeckModel,
   GameConfigurationModel,
   GameStatusModel,
-  SecurityDomainModel,
   SuitModel,
   UserModel,
 } from '../../../core';
 
-import { GameStatusText } from './../../../../types';
 import { PresidentsDeckModel } from '.';
 import { PresidentsGameModel } from '..';
+import { StatusValues } from './../../../../types';
 import { Types } from 'mongoose';
 import { Utils } from './../../../modules.utils';
 import { createCardRanks } from '../../../core/CardRank/CardRank.data';
@@ -22,13 +21,12 @@ import { createCards } from '../../../core/Card/Card.data';
 import { createGameConfigurations } from '../../../core/GameConfiguration/GameConfiguration.data';
 import { createGameStatuses } from '../../../core/GameStatus/GameStatus.data';
 import { createPresidentsDeck } from '../PresidentsDeck/PresidentsDeck.data';
-import { createSecurityDomains } from '../../../core/SecurityDomain/SecurityDomain.data';
 import { createSuits } from '../../../core/Suit/Suit.data';
 import { createUsers } from './../../../core/User/User.data';
 import db from '../../../../db';
 import { logger } from './../../../../logger';
 
-describe('Presidents Deck Model Tests', function () {
+describe('Presidents Deck', function () {
   beforeAll(async () => {
     await db.connect();
     await createSuits();
