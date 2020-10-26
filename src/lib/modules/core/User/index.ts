@@ -1,6 +1,6 @@
 import User from './User';
-import { getModelForClass } from '@typegoose/typegoose';
 import UserResolver from './User.resolver';
+import { getModelForClass } from '@typegoose/typegoose';
 
 const UserModel = getModelForClass(User);
 

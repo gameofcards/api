@@ -10,7 +10,6 @@ import {
   Instance,
   Player,
   User,
-  UserModel,
 } from '../../../core';
 import {
   DocumentType,
@@ -35,7 +34,6 @@ import { PresidentsTurnInput } from '../PresidentsTurn/PresidentsTurn.input';
 import { SendDrinkRequestInput } from './../DrinkRequest/DrinkRequest.input';
 import { StatusValues } from '../../../../types';
 import { Utils } from '../../../modules.utils';
-import { logger } from './../../../../logger';
 
 /**
  * This class represents a PresidentsGame.

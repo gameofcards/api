@@ -1,21 +1,25 @@
 import { CardModel, CardRankModel, SuitModel } from '..';
 
+import { assert } from 'console';
+import { createCardRanks } from '../CardRank/CardRank.data';
+import { createSuits } from '../Suit/Suit.data';
 import { logger } from '../../../logger';
 
 export const createCards = async () => {
   try {
     const suits = await SuitModel.find({});
-    if (suits.length !== 4) return Promise.reject(new Error('Suits not initialized. Cannot create cards.'));
+    assert(suits.length === 4, 'Suits are not initialized.');
     const cardRanks = await CardRankModel.find({});
-    if (cardRanks.length !== 13) return Promise.reject(new Error('CardRanks not initialized. Cannot create cards.'));
+    assert(cardRanks.length === 13, 'CardRanks are not initialized.');
+
     const docs = await CardModel.find({});
-    if (docs.length >= 52) return Promise.reject(new Error('Cards already initialized.'));
+    assert(docs.length === 0, 'Cards are already initialized.');
+
     let cards = [];
     for (let suit of suits) {
       for (let cardRank of cardRanks) {
         const shortHand = cardRank.character + suit.name;
         const card = { cardRank, suit, shortHand };
-        // logger.info(JSON.stringify(card))
         cards.push(card);
       }
     }
@@ -25,4 +29,10 @@ export const createCards = async () => {
     logger.error('[UPLOAD] Failed to create Cards.');
     logger.error(err.message);
   }
+};
+
+export const initializeCards = async () => {
+  await createSuits();
+  await createCardRanks();
+  await createCards();
 };

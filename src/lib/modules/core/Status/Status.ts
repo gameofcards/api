@@ -1,10 +1,10 @@
 import { Field, InterfaceType, ObjectType } from 'type-graphql';
-import { modelOptions as ModelOptions, prop as Property, ReturnModelType, defaultClasses } from '@typegoose/typegoose';
+import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from '@typegoose/typegoose';
 
 import { CreateStatusInput } from './Status.input';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
-import {InstanceOperations} from '../InstanceOperations';
+import { InstanceOperations } from '../InstanceOperations';
 import { Utils } from '../../modules.utils';
 
 /**

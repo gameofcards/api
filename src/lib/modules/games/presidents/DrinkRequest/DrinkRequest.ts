@@ -10,7 +10,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 
 import { CreateDrinkRequestInput } from './DrinkRequest.input';
 import { DrinkRequestModel } from '.';
-import {Instance} from '../../../core';
+import { Instance } from '../../../core';
 import { InstanceId } from '../../../../types';
 import { ObjectId } from 'mongodb';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';

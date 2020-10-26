@@ -1,16 +1,9 @@
-import {
-  DocumentType,
-  modelOptions as ModelOptions,
-  plugin as Plugin,
-  prop as Property,
-  Ref,
-  ReturnModelType,
-} from '@typegoose/typegoose';
+import { DocumentType, modelOptions as ModelOptions, prop as Property, ReturnModelType } from '@typegoose/typegoose';
 import { Field, InterfaceType, ObjectType } from 'type-graphql';
 
 import Card from '../Card/Card';
 import { CreateDeckInput } from './Deck.input';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
 import { Utils } from '../../modules.utils';
 

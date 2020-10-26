@@ -16,14 +16,16 @@ import { createSecurityPolicies } from './SecurityPolicy.data';
 import { createStatuses } from '../../core/Status/Status.data';
 import { createUITasks } from '../UITask/UITask.data';
 import db from '../../../db';
+import { logger } from './../../../logger';
 
 describe('Security Policy', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Security Policy Tests');
     await db.connect();
     await createRoles();
     await createStatuses();
     await createUITasks();
-    await createGameDataDomain()
+    await createGameDataDomain();
     await createSecurityGroups();
     await createPermissions();
   });
@@ -37,6 +39,7 @@ describe('Security Policy', function () {
     await PermissionModel.deleteMany({});
     await SecurityPolicyModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Security Policy Tests');
   });
 
   describe('@createGameDataDomain()', function () {
@@ -46,4 +49,4 @@ describe('Security Policy', function () {
       expect(instances.length).toBe(3);
     });
   });
-})
+});

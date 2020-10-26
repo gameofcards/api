@@ -1,37 +1,19 @@
 import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
-import {
-  CardModel,
-  CardRankModel,
-  DeckModel,
-  GameConfigurationModel,
-  GameStatusModel,
-  SuitModel,
-  UserModel,
-} from '../../../core';
+import { CardModel, CardRankModel, DeckModel, SuitModel } from '../../../core';
 
 import { PresidentsDeckModel } from '.';
-import { PresidentsGameModel } from '..';
-import { StatusValues } from './../../../../types';
-import { Types } from 'mongoose';
-import { Utils } from './../../../modules.utils';
-import { createCardRanks } from '../../../core/CardRank/CardRank.data';
-import { createCards } from '../../../core/Card/Card.data';
-import { createGameConfigurations } from '../../../core/GameConfiguration/GameConfiguration.data';
-import { createGameStatuses } from '../../../core/GameStatus/GameStatus.data';
 import { createPresidentsDeck } from '../PresidentsDeck/PresidentsDeck.data';
-import { createSuits } from '../../../core/Suit/Suit.data';
-import { createUsers } from './../../../core/User/User.data';
 import db from '../../../../db';
+import { initializeCards } from './../../../core/Card/Card.data';
 import { logger } from './../../../../logger';
 
 describe('Presidents Deck', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Presidents Deck Tests');
     await db.connect();
-    await createSuits();
-    await createCardRanks();
-    await createCards();
+    await initializeCards();
   });
 
   afterAll(async () => {
@@ -40,6 +22,7 @@ describe('Presidents Deck', function () {
     await CardRankModel.deleteMany({});
     await CardModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Presidents Deck Tests');
   });
 
   describe('@createPresidentsDeck()', function () {

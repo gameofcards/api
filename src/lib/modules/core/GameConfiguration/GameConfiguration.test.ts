@@ -13,9 +13,11 @@ import { createPresidentsDeck } from '../../games/presidents/PresidentsDeck/Pres
 import { createStandardDeck } from '../Deck/Deck.data';
 import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
+import { logger } from './../../../logger';
 
 describe('Game Configuration', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Game Configuration Tests');
     await db.connect();
     await createSuits();
     await createCardRanks();
@@ -31,6 +33,7 @@ describe('Game Configuration', function () {
     await CardModel.deleteMany({});
     await GameConfigurationModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Game Configuration Tests');
   });
 
   describe('@createGameConfigurations()', function () {

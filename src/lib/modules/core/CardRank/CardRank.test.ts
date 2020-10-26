@@ -4,15 +4,18 @@ import 'reflect-metadata';
 import { CardRankModel } from '.';
 import { createCardRanks } from './CardRank.data';
 import db from '../../../db';
+import { logger } from './../../../logger';
 
 describe('Card Rank', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Card Rank Tests');
     await db.connect();
   });
 
   afterAll(async () => {
     await CardRankModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Card Rank Tests');
   });
 
   describe('@createCardRanks()', function () {

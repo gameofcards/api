@@ -8,9 +8,11 @@ import { createGameDataDomain } from './Domain.data';
 import { createStatuses } from '../../core/Status/Status.data';
 import { createUITasks } from '../UITask/UITask.data';
 import db from '../../../db';
+import { logger } from './../../../logger';
 
 describe('Domain Tests', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Domain Tests');
     await db.connect();
     await createStatuses();
     await createUITasks();
@@ -21,6 +23,7 @@ describe('Domain Tests', function () {
     await DomainModel.deleteMany({});
     await StatusModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Domain Tests');
   });
 
   describe('@createGameDataDomain()', function () {

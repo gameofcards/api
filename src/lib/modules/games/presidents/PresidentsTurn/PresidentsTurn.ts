@@ -9,7 +9,7 @@ import {
   defaultClasses,
 } from '@typegoose/typegoose';
 
-import {Instance} from '../../../core';
+import { Instance } from '../../../core';
 import { InstanceId } from '../../../../types';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
 import { PresidentsTurnInput } from './PresidentsTurn.input';

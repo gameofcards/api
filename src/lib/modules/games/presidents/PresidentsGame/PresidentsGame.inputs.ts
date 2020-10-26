@@ -24,7 +24,6 @@ export class JoinPresidentsGameInput {
   userId: Ref<User>;
 }
 
-
 @InputType()
 export class AddPresidentsTurnInput {
   @Field((type) => ID)

@@ -1,7 +1,6 @@
 import { Field, ID, InterfaceType } from 'type-graphql';
-import { plugin as Plugin, prop as Property, ReturnModelType, defaultClasses } from '@typegoose/typegoose';
+import { plugin as Plugin, prop as Property, defaultClasses } from '@typegoose/typegoose';
 
-import { ApplicationError } from '../../../app/errors';
 import { ObjectId } from 'mongodb';
 
 /**
@@ -24,5 +23,4 @@ export default abstract class Instance extends defaultClasses.Base {
   public id!: string;
 
   abstract get displayId();
-
 }

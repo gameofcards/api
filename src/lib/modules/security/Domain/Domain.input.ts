@@ -1,6 +1,6 @@
-import { DocumentType, Ref } from '@typegoose/typegoose';
 import { Field, InputType } from 'type-graphql';
 
+import { Ref } from '@typegoose/typegoose';
 import { Status } from '../../core';
 import { UITask } from '../UITask';
 
@@ -9,9 +9,9 @@ export class CreateDomainInput {
   @Field()
   name: string;
 
-  @Field(t=>Status)
+  @Field((type) => Status)
   status: Status;
 
-  @Field(t=>[UITask])
+  @Field((type) => [UITask])
   tasks?: Ref<UITask>[];
 }

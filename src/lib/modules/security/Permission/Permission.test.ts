@@ -12,9 +12,11 @@ import { createSecurityGroups } from './../SecurityGroup/SecurityGroup.data';
 import { createStatuses } from '../../core/Status/Status.data';
 import { createUITasks } from '../UITask/UITask.data';
 import db from '../../../db';
+import { logger } from './../../../logger';
 
 describe('Permission Tests', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Permission Tests');
     await db.connect();
     await createRoles();
     await createStatuses();
@@ -29,6 +31,7 @@ describe('Permission Tests', function () {
     await SecurityGroupModel.deleteMany({});
     await PermissionModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Permission Tests');
   });
 
   describe('@createPermissions()', function () {

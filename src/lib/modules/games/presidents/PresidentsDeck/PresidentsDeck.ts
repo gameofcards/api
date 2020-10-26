@@ -4,7 +4,7 @@ import { Field, ObjectType } from 'type-graphql';
 
 import { CreateDeckInput } from './../../../core/Deck/Deck.input';
 import { DeckInterface } from '../../../core/Deck/Deck';
-import {Instance} from '../../../core';
+import { Instance } from '../../../core';
 import { InstanceId } from '../../../../types';
 import { Utils } from '../../../modules.utils';
 

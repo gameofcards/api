@@ -2,29 +2,29 @@ import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
 import { RoleModel } from '../Role';
-import { RoleNames } from './../../../types';
+import { RoleNames } from '../../../types';
 import { UserModel } from '.';
-import { Utils } from './../../modules.utils';
-import { createRoles } from './../Role/Role.data';
-import { createUsers } from './User.data';
+import { Utils } from '../../modules.utils';
 import db from '../../../db';
-import { logger } from './../../../logger';
+import { initializeUsers } from './User.data';
+import { logger } from '../../../logger';
 
 describe('User', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] User Tests');
     await db.connect();
-    await createRoles();
+    await initializeUsers();
   });
 
   afterAll(async () => {
     await UserModel.deleteMany({});
     await RoleModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] User Tests');
   });
 
   describe('@createUsers()', function () {
     it('should initialize 9 instances', async function () {
-      await createUsers();
       const instances = await UserModel.find({});
       expect(instances.length).toBe(9);
     });
@@ -41,14 +41,13 @@ describe('User', function () {
   });
 
   describe('validations', function () {
-
     it('username is required', async function () {
       const userRole = await RoleModel.findOne({ name: RoleNames.User });
       const user = {
         email: 'email',
         displayName: 'displayName',
         password: 'password',
-        role: userRole
+        role: userRole,
       };
       try {
         const instance = await UserModel.createInstance(user as any);
@@ -64,7 +63,7 @@ describe('User', function () {
         email: 'email',
         displayName: 'displayName',
         password: 'password',
-        role: userRole
+        role: userRole,
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -79,7 +78,7 @@ describe('User', function () {
         username: 'tester',
         displayName: 'displayName',
         password: 'password',
-        role: userRole
+        role: userRole,
       };
       try {
         const instance = await UserModel.createInstance(user as any);
@@ -95,7 +94,7 @@ describe('User', function () {
         email: 'jethro@gmail.com',
         displayName: 'displayName',
         password: 'password',
-        role: userRole
+        role: userRole,
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -110,7 +109,7 @@ describe('User', function () {
         username: 'tester',
         email: 'email',
         displayName: 'displayName',
-        role: userRole
+        role: userRole,
       };
       try {
         const instance = await UserModel.createInstance(user as any);
@@ -125,7 +124,7 @@ describe('User', function () {
         username: 'tester',
         email: 'email',
         displayName: 'displayName',
-        password: 'past'
+        password: 'past',
       };
       try {
         const instance = await UserModel.createInstance(user as any);

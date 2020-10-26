@@ -1,16 +1,9 @@
 import { Field, Int, ObjectType } from 'type-graphql';
-import {
-  modelOptions as ModelOptions,
-  plugin as Plugin,
-  prop as Property,
-  Ref,
-  ReturnModelType,
-  defaultClasses,
-} from '@typegoose/typegoose';
+import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from '@typegoose/typegoose';
 
 import { CreateGameConfigurationInput } from './GameConfiguration.input';
 import Deck from '../Deck/Deck';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
 import { Utils } from '../../modules.utils';
 

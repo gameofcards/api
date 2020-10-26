@@ -1,18 +1,11 @@
-import {
-  DocumentType,
-  modelOptions as ModelOptions,
-  plugin as Plugin,
-  prop as Property,
-  Ref,
-  ReturnModelType,
-} from '@typegoose/typegoose';
+import { DocumentType, modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Role, RoleModel } from '../Role';
 
 import { CreateUserInput } from './User.input';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
 import Player from '../Player/Player';
+import { Role } from '../Role';
 import { Utils } from '../../modules.utils';
 
 /**

@@ -1,9 +1,9 @@
 import { Field, ID, InterfaceType } from 'type-graphql';
-import { modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref } from '@typegoose/typegoose';
+import { modelOptions as ModelOptions, prop as Property, Ref } from '@typegoose/typegoose';
 
 import GameConfiguration from '../GameConfiguration/GameConfiguration';
 import GameStatus from '../GameStatus/GameStatus';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
 import Player from '../Player/Player';
 import User from '../User/User';

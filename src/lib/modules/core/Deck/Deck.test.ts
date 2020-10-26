@@ -10,10 +10,11 @@ import { createCards } from '../Card/Card.data';
 import { createStandardDeck } from './Deck.data';
 import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
-import { logger } from '../../../logger';
+import { logger } from './../../../logger';
 
 describe.skip('Deck', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Deck Tests');
     await db.connect();
     await createSuits();
     await createCardRanks();
@@ -26,6 +27,7 @@ describe.skip('Deck', function () {
     await CardRankModel.deleteMany({});
     await CardModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Deck Tests');
   });
 
   describe('@createStandardDeck()', function () {

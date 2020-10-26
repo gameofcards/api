@@ -1,12 +1,12 @@
-import { Field, ID, InterfaceType, ObjectType } from 'type-graphql';
-import { modelOptions as ModelOptions, plugin as Plugin, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
+import { Field, ObjectType } from 'type-graphql';
+import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from '@typegoose/typegoose';
 
-import CardRank from '../CardRank/CardRank';
+import { CardRank } from '../CardRank';
 import { CreateCardInput } from './Card.input';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
-import {InstanceOperations} from '../InstanceOperations';
-import Suit from '../Suit/Suit';
+import { InstanceOperations } from '../InstanceOperations';
+import { Suit } from '../Suit';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -15,11 +15,10 @@ import { Utils } from '../../modules.utils';
  * instead of IDs.
  * @extends Instance
  * @public
- *
  */
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
-export default class Card extends InstanceOperations implements Instance  {
+export default class Card extends InstanceOperations implements Instance {
   public _id!: InstanceId;
   public id!: string;
 

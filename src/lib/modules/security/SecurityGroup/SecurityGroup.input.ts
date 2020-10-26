@@ -9,12 +9,12 @@ export class CreateSecurityGroupInput {
   @Field()
   name: string;
 
-  @Field(t=>Status)
+  @Field((type) => Status)
   status: Status;
 
-  @Field(t=>Role)
+  @Field((type) => Role)
   role: Role;
 
-  @Field(t=>ID)
+  @Field((type) => ID)
   securityPolicy?: Ref<SecurityPolicy>;
 }

@@ -7,5 +7,4 @@ export class CreatePoliticalRankInput {
 
   @Field((type) => Int)
   value: number;
-
 }

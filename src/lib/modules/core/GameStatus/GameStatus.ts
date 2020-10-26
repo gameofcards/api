@@ -1,7 +1,7 @@
 import { ReturnModelType, modelOptions } from '@typegoose/typegoose';
 
 import { CreateGameStatusInput } from './GameStatus.input';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
 import { ObjectType } from 'type-graphql';
 import Status from '../Status/Status';

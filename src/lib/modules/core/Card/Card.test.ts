@@ -4,17 +4,15 @@ import 'reflect-metadata';
 import { CardModel } from '.';
 import { CardRankModel } from '../CardRank';
 import { SuitModel } from '../Suit';
-import { createCardRanks } from '../CardRank/CardRank.data';
-import { createCards } from './Card.data';
-import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
-import { logger } from '../../../logger';
+import { initializeCards } from './Card.data';
+import { logger } from './../../../logger';
 
 describe('Card', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Card Tests');
     await db.connect();
-    await createSuits();
-    await createCardRanks();
+    await initializeCards();
   });
 
   afterAll(async () => {
@@ -22,11 +20,11 @@ describe('Card', function () {
     await CardRankModel.deleteMany({});
     await SuitModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Card Tests');
   });
 
   describe('@createCards()', function () {
     it('should initialize 52 instances', async function () {
-      await createCards();
       const instance = await CardModel.findOne({ shortHand: '3Clubs' });
       expect(instance).toBeDefined();
       expect(instance.shortHand).toEqual('3Clubs');

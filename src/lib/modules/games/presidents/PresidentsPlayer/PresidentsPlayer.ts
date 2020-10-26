@@ -1,12 +1,5 @@
 import { Card, Game, User } from '../../../core';
-import {
-  DocumentType,
-  modelOptions as ModelOptions,
-  plugin as Plugin,
-  prop as Property,
-  Ref,
-  ReturnModelType,
-} from '@typegoose/typegoose';
+import { DocumentType, modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import { Instance, UserModel } from '../../../core';
 

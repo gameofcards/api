@@ -10,13 +10,12 @@ export class CreatePermissionInput {
   @Field()
   name: string;
 
-  @Field(t=>ID)
+  @Field((type) => ID)
   securityGroup: Ref<SecurityGroup>;
 
-  @Field(t=>Status)
+  @Field((type) => Status)
   status: Status;
 
-  @Field(t=>ID)
+  @Field((type) => ID)
   task: Ref<UITask>;
-
 }

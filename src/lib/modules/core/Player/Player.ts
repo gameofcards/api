@@ -1,16 +1,9 @@
-import {
-  DocumentType,
-  modelOptions as ModelOptions,
-  plugin as Plugin,
-  prop as Property,
-  Ref,
-  ReturnModelType,
-} from '@typegoose/typegoose';
-import { Field, ID, Int, InterfaceType, ObjectType } from 'type-graphql';
+import { DocumentType, modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
+import { Field, ID, Int, InterfaceType } from 'type-graphql';
 
-import Card from '../Card/Card';
-import Game from '../Game/Game';
-import {Instance} from '../Instance';
+import { Card } from '../Card';
+import { Game } from '../Game';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
 import { ObjectId } from 'mongodb';
 import User from '../User/User';

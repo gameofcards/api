@@ -59,7 +59,7 @@ export default class SecurityGroup implements Instance {
    * @returns Promise<SecurityGroup>
    * @public
    * @async
-   * @automation 
+   * @automation
    */
   public async setSecurityPolicy(this: DocumentType<SecurityGroup>, securityPolicy: Ref<SecurityPolicy>) {
     this.securityPolicy = securityPolicy;

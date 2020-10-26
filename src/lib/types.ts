@@ -49,7 +49,7 @@ export enum UITaskNames {
   PlayPresidentsGame = 'Play Presidents Game',
 }
 
-export enum SecuirtyPolicyNames {
+export enum SecurityPolicyNames {
   GamePlayersGameTasksAllPermissions = 'Game Players - Game Tasks - All Permissions',
   AdministratorsGameTasksAllPermissions = 'Administrators - Game Tasks - All Permissions',
   DevelopersGameTasksAllPermissions = 'Developers - Game Tasks - All Permissions',
@@ -61,7 +61,7 @@ export enum SecurityGroupNames {
   Developers = 'Developers',
 }
 
-export enum PermissionNames {
+export enum PermissionNamesEnum {
   GamePlayersCreatePresidentsGame = 'Game Players - Create Presidents Game',
   GamePlayersPlayPresidentsGame = 'Game Players - Play Presidents Game',
   AdministratorsCreatePresidentsGame = 'Administrators - Create Presidents Game',
@@ -79,7 +79,7 @@ export enum DeckNames {
 
 export enum GameConfigurationNames {
   Presidents = 'Presidents',
-  Poker = 'Poker,'
+  Poker = 'Poker,',
 }
 
 export type NonEmptyArray<TItem> = readonly [TItem, ...TItem[]] | [TItem, ...TItem[]];

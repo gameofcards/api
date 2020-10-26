@@ -18,7 +18,7 @@ export default class DatabaseConnection {
       logger.info('[Database] connected to mongodb');
     } catch (err) {
       logger.error('[Database] failed to connect to mongodb');
-      logger.error(`[Database] error: ${err}`);
+      logger.error(`[Database] error: ${err.message}`);
     }
   }
 
@@ -28,7 +28,7 @@ export default class DatabaseConnection {
       logger.info('[Database] disconnected from mongodb');
     } catch (err) {
       logger.error('[Database] failed to disconnect from mongodb');
-      logger.error(`[Database] error: ${err}`);
+      logger.error(`[Database] error: ${err.message}`);
     }
   }
 
@@ -48,7 +48,7 @@ export default class DatabaseConnection {
       logger.info('[Database] disconnected from mongodb');
     } catch (err) {
       logger.error('[Database] failed to disconnect from mongodb');
-      logger.error(`[Database] error: ${err}`);
+      logger.error(`[Database] error: ${err.message}`);
     }
   }
 }

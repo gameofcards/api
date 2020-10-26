@@ -4,7 +4,7 @@ import { modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } 
 
 import { CreatePermissionInput } from './Permission.input';
 import { InstanceId } from '../../../types';
-import { PermissionNames } from './Permission.data';
+import { PermissionNamesEnum } from './../../../types';
 import { SecurityGroup } from '../SecurityGroup';
 import { UITask } from '../UITask';
 import { Utils } from '../../modules.utils';
@@ -55,18 +55,6 @@ export default class Permission implements Instance {
     return this.create(input);
   }
 
-  // /**
-  //  * Utility method to return a set of Permissions by name, using an array of names.
-  //  * @param names The names of the Permissions to return.
-  //  * @returns Promise<Permission[]>
-  //  * @public
-  //  * @static
-  //  * @async
-  //  */
-  // public static async findManyByNames(this: ReturnModelType<typeof Permission>, names: string[]) {
-  //   return this.find({ name: { $in: names } });
-  // }
-
   /**
    * Utility method to return all Permissions
    * @returns Promise<Permission[]>
@@ -75,6 +63,11 @@ export default class Permission implements Instance {
    * @async
    */
   public static async all(this: ReturnModelType<typeof Permission>) {
-    return this.find({ name: { $in: PermissionNames } });
+    return this.find({ name: { $in: [
+        PermissionNamesEnum.AdministratorsCreatePresidentsGame,
+        PermissionNamesEnum.AdministratorsPlayPresidentsGame,
+        PermissionNamesEnum.GamePlayersCreatePresidentsGame,
+        PermissionNamesEnum.GamePlayersPlayPresidentsGame,
+    ]}});
   }
 }

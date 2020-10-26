@@ -1,15 +1,8 @@
-import {
-  DocumentType,
-  modelOptions as ModelOptions,
-  plugin as Plugin,
-  prop as Property,
-  Ref,
-  ReturnModelType,
-} from '@typegoose/typegoose';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
+import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from '@typegoose/typegoose';
 
 import { CreateRoleInput } from './Role.input';
-import {Instance} from '../Instance';
+import { Instance } from '../Instance';
 import { InstanceId } from '../../../types';
 import { Utils } from '../../modules.utils';
 
@@ -28,7 +21,7 @@ export default class Role implements Instance {
     return this.name;
   }
 
-  @Property({ required: true,maxlength: 50 })
+  @Property({ required: true, maxlength: 50 })
   @Field()
   public name!: string;
 

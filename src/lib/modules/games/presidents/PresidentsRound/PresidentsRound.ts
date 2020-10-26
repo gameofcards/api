@@ -10,7 +10,7 @@ import {
 import { Field, ID, ObjectType } from 'type-graphql';
 
 import { CreatePresidentsRoundInput } from './PresidentsRound.input';
-import {Instance} from '../../../core';
+import { Instance } from '../../../core';
 import { InstanceId } from '../../../../types';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
 import { PresidentsRoundModel } from '.';

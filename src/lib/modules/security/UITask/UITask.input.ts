@@ -11,6 +11,6 @@ export class CreateUITaskInput {
   @Field()
   description: string;
 
-  @Field(t=>ID)
+  @Field((type) => ID)
   domain?: Ref<Domain>;
 }

@@ -74,6 +74,6 @@ export class Utils {
   }
 
   static convertArrayOfObjectsToOneObject(objs) {
-    return Object.assign({}, ...(objs.map(item => ({ [item.name]: item }) )));
+    return Object.assign({}, ...objs.map((item) => ({ [item.name]: item })));
   }
 }

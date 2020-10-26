@@ -8,7 +8,7 @@ const Statuses = [
   },
   {
     value: StatusValues.Inactive,
-  }
+  },
 ];
 
 export const createStatuses = async () => {

@@ -1,10 +1,10 @@
-import { ApplicationError } from '../../../app/errors';
 import { InstanceId } from '../../../types';
+import { InstanceOperationsError } from './errors';
 import { ReturnModelType } from '@typegoose/typegoose';
 
 /**
  * This abstract class defines some base methods, and all classes representing
- * documents should extend it. It extends InstanceData. So now we have a class with the 
+ * documents should extend it. It extends InstanceData. So now we have a class with the
  * base instance properties, and it's not abstract so we can define methods which
  * @extends InstanceData
  * @abstract
@@ -12,12 +12,10 @@ import { ReturnModelType } from '@typegoose/typegoose';
  *
  */
 export default class InstanceOperations {
-  
   public static async createInstance(this: ReturnModelType<any>, input: any): Promise<any> {
-    throw new ApplicationError(`Class Definition Error [${this.modelName}]: #createInstance() must be implemented`);
+    throw new InstanceOperationsError(`createInstance() must be implemented on class ${this.modelName}`);
   }
 
-  
   public static async findByChar(this: ReturnModelType<any>, character: string): Promise<any> {
     return this.findOne({ character });
   }

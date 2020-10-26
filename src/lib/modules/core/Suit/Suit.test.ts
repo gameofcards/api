@@ -4,15 +4,18 @@ import 'reflect-metadata';
 import { SuitModel } from '.';
 import { createSuits } from './Suit.data';
 import db from '../../../db';
+import { logger } from './../../../logger';
 
 describe('Suit', function () {
   beforeAll(async () => {
+    logger.info('[BEGIN] Suit Tests');
     await db.connect();
   });
 
   afterAll(async () => {
     await SuitModel.deleteMany({});
     await db.disconnect();
+    logger.info('[END] Suit Tests');
   });
 
   describe('@createSuits()', function () {

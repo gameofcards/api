@@ -1,6 +1,6 @@
 import { DocumentType, modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
-import {Instance, InstanceOperations} from '../../core';
+import { Instance, InstanceOperations } from '../../core';
 
 import { CreateUITaskInput } from './UITask.input';
 import { Domain } from '../Domain';
@@ -48,22 +48,10 @@ export default class UITask extends InstanceOperations implements Instance {
     return this.create(input);
   }
 
-  // /**
-  //  * Utility method to return a set of card documents using an array of document IDs
-  //  * @param ids The IDs of cards to return.
-  //  * @returns Promise<Card[]>
-  //  * @public
-  //  * @static
-  //  * @async
-  //  */
-  // public static async findManyByNames(this: ReturnModelType<typeof UITask>, names: string[]) {
-  //   return this.find({ name: { $in: names } });
-  // }
-
   /**
    * Set the domain
    * @param domain DocumentType<UITask>
-   * @returns 
+   * @returns
    * @public
    * @async
    */

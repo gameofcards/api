@@ -3,4 +3,4 @@ import { getModelForClass } from '@typegoose/typegoose';
 
 const RoleModel = getModelForClass(Role);
 
-export { Role, RoleModel }
+export { Role, RoleModel };

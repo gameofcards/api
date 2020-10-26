@@ -7,8 +7,8 @@ import {
   defaultClasses,
 } from '@typegoose/typegoose';
 
-import { CreatePoliticalRankInput } from './PoliticalRank.input'
-import {Instance} from '../../../core';
+import { CreatePoliticalRankInput } from './PoliticalRank.input';
+import { Instance } from '../../../core';
 import { InstanceId } from '../../../../types';
 import { Utils } from '../../../modules.utils';
 

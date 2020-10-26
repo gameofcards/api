@@ -11,15 +11,15 @@ export class CreateSecurityPolicyInput {
   @Field()
   name: string;
 
-  @Field(t=>ID)
+  @Field((type) => ID)
   securityGroup: Ref<SecurityGroup>;
 
-  @Field(t=>Status)
+  @Field((type) => Status)
   status: Status;
 
-  @Field(t=>ID)
+  @Field((type) => ID)
   domain: Ref<Domain>;
 
-  @Field(t=>[ID])
-  permissions: Ref<Permission>[]
+  @Field((type) => [ID])
+  permissions: Ref<Permission>[];
 }

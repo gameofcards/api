@@ -24,7 +24,7 @@ export default class SecurityPolicy implements Instance {
   @Property({ required: true })
   @Field()
   public name!: string;
-  
+
   @Property({ ref: 'SecurityGroup' })
   @Field((type) => ID)
   public securityGroup!: Ref<SecurityGroup>;
@@ -52,7 +52,7 @@ export default class SecurityPolicy implements Instance {
    * @public
    * @static
    * @async
-   * @automation 
+   * @automation
    */
   public static async createInstance(this: ReturnModelType<typeof SecurityPolicy>, input: CreateSecurityPolicyInput) {
     return this.create(input);
