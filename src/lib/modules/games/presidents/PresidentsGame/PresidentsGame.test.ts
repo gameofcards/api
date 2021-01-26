@@ -1,9 +1,11 @@
 import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
-import { GameStatusModel, UserModel } from '../../../core';
+import { CardModel, GameStatusModel, UserModel } from '../../../core';
 import { dropCoreModule, initializeCoreModule } from './../../../core/core.data';
 
+import { AddPresidentsTurnInput } from './../PresidentsTurn/PresidentsTurn.input';
+import { PresidentsGameBuilder } from './PresidentsGame.builder';
 import { PresidentsGameModel } from '..';
 import { StatusValues } from './../../../../types';
 import { Utils } from './../../../modules.utils';
@@ -30,7 +32,7 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       const instance = await PresidentsGameModel.createInstance(gameInput);
 
@@ -43,7 +45,7 @@ describe('Presidents Game', function () {
       expect(instance.finishedAt).toBeFalsy();
       expect(instance.status.value).toEqual(StatusValues.NotStarted);
       expect(instance.config.name).toEqual('Presidents');
-      expect(instance.createdByUser).toEqual(gameInput.createdByUser);
+      expect(instance.createdByUser.toString()).toEqual(gameInput.createdByUser);
       expect(instance.currentPlayer).toBeFalsy();
       expect(instance.winningPlayer).toBeFalsy();
       expect(instance.turnToBeat).toBeFalsy();
@@ -59,13 +61,13 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       const instance = await PresidentsGameModel.createInstance(gameInput);
-      const result = await instance.addPlayerFromUserId(user._id);
+      const result = await instance.addPlayerFromUserId(user.id);
 
       expect(result.players.length).toEqual(1);
-      expect(result.players[0].user.toString()).toEqual(user.id);
+      expect(result.players[0].user).toEqual(user._id);
     });
   });
 
@@ -75,7 +77,7 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       const instance = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
 
@@ -90,13 +92,13 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let instance = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const user2 = await UserModel.findOne({ username: 'johnnyroastbeef' });
       const joinInput1 = {
-        id: instance._id,
-        userId: user2._id,
+        id: instance.id,
+        userId: user2.id,
       };
       instance = await PresidentsGameModel.JoinGame(joinInput1);
 
@@ -104,8 +106,8 @@ describe('Presidents Game', function () {
 
       const user3 = await UserModel.findOne({ username: 'tony' });
       const joinInput2 = {
-        id: instance._id,
-        userId: user3._id,
+        id: instance.id,
+        userId: user3.id,
       };
       instance = await PresidentsGameModel.JoinGame(joinInput2);
 
@@ -117,13 +119,13 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const user2 = await UserModel.findOne({ username: 'johnnyroastbeef' });
       const joinInput1 = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       const inProgressStatus = await GameStatusModel.findByValue(StatusValues.InProgress);
       try {
@@ -139,18 +141,18 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const user2 = await UserModel.findOne({ username: 'johnnyroastbeef' });
       const joinInput1 = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       const finalizedStatus = await GameStatusModel.findByValue(StatusValues.Finalized);
       try {
-        await PresidentsGameModel.JoinGame(joinInput1);
         game.status = finalizedStatus;
+        await PresidentsGameModel.JoinGame(joinInput1);
       } catch (err) {
         expect(err.message).toEqual('Cannot join game. It`s finished.');
       }
@@ -168,13 +170,13 @@ describe('Presidents Game', function () {
       const user8 = await UserModel.findOne({ username: 'jethro' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       try {
         let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
         const joinInputs = [user, user2, user3, user4, user5, user6, user7, user8].map((user) => ({
-          id: game._id,
-          userId: user._id,
+          id: game.id,
+          userId: user.id,
         }));
         for (let input of joinInputs) {
           game = await PresidentsGameModel.JoinGame(input);
@@ -191,13 +193,13 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const user2 = await UserModel.findOne({ username: 'johnnyroastbeef' });
       const joinInput1 = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       game = await PresidentsGameModel.JoinGame(joinInput1);
       game = await game.initialize();
@@ -218,7 +220,7 @@ describe('Presidents Game', function () {
       const user = await UserModel.findOne({ username: 'tony' });
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       const instance = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       try {
@@ -236,12 +238,12 @@ describe('Presidents Game', function () {
       const id = Utils.getObjectId();
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const joinInput = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       game = await PresidentsGameModel.JoinGame(joinInput);
       game = await game.initialize();
@@ -256,12 +258,12 @@ describe('Presidents Game', function () {
       const id = Utils.getObjectId();
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const joinInput = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       game = await PresidentsGameModel.JoinGame(joinInput);
       game = await game.initialize();
@@ -276,12 +278,12 @@ describe('Presidents Game', function () {
       const id = Utils.getObjectId();
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const joinInput = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       game = await PresidentsGameModel.JoinGame(joinInput);
       game = await game.initialize();
@@ -296,12 +298,12 @@ describe('Presidents Game', function () {
       const id = Utils.getObjectId();
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const joinInput = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       game = await PresidentsGameModel.JoinGame(joinInput);
       game = await game.initialize();
@@ -319,12 +321,12 @@ describe('Presidents Game', function () {
       const id = Utils.getObjectId();
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const joinInput = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       game = await PresidentsGameModel.JoinGame(joinInput);
       game = await game.initialize();
@@ -345,7 +347,7 @@ describe('Presidents Game', function () {
       };
       game = await game.initializeNextRound();
 
-      expect(game.turnToBeat).toBeUndefined();
+      expect(game.turnToBeat).toBeNull();
     });
   });
 
@@ -356,12 +358,12 @@ describe('Presidents Game', function () {
       const id = Utils.getObjectId();
       const gameInput = {
         name: `${id}`,
-        createdByUser: user._id,
+        createdByUser: user.id,
       };
       let game = await PresidentsGameModel.CreateGameAndAddPlayer(gameInput);
       const joinInput = {
-        id: game._id,
-        userId: user2._id,
+        id: game.id,
+        userId: user2.id,
       };
       game = await PresidentsGameModel.JoinGame(joinInput);
       game = await PresidentsGameModel.StartGame(game.id);
@@ -381,89 +383,343 @@ describe('Presidents Game', function () {
     });
   });
 
-  describe.skip('#calculateSkips', function () {
+  describe('#PresidentsGameBuilder', function () {
+    it('should start the game, add players, and set the turn to beat', async () => {
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: true
+      });
+
+      expect(game.players[0].cards.length).toBeGreaterThan(0);
+      expect(game.players[1].cards.length).toBeGreaterThan(0);
+      expect(game.currentPlayer).toBeDefined();
+      expect(game.startedAt).toBeDefined();
+      expect(game.status.value).toEqual(StatusValues.InProgress);
+      expect(game.rounds.length).toEqual(1);
+      expect(game.turnToBeat).toBeDefined();
+      expect(game.turnToBeat.cardsPlayed.length).toEqual(1);
+    });
+
+    it('verify test cards', async () => {
+      const [A, B] = await PresidentsGameBuilder.getTestCardHands()
+    });
+  });
+
+  describe('#calculateSkips', function () {
     it('should return 0 if there is no turn to beat', async () => {
-      const skips = 0;
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella']
+      });
+      const cardsPlayed = await CardModel.findManyByShortHands(['3Clubs']);
+      const skips = await game.calculateSkips(cardsPlayed);
       expect(skips).toEqual(0);
     });
 
-    it('should return 0 if the new turn to beat has cards of of a different rank', async () => {
-      const skips = 0;
+    it('should return 0 if the new turn to beat has cards of a different rank', async () => {
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: true
+      });
+      const oneCard = await CardModel.findManyByShortHands(['4Clubs']);
+      const twoCards = await CardModel.findManyByShortHands(['9Clubs', '9Hearts']);
+      const threeCards = await CardModel.findManyByShortHands(['AClubs', 'ADiamonds', 'ASpades']);
+      const two = await CardModel.findManyByShortHands(['2Clubs']);
+      let skips = await game.calculateSkips(oneCard);
+      expect(skips).toEqual(0);
+      skips = await game.calculateSkips(twoCards);
+      expect(skips).toEqual(0);
+      skips = await game.calculateSkips(threeCards);
+      expect(skips).toEqual(0);
+      skips = await game.calculateSkips(two);
       expect(skips).toEqual(0);
     });
 
     it('should return 1 for single skip', async () => {
-      const skips = 0;
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: true
+      });
+      const cardsPlayed = await CardModel.findManyByShortHands(['3Hearts']);
+      const skips = await game.calculateSkips(cardsPlayed);
       expect(skips).toEqual(1);
     });
 
     it('should return 2 for double skip', async () => {
-      const skips = 0;
-      expect(skips).toEqual(1);
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: true
+      });
+      const cardsPlayed = await CardModel.findManyByShortHands(['3Hearts', '3Diamonds']);
+      const skips = await game.calculateSkips(cardsPlayed);
+      expect(skips).toEqual(2);
     });
 
     it('should return 3 for triple skip', async () => {
-      const skips = 0;
-      expect(skips).toEqual(1);
-    });
-
-    it('should return 4 for quadruple skip', async () => {
-      const skips = 0;
-      expect(skips).toEqual(1);
-    });
-  });
-
-  describe.skip('#AddPresidentsTurn', function () {});
-
-  describe.skip('#isValidTurn', function () {});
-
-  describe.skip('#areCardsValid', function () {
-    describe('true cases', function () {
-      it('cards are of the same rank', async function () {});
-    });
-
-    describe('false cases', function () {
-      it('cards are not of the same rank', async function () {});
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: true
+      });
+      const cardsPlayed = await CardModel.findManyByShortHands(['3Hearts', '3Diamonds', '3Spades']);
+      const skips = await game.calculateSkips(cardsPlayed);
+      expect(skips).toEqual(3);
     });
   });
 
-  describe.skip('#areCardsBetter', function () {
-    describe('true cases', function () {
-      it('current hand has more cards', async function () {});
+  describe.skip('#AddPresidentsTurn', function () {
 
-      it('current hand has equal number of cards with same rank', async function () {});
+   
 
-      it('current hand has equal number of cards with a better rank', async function () {});
+  });
 
-      it('current hand has fewer cards but contains a two', async function () {});
+  describe('#isValidTurn', function () {
+
+    it('should error if it’s not the players turn', async () => {
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella']
+      });
+
+      const { currentPlayer } = game;
+      const otherPlayer = game.players.filter(player => player._id !== currentPlayer)[0];
+      const turn: AddPresidentsTurnInput = {
+        forPlayer: otherPlayer._id,
+        cardsPlayed: [],
+        wasPassed: true
+      };
+
+      try {
+        await game.isValidTurn(turn);
+      } catch (err) {
+        expect(err.message).toEqual('Unable to process turn. It is not your turn.');
+      }
+     
     });
 
-    describe('false cases', function () {
-      it("current turn's rank does not beat previous turn's rank", async function () {});
+    it('should error if the first turn of the game is not the 3 Clubs', async () => {
 
-      it('not enough cards selected (and no 2 included)', async function () {});
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella']
+      });
+
+      const forPlayer = (game.players.find(player => player._id === game.currentPlayer))._id;
+      const invalidCards = await CardModel.findManyByShortHands(['4Clubs']);
+      const validCards = await CardModel.findManyByShortHands(['3Clubs']);
+      const invalidTurn: AddPresidentsTurnInput = {
+        forPlayer,
+        cardsPlayed: invalidCards,
+        wasPassed: false
+      };
+      const validTurn: AddPresidentsTurnInput = {
+        forPlayer,
+        cardsPlayed: validCards,
+        wasPassed: false
+      };
+
+      let result = false;
+      try {
+        result = await game.isValidTurn(invalidTurn);
+      } catch (err) {
+        expect(err.message).toEqual('First turn of the game must contain a 3 of clubs.');
+      }
+
+      result = false;
+      try {
+        result = await game.isValidTurn(validTurn);
+      } catch (err) {
+        expect(result).toEqual(true);
+      }
+
+    });
+
+    it('should return true if it is the player\'s turn and they passed', async () => {
+
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: true
+      });
+
+      const forPlayer = (game.players.find(player => player._id === game.currentPlayer))._id;
+      const cardsPlayed = await CardModel.findManyByShortHands(['3Clubs']);
+      const turn: AddPresidentsTurnInput = {
+        forPlayer,
+        cardsPlayed,
+        wasPassed: false
+      };
+      let result = false;
+      try {
+        result = await game.isValidTurn(turn);
+      } catch (err) {
+        expect(err.message).toEqual('First turn of the game must contain a 3 of clubs.');
+      }
+
+    });
+
+    it('should return true if it is the player\'s turn and they have valid cards', async () => {
+
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: true
+      });
+
+      const player = game.players.find(player => player._id === game.currentPlayer);
+      const forPlayer = player._id;
+      const betterCard = player.cards.find(card => card.cardRank.value >= 3);
+      const turn: AddPresidentsTurnInput = {
+        forPlayer,
+        cardsPlayed: [betterCard],
+        wasPassed: false
+      };
+
+      let result = false;
+      try {
+        result = await game.isValidTurn(turn);
+      } catch (err) {
+        logger.error(err.message)
+        expect(result).toEqual(true);
+      }
+
+    });
+
+    it('should error if it is the player\'s turn and they have invalid cards', async () => {
+
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        skipFirstRound: true
+      });
+
+      const player = game.players.find(player => player._id === game.currentPlayer);
+      const forPlayer = player._id;
+      const betterCard = player.cards.find(card => card.cardRank.value >= 9);
+      const turn: AddPresidentsTurnInput = {
+        forPlayer,
+        cardsPlayed: [betterCard],
+        wasPassed: false
+      };
+      let result = false;
+      try {
+        result = await game.isValidTurn(turn);
+      } catch (err) {
+        logger.error(err.message)
+        expect(result).toEqual(true);
+      }
+
+    });
+
+    it('should return true if it is the first turn of the round and any valid card is selected', async () => {
+
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        skipFirstRound: true
+      });
+
+    
+      const player = game.players.find(player => player._id === game.currentPlayer);
+      const forPlayer = player._id;
+      const card = player.cards[0];
+      const turn: AddPresidentsTurnInput = {
+        forPlayer,
+        cardsPlayed: [card],
+        wasPassed: false
+      };
+
+      let result = false;
+      try {
+        result = await game.isValidTurn(turn);
+      } catch (err) {
+        logger.error(err.message)
+        expect(result).toEqual(true);
+      }
+
+    });
+
+  });
+
+  
+
+  
+
+  describe('#isRoundOver', function () {
+    it('true - they twoed it and booted it', async function () {
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        skipFirstRound: true
+      });
+      const player = game.players.find(player => player._id === game.currentPlayer);
+      const forPlayer = player._id;
+      const two = player.cards.find(card => card.cardRank.value === 2);
+      const turn: AddPresidentsTurnInput = {
+        forPlayer,
+        cardsPlayed: [two],
+        wasPassed: false
+      };
+    });
+
+    it('true - everyone after them skipped or passed', async function () {
+
+    });
+
+    it('false - not all players have taken a turn', async function () {
+
+    });
+
+    it('false - it\'s their first turn of the round', async function () {
+
+    });
+
+    it('false - they got skipped', async function () {
+
+    });
+
+    it('false - they passed', async function () {
+
+    });
+
+    it('false - someone after them played a better hand of cards', async function () {
+
     });
   });
 
-  describe.skip('#didCurrentPlayersLastTurnEndTheRound', function () {
-    it('true', async function () {});
-
-    it('false - they skipped', async function () {});
-
-    it('false - they passed', async function () {});
-
-    it('false - someone played a better hand', async function () {});
+  describe('#getNextPlayer', function () {
+    it('when called 8 times it wraps around the players array', async function () {
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella', 'tommypastrami', 'johnnyroastbeef', 'tony', 'malory', 'bobby', 'timmy']
+      });
+      const startingPlayer = game.currentPlayer;
+      let next;
+      await Utils.asyncForEach([1,2,3,4,5,6,7,8], async () => {
+        next = await game.getNextPlayerId();
+        game.currentPlayer = next;
+      });
+      expect(startingPlayer).toEqual(next);
+    });
   });
 
-  describe.skip('#getNextPlayer', function () {
-    it('when called 8 times it wraps around the players array', async function () {});
+  describe.skip('#Rematch', function () {
+
   });
 
-  describe.skip('#Rematch', function () {});
+  describe.skip('#FulfillDrinkRequest', function () {
 
-  describe.skip('#FulfillDrinkRequest', function () {});
+  });
 
-  describe.skip('#SendDrinkRequest', function () {});
+  describe.skip('#SendDrinkRequest', function () {
 
-  describe.skip('#FulfillDrinkRequest', function () {});
+  });
+
+  describe.skip('#FulfillDrinkRequest', function () {
+
+  });
 });

@@ -19,6 +19,11 @@ export const ObjectIdScalar = new GraphQLScalarType({
   },
 });
 
+export enum ConfidenceLevels {
+  Internal = 'INTERNAL',
+  Production = 'PRODUCTION',
+}
+
 export enum StatusValues {
   InProgress = 'IN_PROGRESS',
   Finalized = 'FINALIZED',

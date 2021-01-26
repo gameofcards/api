@@ -28,14 +28,14 @@ export default class InstanceOperations {
    * @static
    * @async
    */
-  public static async findManyByIds(this: ReturnModelType<any>, ids: InstanceId[]): Promise<any[]> {
+  public static async findManyByIds(this: ReturnModelType<any>, ids: string[]): Promise<any[]> {
     return this.find({ _id: { $in: ids } });
   }
 
   /**
    * Utility method to return an Instance by name.
    * @param name The name of the Instance
-   * @returns Promise<Instance>
+   * @returns Promise<any>
    * @public
    * @static
    * @async
@@ -47,7 +47,7 @@ export default class InstanceOperations {
   /**
    * This method will find an Instance instance by value.
    * @param value The value of the Instance.
-   * @returns Promise<Instance>
+   * @returns Promise<any>
    * @public
    * @static
    * @async
@@ -59,7 +59,7 @@ export default class InstanceOperations {
   /**
    * Utility method to return a set of Instances by name, using an array of names.
    * @param names The names of the Instances to return.
-   * @returns Promise<Instance[]>
+   * @returns Promise<any[]>
    * @public
    * @static
    * @async

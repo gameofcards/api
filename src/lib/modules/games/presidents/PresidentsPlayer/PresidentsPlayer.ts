@@ -27,15 +27,11 @@ export default class PresidentsPlayer extends Player implements Instance {
   public seatPosition!: number;
   public cards!: Card[];
   public get displayId() {
-    return '';
+    return this.gameDisplayId;
   }
   @Property({ required: true })
   @Field((type) => ID)
   public game!: ObjectId;
-
-  @Property()
-  @Field()
-  public wonTheGame?: boolean;
 
   @Property({ type: PoliticalRank })
   @Field((type) => PoliticalRank)
@@ -69,11 +65,12 @@ export default class PresidentsPlayer extends Player implements Instance {
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsPlayer>, input: CreatePresidentsPlayerInput) {
     const { user, game, seatPosition } = input;
-    const gameDisplayId = 'id';
     const drinksDrunk = 0;
     const cards = [];
     const drinkRequestsSent = [];
     const drinkRequestsReceived = [];
+    const userInstance = await UserModel.findById(user);
+    const gameDisplayId = userInstance.username;
     const presidentsPlayer = {
       gameDisplayId,
       user,
@@ -85,7 +82,6 @@ export default class PresidentsPlayer extends Player implements Instance {
       drinkRequestsReceived,
     };
     const instance = await this.create(presidentsPlayer);
-    const userInstance = await UserModel.findById(user);
     await userInstance.addPlayerRecord(instance);
     return instance;
   }
@@ -142,5 +138,17 @@ export default class PresidentsPlayer extends Player implements Instance {
     this.drinkRequestsReceived.push(request);
     await this.save();
     return this;
+  }
+
+  /**
+   * This method will add a drinkRequest to the drinkRequestsReceived collection on the player instance.
+   * @param request The request to add.
+   * @returns DocumentType<PresidentsPlayer>
+   * @public
+   * @async
+   * @automation PresidentsPlayer.test.ts #addDrinkRequestReceived
+   */
+  public async getBetterCard(this: DocumentType<PresidentsPlayer>, otherCard: DocumentType<Card>) {
+    return this.cards.find(card => card.cardRank.value >= otherCard.cardRank.value);
   }
 }

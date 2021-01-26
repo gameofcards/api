@@ -50,4 +50,17 @@ export default class Card extends InstanceOperations implements Instance {
   public static async createInstance(this: ReturnModelType<typeof Card>, input: CreateCardInput): Promise<Card> {
     return this.create(input);
   }
+
+  /**
+   * This method will find a collection of cards by shortHands.
+   * @param input Array of shortHands.
+   * @returns Promise<Card>
+   * @public
+   * @static
+   * @async
+   * @automation Card.test.ts #findManyByShortHands
+   */
+  public static async findManyByShortHands(this: ReturnModelType<typeof Card>, input: string[]): Promise<Card[]> {
+    return this.find({ shortHand: { $in: input } });
+  }
 }

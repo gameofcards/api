@@ -7,3 +7,4 @@ import './Status/Status.test';
 import './GameStatus/GameStatus.test';
 import './Role/Role.test';
 import './User/User.test';
+import './Toggle/Toggle.test';

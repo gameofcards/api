@@ -7,40 +7,34 @@ import { Role } from '../../../core/Role';
 import { User } from '../../../core';
 
 @InputType()
-export class PresidentsGameInput {
+export class CreatePresidentsGameRequest {
   @Field()
   name: string;
 
-  @Field((type) => ID)
-  createdByUser: Ref<User>;
+  @Field()
+  createdByUser: string;
 }
 
 @InputType()
-export class JoinPresidentsGameInput {
-  @Field((type) => ID)
-  id: Ref<PresidentsGame>;
-
-  @Field((type) => ID)
-  userId: Ref<User>;
-}
+export class CreatePresidentsGameInstance extends  CreatePresidentsGameRequest {}
 
 @InputType()
-export class AddPresidentsTurnInput {
-  @Field((type) => ID)
-  id: ObjectId;
-
-  @Field((type) => ID)
-  forPlayer: ObjectId;
-
-  @Field((type) => [ID])
-  cardsPlayed: ObjectId[];
+export class JoinPresidentsGameRequest {
+  @Field()
+  id: string;
 
   @Field()
-  wasPassed: boolean;
+  userId: string;
 }
 
+// For some reason an input with only one field is not an object in usage (no dot access)
 @InputType()
-export class IdInput {
+export class IdRequest {
   @Field((type) => ID)
   id: ObjectId;
 }
+
+@InputType()
+export class StartPresidentsGameRequest extends IdRequest {}
+
+

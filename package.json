@@ -9,6 +9,7 @@
     "dataDump": "export NODE_ENV=test && ts-node ./src/lib/modules/modules.data.ts",
     "test:prez": "export NODE_ENV=test && jest presidents.test.ts",
     "test:prez-game": "export NODE_ENV=test && jest PresidentsGame.test.ts",
+    "test:prez-turn": "export NODE_ENV=test && jest PresidentsTurn.test.ts",
     "test:sec": "export NODE_ENV=test && jest security.test.ts",
     "test:core": "export NODE_ENV=test && jest core.test.ts",
     "test": "export NODE_ENV=test && jest modules.test.ts",
@@ -16,7 +17,7 @@
     "build": "webpack --mode production",
     "lint": "tslint --project '.'",
     "lint:fix": "tslint --fix --project '.'",
-    "prod": "node build/bundle.js"
+    "install:prod": "npm install --only=prod"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-import { AddPresidentsTurnInput, JoinPresidentsGameInput } from './PresidentsGame.inputs';
+import { AddPresidentsTurnInput, AddPresidentsTurnRequest } from './../PresidentsTurn/PresidentsTurn.input';
 import {
   Card,
   CardModel,
@@ -10,7 +10,9 @@ import {
   Instance,
   Player,
   User,
+  UserModel
 } from '../../../core';
+import { CreatePresidentsGameInstance, CreatePresidentsGameRequest, IdRequest, JoinPresidentsGameRequest, StartPresidentsGameRequest } from './PresidentsGame.inputs';
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -22,18 +24,20 @@ import {
 } from '@typegoose/typegoose';
 import { DrinkRequest, DrinkRequestModel } from '../DrinkRequest';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { PresidentsDeck, PresidentsDeckModel } from '../PresidentsDeck';
 import { PresidentsPlayer, PresidentsPlayerModel } from '../PresidentsPlayer';
 import { PresidentsRound, PresidentsRoundModel } from '../PresidentsRound';
 import { PresidentsTurn, PresidentsTurnModel } from '../PresidentsTurn';
 
+import { Doc } from 'prettier';
 import { InstanceId } from '../../../../types';
+import { ObjectId } from 'mongodb';
+import { PresidentsDeckModel } from '../PresidentsDeck';
 import { PresidentsGameError } from './errors';
-import { PresidentsGameInput } from './PresidentsGame.inputs';
 import { PresidentsTurnInput } from '../PresidentsTurn/PresidentsTurn.input';
 import { SendDrinkRequestInput } from './../DrinkRequest/DrinkRequest.input';
 import { StatusValues } from '../../../../types';
 import { Utils } from '../../../modules.utils';
+import { logger } from './../../../../logger';
 
 /**
  * This class represents a PresidentsGame.
@@ -84,7 +88,7 @@ export default class PresidentsGame extends Game {
    * @async
    * @automation PresidentsGame.test.ts #createInstance
    */
-  public static async createInstance(this: ReturnModelType<typeof PresidentsGame>, input: PresidentsGameInput) {
+  public static async createInstance(this: ReturnModelType<typeof PresidentsGame>, input: CreatePresidentsGameInstance) {
     const status = await GameStatusModel.findByValue(StatusValues.NotStarted);
     const config = await GameConfigurationModel.findOne({ name: 'Presidents' });
     const game = {
@@ -109,24 +113,13 @@ export default class PresidentsGame extends Game {
    * @async
    * @automation PresidentsGame.test.ts #addPlayerFromUserId
    */
-  public async addPlayerFromUserId(this: DocumentType<PresidentsGame>, userId: Ref<User>) {
+  public async addPlayerFromUserId(this: DocumentType<PresidentsGame>, userId: string) {
+    const user = await UserModel.findById(userId);
     const player = await PresidentsPlayerModel.createInstance({
-      user: userId,
+      user: user._id,
       game: this._id,
       seatPosition: this.players.length,
     });
-    return this.addPlayer(player);
-  }
-
-  /**
-   * This method will add a PresidentsPlayer document to the players list.
-   * @param input player: DocumentType<PresidentsPlayer>
-   * @returns DocumentType<PresidentsGame>
-   * @public
-   * @async
-   * @automation PresidentsGame.test.ts #addPlayerFromUserId
-   */
-  public async addPlayer(this: DocumentType<PresidentsGame>, player: DocumentType<PresidentsPlayer>) {
     this.players.push(player);
     await this.save();
     return this;
@@ -139,9 +132,10 @@ export default class PresidentsGame extends Game {
    * @public
    * @static
    * @async
+   * @graphql
    * @automation PresidentsGame.test.ts #CreateGameAndAddPlayer
    */
-  public static async CreateGameAndAddPlayer(this: ReturnModelType<typeof PresidentsGame>, input: PresidentsGameInput) {
+  public static async CreateGameAndAddPlayer(this: ReturnModelType<typeof PresidentsGame>, input: CreatePresidentsGameRequest) {
     const game = await this.createInstance(input);
     return await game.addPlayerFromUserId(input.createdByUser);
   }
@@ -154,9 +148,10 @@ export default class PresidentsGame extends Game {
    * @public
    * @static
    * @async
+   * @graphql
    * @automation PresidentsGame.test.ts #CreateGameAndAddPlayer
    */
-  public static async JoinGame(this: ReturnModelType<typeof PresidentsGame>, input: JoinPresidentsGameInput) {
+  public static async JoinGame(this: ReturnModelType<typeof PresidentsGame>, input: JoinPresidentsGameRequest) {
     const game = await this.findById(input.id);
 
     if (game.status.value === 'IN_PROGRESS') {
@@ -171,7 +166,7 @@ export default class PresidentsGame extends Game {
       return Promise.reject(new PresidentsGameError('Cannot join game. It is already full.'));
     }
 
-    const hasUserJoined = game.players.find((player) => player._id === input.userId);
+    const hasUserJoined = game.players.find((player) => player.id === input.userId);
     if (hasUserJoined) {
       return Promise.reject(new PresidentsGameError('User has already joined the game.'));
     }
@@ -197,13 +192,6 @@ export default class PresidentsGame extends Game {
     if (this.players.length < this.config.minPlayers) {
       return Promise.reject(
         new PresidentsGameError(`Unable to start game. Minimum number of players is ${this.config.minPlayers}.`)
-      );
-    }
-    if (this.players.length === this.config.maxPlayers) {
-      return Promise.reject(
-        new PresidentsGameError(
-          `Unable to start game. The maximum amount of players (${this.config.maxPlayers}) has been reached.`
-        )
       );
     }
 
@@ -238,7 +226,7 @@ export default class PresidentsGame extends Game {
     }
     if (this.status.value === StatusValues.InProgress) {
       if (this.turnToBeat) {
-        this.turnToBeat = undefined;
+        this.turnToBeat = null;
       }
     }
     if (this.status.value === StatusValues.NotStarted) {
@@ -261,9 +249,10 @@ export default class PresidentsGame extends Game {
    * @public
    * @static
    * @async
+   * @graphql
    * @automation PresidentsGame.test.ts #StartGame
    */
-  public static async StartGame(this: ReturnModelType<typeof PresidentsGame>, id: string) {
+  public static async StartGame(this: ReturnModelType<typeof PresidentsGame>, id: StartPresidentsGameRequest) {
     let game = await this.findById(id);
     game = await game.initialize();
     return game.initializeNextRound();
@@ -306,27 +295,27 @@ export default class PresidentsGame extends Game {
 
   /**
    * This method will calculate how many skips the cards would cause if they were played.
+   * We can assume cardsPlayed are valid.
    * @param cardsPlayed Card[]
    * @returns number 0-4
    * @public
    * @async
    * @automation PresidentsGame.test.ts #calculateSkips
    */
-  public async calculateSkips(this: DocumentType<PresidentsGame>, cardsPlayed: InstanceId[]) {
-    const cards = await CardModel.findManyByIds(cardsPlayed);
+  public async calculateSkips(this: DocumentType<PresidentsGame>, cards: Card[]) {
     // first hand of the game there will be no handToBeat
-    if (this.turnToBeat === null) {
+    if (!this.turnToBeat) {
       return 0;
     }
     // assume cards are valid and cards are better
-    const handToBeatCardRankValue = this.turnToBeat[0].cardRank.value;
+    const handToBeatCardRankValue = this.turnToBeat.cardsPlayed[0].cardRank.value;
     const cardRankValue = cards[0].cardRank.value;
-    if (handToBeatCardRankValue === cardRankValue) {
+    const areCardsOfSameRank = handToBeatCardRankValue === cardRankValue;
+    if (areCardsOfSameRank) {
       if (this.turnToBeat.cardsPlayed.length === cards.length) {
         return 1;
       } else {
-        let result = 1 + cardsPlayed.length - this.turnToBeat.cardsPlayed.length;
-        return result;
+        return 1 + cards.length - this.turnToBeat.cardsPlayed.length;
       }
     }
     return 0;
@@ -341,7 +330,7 @@ export default class PresidentsGame extends Game {
    * @async
    * @automation PresidentsGame.test.ts #AddPresidentsTurn
    */
-  public async createPresidentsTurn(this: DocumentType<PresidentsGame>, turn: PresidentsTurnInput) {
+  public async createPresidentsTurn(this: DocumentType<PresidentsGame>, turn: AddPresidentsTurnInput) {
     const { wasPassed } = turn;
     const forPlayer = await PresidentsPlayerModel.findById(turn.forPlayer);
     const presidentsTurn = {
@@ -382,6 +371,11 @@ export default class PresidentsGame extends Game {
     return presidentsTurnInstance;
   }
 
+
+  public static async AddPresidentsTurn(this: ReturnModelType<typeof PresidentsGame>, turn: AddPresidentsTurnRequest) {
+    const game = await this.findById(turn.id);
+    return await game.addPresidentsTurn(turn);
+  }
   /**
    * This method will add a PresidentsTurn instance to the current round.
    * @param input PresidentsTurnInput
@@ -389,36 +383,40 @@ export default class PresidentsGame extends Game {
    * @public
    * @static
    * @async
+   * @graphql
    * @automation PresidentsGame.test.ts #AddPresidentsTurn
    */
-  public static async AddPresidentsTurn(this: ReturnModelType<typeof PresidentsGame>, id: string, turn: PresidentsTurnInput) {
-    let game = await this.findById(id);
-    const validTurn = await game.isValidTurn(turn);
+  public async addPresidentsTurn(this: DocumentType<PresidentsGame>, turn: AddPresidentsTurnRequest) {
+    const { wasPassed } = turn;
+    const forPlayer = await PresidentsPlayerModel.findById(turn.forPlayer);
+    const cardsPlayed = await CardModel.findManyByIds(turn.cardsPlayed);
+    const turnInput = { forPlayer, cardsPlayed, wasPassed };
+    const validTurn = await this.isValidTurn(turnInput);
 
     if (validTurn) {
-      const presidentsTurnInstance = await game.createPresidentsTurn(turn);
-      const currentRoundIndex = game.rounds.length - 1;
-      game.rounds[currentRoundIndex].turns.push(presidentsTurnInstance);
-      game.currentPlayer = game.getNextPlayerId();
+      const presidentsTurnInstance = await this.createPresidentsTurn(turnInput);
+      const currentRoundIndex = this.rounds.length - 1;
+      this.rounds[currentRoundIndex].turns.push(presidentsTurnInstance);
+      this.currentPlayer = this.getNextPlayerId();
 
       if (presidentsTurnInstance.didCauseSkips) {
         let { skipsRemaining } = presidentsTurnInstance;
         while (skipsRemaining) {
           skipsRemaining--;
-          const skipTurn = await game.createSkipTurn(skipsRemaining);
-          game.rounds[currentRoundIndex].turns.push(skipTurn);
-          game.currentPlayer = game.getNextPlayerId();
+          const skipTurn = await this.createSkipTurn(skipsRemaining);
+          this.rounds[currentRoundIndex].turns.push(skipTurn);
+          this.currentPlayer = this.getNextPlayerId();
         }
       }
 
-      if (game.status.value === StatusValues.InProgress) {
-        let didCurrentPlayersLastTurnEndTheRound = game.didCurrentPlayersLastTurnEndTheRound();
+      if (this.status.value === StatusValues.InProgress) {
+        let didCurrentPlayersLastTurnEndTheRound = await this.didCurrentPlayersLastTurnEndTheRound();
         if (didCurrentPlayersLastTurnEndTheRound) {
-          await game.initializeNextRound();
+          await this.initializeNextRound();
         }
       }
 
-      let instance = await game.save();
+      let instance = await this.save();
       return instance;
     }
   }
@@ -431,11 +429,8 @@ export default class PresidentsGame extends Game {
    * @async
    * @automation PresidentsGame.test.ts #isValidTurn
    */
-  public async isValidTurn(this: DocumentType<PresidentsGame>, turn: PresidentsTurnInput) {
-    const player = await PresidentsPlayerModel.findById(turn.forPlayer);
-    const cardInstances = await CardModel.findManyByIds(turn.cardsPlayed);
-    const turnToBeatCards = this.turnToBeat.cardsPlayed || [];
-    const isPlayersTurn = player._id === this.currentPlayer;
+  public async isValidTurn(this: DocumentType<PresidentsGame>, turn: AddPresidentsTurnInput) {
+    const isPlayersTurn = turn.forPlayer === this.currentPlayer;
     const isPlayingCards = turn.cardsPlayed.length > 0;
 
     if (!isPlayersTurn) {
@@ -445,14 +440,18 @@ export default class PresidentsGame extends Game {
       return Promise.resolve(true);
     }
     if (isPlayersTurn && !turn.wasPassed) {
+      if (! isPlayingCards) {
+        // they didn't pass or play any cards
+        return false;
+      }
       // Is the current hand valid (all ranks the same)?
-      const areCardsValid = await this.areCardsValid(cardInstances);
-      if (areCardsValid) {
+      const areCardsValid = await this.areCardsValid(turn.cardsPlayed);
+      if (! areCardsValid) {
         return Promise.reject(new PresidentsGameError(`Cannot process an invalid turn. The cards selected are invalid.`));
       }
       const isFirstTurnOfTheGame = this.rounds.length === 1 && this.rounds[0].turns.length === 0;
       if (isFirstTurnOfTheGame) {
-        const contains3Clubs = cardInstances.find((card) => card.shortHand === '3Clubs');
+        const contains3Clubs = turn.cardsPlayed.find((card) => card.shortHand === '3Clubs');
         if (contains3Clubs) {
           return Promise.resolve(true);
         }
@@ -466,7 +465,7 @@ export default class PresidentsGame extends Game {
       if (this.turnToBeat === undefined) {
         return Promise.resolve(true);
       } else {
-        const areCardsBetter = await this.areCardsBetter(cardInstances);
+        const areCardsBetter = await this.areCardsBetter(turn.cardsPlayed);
         if (areCardsBetter) {
           return Promise.resolve(true);
         } else {
@@ -552,6 +551,7 @@ export default class PresidentsGame extends Game {
     let foundLastTurn = false;
     let i = latestRound.turns.length;
 
+    // not all players have taken a turn
     if (i < this.players.length) {
       return false;
     }
@@ -559,6 +559,7 @@ export default class PresidentsGame extends Game {
     let turn;
     while (searchingForLastTurn) {
       i--;
+      // work from the most recent turn backwards
       turn = latestRound.turns[i];
       if (this.currentPlayer === turn.forPlayer) {
         playersLastTurnIdx = i;
@@ -567,28 +568,35 @@ export default class PresidentsGame extends Game {
       }
     }
 
+    // if we found a turn and it contained a 2 they ended the round
     if (turn.cardsPlayed.find((card) => card.cardRank.value === 2)) {
       return true;
     }
+
+    // we didn't find one
     if (!foundLastTurn) {
       return false;
     }
 
+    // we found one, did it end the round?
     let turns = latestRound.turns.slice(playersLastTurnIdx);
     let playersLastTurn = turns[0];
+    // they could've been skipped
     if (playersLastTurn.wasSkipped) {
       let searchingForWhoCausedSkip = true;
       while (searchingForWhoCausedSkip) {
         i--;
         let turn = latestRound.turns[i];
         if (turn.didCauseSkips) {
+          // but if they skipped themself, and now it's back to them they're good
           if (this.currentPlayer === turn.forPlayer) {
             return true;
           }
+          // if they didn't skip themself, they didn't end the round
           return false;
         }
       }
-
+      // if they didn't skip themself, they didn't end the round
       return false;
     }
     if (playersLastTurn.wasPassed) {
@@ -598,6 +606,7 @@ export default class PresidentsGame extends Game {
     i = 1;
     let checkingForSkips = true;
 
+    // did everyone after this player skip or pass?
     while (checkingForSkips && i < turns.length) {
       let turn = turns[i];
       if (!turn.wasSkipped) {
@@ -617,6 +626,7 @@ export default class PresidentsGame extends Game {
       }
     }
 
+    // they played a turn so good nobody could beat it
     return true;
   }
 
@@ -627,8 +637,8 @@ export default class PresidentsGame extends Game {
    * @async
    * @automation PresidentsGame.test.ts #getNextPlayer
    */
-  public getNextPlayerId(this: DocumentType<PresidentsGame>) {
-    const currentPlayer = this.players.find((player) => player.user === this.currentPlayer);
+  public getNextPlayerId(this: DocumentType<PresidentsGame>): ObjectId {
+    const currentPlayer = this.players.find((player) => player._id === this.currentPlayer);
     const currentSeatPosition = currentPlayer.seatPosition;
     let nextSeatPosition = (currentSeatPosition + 1) % this.players.length;
     let searching = true;
@@ -653,17 +663,18 @@ export default class PresidentsGame extends Game {
    * @public
    * @static
    * @async
+   * @graphql
    * @automation PresidentsGame.test.ts #Rematch
    */
-  public static async Rematch(this: ReturnModelType<typeof PresidentsGame>, id: string) {
+  public static async Rematch(this: ReturnModelType<typeof PresidentsGame>, id: IdRequest) {
     let game = await this.findById(id);
     let { createdByUser, config } = game;
     let players = game.players.sort((a, b) => (a.seatPosition < b.seatPosition ? 1 : -1));
     let usersToAdd = players.map(({ user, nextGameRank }) => ({ _id: user, nextGameRank }));
     let name = `${game.name}-rematch-${Utils.getObjectId()}`;
-    const gameInput = { name, createdByUser, config };
+    const gameInput = { name, createdByUser: createdByUser.toString(), config };
     let newGame = await this.createInstance(gameInput);
-    await Promise.all(usersToAdd.map(async (user) => newGame.addPlayerFromUserId(user._id)));
+    await Promise.all(usersToAdd.map(async (user) => newGame.addPlayerFromUserId(user._id.toString())));
     newGame = await newGame.initialize();
     return newGame.initializeNextRound();
   }
@@ -675,6 +686,7 @@ export default class PresidentsGame extends Game {
    * @public
    * @static
    * @async
+   * @graphql
    * @automation PresidentsGame.test.ts #FulfillDrinkRequest
    */
   public static async FulfillDrinkRequest(this: ReturnModelType<typeof PresidentsGame>, id: string) {
@@ -697,6 +709,7 @@ export default class PresidentsGame extends Game {
    * @public
    * @static
    * @async
+   * @graphql
    * @automation PresidentsGame.test.ts #SendDrinkRequest
    */
   public static async SendDrinkRequest(this: ReturnModelType<typeof PresidentsGame>, input: SendDrinkRequestInput) {

@@ -12,7 +12,7 @@ import { createSuits } from '../Suit/Suit.data';
 import db from '../../../db';
 import { logger } from './../../../logger';
 
-describe.skip('Deck', function () {
+describe('Deck', function () {
   beforeAll(async () => {
     logger.info('[BEGIN] Deck Tests');
     await db.connect();

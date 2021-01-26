@@ -76,4 +76,10 @@ export class Utils {
   static convertArrayOfObjectsToOneObject(objs) {
     return Object.assign({}, ...objs.map((item) => ({ [item.name]: item })));
   }
+
+  static async asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  }
 }

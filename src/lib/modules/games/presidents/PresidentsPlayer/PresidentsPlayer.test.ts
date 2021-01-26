@@ -62,20 +62,7 @@ describe('Presidents Player', function () {
     expect(result.drinksDrunk).toEqual(1);
   });
 
-  test.skip('#setCards', async () => {
-    // const id = Types.ObjectId();
-    // const user = await UserModel.findOne({username: 'tommypastrami'});
-    // const player = {
-    //   user: user._id,
-    //   game: id,
-    //   seatPosition: 0
-    // };
-    // const instance = await PresidentsPlayerModel.createInstance(player);
-    // expect(instance.drinksDrunk).toEqual(0);
-    // let result = await instance.drinkDrink();
-    // expect(result).toBeDefined();
-    // expect(result.drinksDrunk).toEqual(1);
-  });
+  test.skip('#setCards', async () => {});
 
   test.skip('#addDrinkRequestSent', async () => {});
 

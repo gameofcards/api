@@ -8,14 +8,14 @@ import { logger } from './../../../logger';
 
 describe('UITask Tests', function () {
   beforeAll(async () => {
-    logger.info('[BEGIN] Game Configuration Tests');
+    logger.info('[BEGIN] UITask Tests');
     await db.connect();
   });
 
   afterAll(async () => {
     await UITaskModel.deleteMany({});
     await db.disconnect();
-    logger.info('[END] Game Configuration Tests');
+    logger.info('[END] UITask Tests');
   });
 
   describe('@createUITasks()', function () {
