@@ -149,6 +149,6 @@ export default class PresidentsPlayer extends Player implements Instance {
    * @automation PresidentsPlayer.test.ts #addDrinkRequestReceived
    */
   public async getBetterCard(this: DocumentType<PresidentsPlayer>, otherCard: DocumentType<Card>) {
-    return this.cards.find(card => card.cardRank.value >= otherCard.cardRank.value);
+    return this.cards.find((card) => card.cardRank.value >= otherCard.cardRank.value);
   }
 }

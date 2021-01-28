@@ -8,7 +8,6 @@ import { AddPresidentsTurnRequest } from '../PresidentsTurn/PresidentsTurn.input
 
 @Resolver((of) => PresidentsGame)
 export default class PresidentsGameResolver {
-  
   @Query((returns) => PresidentsGame)
   async presidentsGame(@Arg('id', (type) => ObjectIdScalar) id: ObjectId) {
     return PresidentsGameModel.findById(id);

@@ -63,11 +63,15 @@ export default class Permission implements Instance {
    * @async
    */
   public static async all(this: ReturnModelType<typeof Permission>) {
-    return this.find({ name: { $in: [
-        PermissionNamesEnum.AdministratorsCreatePresidentsGame,
-        PermissionNamesEnum.AdministratorsPlayPresidentsGame,
-        PermissionNamesEnum.GamePlayersCreatePresidentsGame,
-        PermissionNamesEnum.GamePlayersPlayPresidentsGame,
-    ]}});
+    return this.find({
+      name: {
+        $in: [
+          PermissionNamesEnum.AdministratorsCreatePresidentsGame,
+          PermissionNamesEnum.AdministratorsPlayPresidentsGame,
+          PermissionNamesEnum.GamePlayersCreatePresidentsGame,
+          PermissionNamesEnum.GamePlayersPlayPresidentsGame,
+        ],
+      },
+    });
   }
 }

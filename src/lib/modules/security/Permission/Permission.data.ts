@@ -35,7 +35,6 @@ const Permissions = [
   },
 ];
 
-
 const GamePlayersCreatePresidentsGame = 0;
 const GamePlayersPlayPresidentsGame = 1;
 const AdministratorsCreatePresidentsGame = 2;
@@ -46,10 +45,7 @@ export const createPermissions = async () => {
     const gamePlayersSecurityGroup = await SecurityGroupModel.findOne({ name: SecurityGroupNames.GamePlayers });
     const administratorsSecurityGroup = await SecurityGroupModel.findOne({ name: SecurityGroupNames.Administrators });
     const active = await StatusModel.findByValue(StatusValues.Active);
-    const taskInstances = await UITaskModel.findManyByNames([
-      UITaskNames.CreatePresidentsGame, 
-      UITaskNames.PlayPresidentsGame
-    ]);
+    const taskInstances = await UITaskModel.findManyByNames([UITaskNames.CreatePresidentsGame, UITaskNames.PlayPresidentsGame]);
 
     assert(gamePlayersSecurityGroup && administratorsSecurityGroup, 'Security Groups not initialized.');
     assert(active, 'Statuses not initialized.');

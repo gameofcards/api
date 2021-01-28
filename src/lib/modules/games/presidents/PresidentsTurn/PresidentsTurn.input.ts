@@ -1,6 +1,6 @@
+import { Card, Player } from '../../../core';
 import { Field, ID, InputType, Int } from 'type-graphql';
 
-import { Card } from '../../../core'
 import { PresidentsPlayer } from '../PresidentsPlayer';
 import { Ref } from '@typegoose/typegoose';
 
@@ -19,7 +19,6 @@ export class AddPresidentsTurnRequest {
   wasPassed!: boolean;
 }
 
-
 @InputType()
 export class AddPresidentsTurnInput {
   @Field((type) => ID)
@@ -31,7 +30,6 @@ export class AddPresidentsTurnInput {
   @Field()
   wasPassed!: boolean;
 }
-
 
 @InputType()
 export class PresidentsTurnInput {
@@ -52,11 +50,25 @@ export class PresidentsTurnInput {
 
   @Field((type) => Int)
   skipsRemaining!: number;
-  
+
   @Field()
   endedRound!: boolean;
 }
 
+@InputType()
+export class GameDataForTurnValidation {
+  @Field((type) => ID)
+  currentPlayer!: Ref<Player>;
+
+  @Field()
+  isFirstTurnOfTheGame!: boolean;
+
+  @Field((type) => Int)
+  isFirstTurnOfCurrentRound!: boolean;
+
+  @Field((type) => [Card])
+  cardsToBeat!: Card[];
+}
 
 @InputType()
 export class BuildPresidentsTurnInput {
@@ -69,4 +81,3 @@ export class BuildPresidentsTurnInput {
   @Field()
   wasPassed!: boolean;
 }
-

@@ -2,11 +2,13 @@ import { ConfidenceLevels } from '../../../types';
 import { ToggleModel } from '.';
 import { logger } from './../../../logger';
 
-const toggles = [{
-  name: 'v1Alpha',
-  description: 'API v1 alpha for Game of Cards',
-  confidenceLevel: ConfidenceLevels.Internal
-}];
+const toggles = [
+  {
+    name: 'v1Alpha',
+    description: 'API v1 alpha for Game of Cards',
+    confidenceLevel: ConfidenceLevels.Internal,
+  },
+];
 
 export const createToggles = async () => {
   try {

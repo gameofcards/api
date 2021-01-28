@@ -16,7 +16,7 @@ export class CreatePresidentsGameRequest {
 }
 
 @InputType()
-export class CreatePresidentsGameInstance extends  CreatePresidentsGameRequest {}
+export class CreatePresidentsGameInstance extends CreatePresidentsGameRequest {}
 
 @InputType()
 export class JoinPresidentsGameRequest {
@@ -36,5 +36,3 @@ export class IdRequest {
 
 @InputType()
 export class StartPresidentsGameRequest extends IdRequest {}
-
-

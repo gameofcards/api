@@ -16,7 +16,6 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class Toggle implements Instance {
-
   public _id!: InstanceId;
   public id!: string;
 

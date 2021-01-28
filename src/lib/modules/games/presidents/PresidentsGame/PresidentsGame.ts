@@ -1,4 +1,8 @@
-import { AddPresidentsTurnInput, AddPresidentsTurnRequest } from './../PresidentsTurn/PresidentsTurn.input';
+import {
+  AddPresidentsTurnInput,
+  AddPresidentsTurnRequest,
+  GameDataForTurnValidation,
+} from './../PresidentsTurn/PresidentsTurn.input';
 import {
   Card,
   CardModel,
@@ -10,9 +14,15 @@ import {
   Instance,
   Player,
   User,
-  UserModel
+  UserModel,
 } from '../../../core';
-import { CreatePresidentsGameInstance, CreatePresidentsGameRequest, IdRequest, JoinPresidentsGameRequest, StartPresidentsGameRequest } from './PresidentsGame.inputs';
+import {
+  CreatePresidentsGameInstance,
+  CreatePresidentsGameRequest,
+  IdRequest,
+  JoinPresidentsGameRequest,
+  StartPresidentsGameRequest,
+} from './PresidentsGame.inputs';
 import {
   DocumentType,
   modelOptions as ModelOptions,
@@ -294,34 +304,6 @@ export default class PresidentsGame extends Game {
   }
 
   /**
-   * This method will calculate how many skips the cards would cause if they were played.
-   * We can assume cardsPlayed are valid.
-   * @param cardsPlayed Card[]
-   * @returns number 0-4
-   * @public
-   * @async
-   * @automation PresidentsGame.test.ts #calculateSkips
-   */
-  public async calculateSkips(this: DocumentType<PresidentsGame>, cards: Card[]) {
-    // first hand of the game there will be no handToBeat
-    if (!this.turnToBeat) {
-      return 0;
-    }
-    // assume cards are valid and cards are better
-    const handToBeatCardRankValue = this.turnToBeat.cardsPlayed[0].cardRank.value;
-    const cardRankValue = cards[0].cardRank.value;
-    const areCardsOfSameRank = handToBeatCardRankValue === cardRankValue;
-    if (areCardsOfSameRank) {
-      if (this.turnToBeat.cardsPlayed.length === cards.length) {
-        return 1;
-      } else {
-        return 1 + cards.length - this.turnToBeat.cardsPlayed.length;
-      }
-    }
-    return 0;
-  }
-
-  /**
    * This method will create a PresidentsTurn instance.
    * @param input PresidentsTurnInput
    * @returns DocumentType<PresidentsGame>
@@ -342,7 +324,7 @@ export default class PresidentsGame extends Game {
       didCauseSkips: false,
       skipsRemaining: 0,
     };
-    presidentsTurn.skipsRemaining = await this.calculateSkips(turn.cardsPlayed);
+    presidentsTurn.skipsRemaining = PresidentsTurnModel.calculateSkips(this?.turnToBeat?.cardsPlayed, turn.cardsPlayed);
     presidentsTurn.didCauseSkips = presidentsTurn.skipsRemaining > 0;
     const presidentsTurnInstance = await PresidentsTurnModel.createInstance(presidentsTurn);
     return presidentsTurnInstance;
@@ -371,10 +353,17 @@ export default class PresidentsGame extends Game {
     return presidentsTurnInstance;
   }
 
-
   public static async AddPresidentsTurn(this: ReturnModelType<typeof PresidentsGame>, turn: AddPresidentsTurnRequest) {
     const game = await this.findById(turn.id);
     return await game.addPresidentsTurn(turn);
+  }
+
+  public isFirstTurnOfTheGame(this: DocumentType<PresidentsGame>) {
+    return this.rounds.length === 1 && this.rounds[0].turns.length === 0;
+  }
+
+  public isFirstTurnOfCurrentRound(this: DocumentType<PresidentsGame>) {
+    return this.rounds[this.rounds.length - 1].turns.length === 0;
   }
   /**
    * This method will add a PresidentsTurn instance to the current round.
@@ -391,7 +380,13 @@ export default class PresidentsGame extends Game {
     const forPlayer = await PresidentsPlayerModel.findById(turn.forPlayer);
     const cardsPlayed = await CardModel.findManyByIds(turn.cardsPlayed);
     const turnInput = { forPlayer, cardsPlayed, wasPassed };
-    const validTurn = await this.isValidTurn(turnInput);
+    const gameData: GameDataForTurnValidation = {
+      currentPlayer: this.currentPlayer,
+      isFirstTurnOfTheGame: this.isFirstTurnOfTheGame(),
+      isFirstTurnOfCurrentRound: this.isFirstTurnOfCurrentRound(),
+      cardsToBeat: this.turnToBeat?.cardsPlayed,
+    };
+    const validTurn = PresidentsTurnModel.isValidTurn(gameData, turnInput);
 
     if (validTurn) {
       const presidentsTurnInstance = await this.createPresidentsTurn(turnInput);
@@ -418,119 +413,6 @@ export default class PresidentsGame extends Game {
 
       let instance = await this.save();
       return instance;
-    }
-  }
-
-  /**
-   * This method will validate the turn submitted.
-   * @param turn PresidentsTurnInput
-   * @returns Promise<boolean>
-   * @public
-   * @async
-   * @automation PresidentsGame.test.ts #isValidTurn
-   */
-  public async isValidTurn(this: DocumentType<PresidentsGame>, turn: AddPresidentsTurnInput) {
-    const isPlayersTurn = turn.forPlayer === this.currentPlayer;
-    const isPlayingCards = turn.cardsPlayed.length > 0;
-
-    if (!isPlayersTurn) {
-      return Promise.reject(new PresidentsGameError(`Unable to process turn. It is not your turn.`));
-    }
-    if (isPlayersTurn && turn.wasPassed) {
-      return Promise.resolve(true);
-    }
-    if (isPlayersTurn && !turn.wasPassed) {
-      if (! isPlayingCards) {
-        // they didn't pass or play any cards
-        return false;
-      }
-      // Is the current hand valid (all ranks the same)?
-      const areCardsValid = await this.areCardsValid(turn.cardsPlayed);
-      if (! areCardsValid) {
-        return Promise.reject(new PresidentsGameError(`Cannot process an invalid turn. The cards selected are invalid.`));
-      }
-      const isFirstTurnOfTheGame = this.rounds.length === 1 && this.rounds[0].turns.length === 0;
-      if (isFirstTurnOfTheGame) {
-        const contains3Clubs = turn.cardsPlayed.find((card) => card.shortHand === '3Clubs');
-        if (contains3Clubs) {
-          return Promise.resolve(true);
-        }
-        return Promise.reject(new PresidentsGameError(`First turn of the game must contain a 3 of clubs.`));
-      }
-      const isFirstTurnOfCurrentRound = this.rounds[this.rounds.length - 1].turns.length === 0;
-      if (isFirstTurnOfCurrentRound) {
-        return Promise.resolve(true);
-      }
-      // it's a turn in the middle of the round, see if it's better than the last
-      if (this.turnToBeat === undefined) {
-        return Promise.resolve(true);
-      } else {
-        const areCardsBetter = await this.areCardsBetter(turn.cardsPlayed);
-        if (areCardsBetter) {
-          return Promise.resolve(true);
-        } else {
-          return Promise.reject(
-            new PresidentsGameError(`Cannot process an invalid turn. Your cards are not better than the last hand.`)
-          );
-        }
-      }
-    }
-  }
-
-  /**
-   * This method will validate the cards submitted in a turn.
-   * @param cardsPlayed Card[]
-   * @returns Promise<boolean>
-   * @public
-   * @static
-   * @async
-   * @automation PresidentsGame.test.ts #areCardsValid
-   */
-  public async areCardsValid(this: DocumentType<PresidentsGame>, cardsPlayed: Card[]) {
-    const currentHandCardRankValues = cardsPlayed.map((card) => card.cardRank.value);
-    const rankValue = currentHandCardRankValues[0];
-    const areCardsValid = currentHandCardRankValues.every((cardRankValue) => cardRankValue === rankValue);
-    return areCardsValid;
-  }
-
-  /**
-   * This method will check if the cards submitted in a turn are better
-   * than the current turn to beat.
-   * @param cardsPlayed Card[]
-   * @returns Promise<boolean>
-   * @public
-   * @static
-   * @async
-   * @automation PresidentsGame.test.ts #areCardsBetter
-   */
-  public async areCardsBetter(this: DocumentType<PresidentsGame>, cardsPlayed: Card[]) {
-    const handToBeatCardRankValues = this.turnToBeat.cardsPlayed.map((card) => card.cardRank.value);
-    const currentHandCardRankValues = cardsPlayed.map((card) => card.cardRank.value);
-
-    const doesContainTwo = !!currentHandCardRankValues.find((value) => value === 2);
-    if (doesContainTwo) {
-      return Promise.resolve(true);
-    }
-
-    const doesCurrentHandHaveMoreCards = currentHandCardRankValues.length > handToBeatCardRankValues.length;
-    if (doesCurrentHandHaveMoreCards) {
-      return Promise.resolve(true);
-    }
-
-    const areNumberOfCardsEqual = currentHandCardRankValues.length === handToBeatCardRankValues.length;
-    if (areNumberOfCardsEqual) {
-      const areCardsSameRank = currentHandCardRankValues[0] === handToBeatCardRankValues[0];
-      if (areCardsSameRank) {
-        return Promise.resolve(true);
-      }
-      const doesCurrentHandRankBeatPrevious = currentHandCardRankValues[0] > handToBeatCardRankValues[0];
-      if (doesCurrentHandRankBeatPrevious) {
-        return Promise.resolve(true);
-      } else {
-        return Promise.reject(new PresidentsGameError(`The rank of the selected cards does not beat the previous turns.`));
-      }
-    } else {
-      return Promise.reject(new PresidentsGameError(`The rank of the selected cards does not beat the previous turns.`));
     }
   }
 
@@ -645,7 +527,7 @@ export default class PresidentsGame extends Game {
     let nextPlayer;
 
     while (searching) {
-      nextPlayer = this.players.find((player) => player.seatPosition === nextSeatPosition);
+      nextPlayer = this.findPlayerBySeatPosition(nextSeatPosition);
       if (nextPlayer?.nextGameRank) {
         nextSeatPosition = (nextSeatPosition + 1) % this.players.length;
       } else {

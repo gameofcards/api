@@ -10,9 +10,9 @@ export const createGameDataDomain = async () => {
   try {
     const active = await StatusModel.findByValue(StatusValues.Active);
     const tasks = await UITaskModel.findManyByNames([
-      UITaskNames.CreatePresidentsGame, 
-      UITaskNames.PlayPresidentsGame, 
-      UITaskNames.CreateUser 
+      UITaskNames.CreatePresidentsGame,
+      UITaskNames.PlayPresidentsGame,
+      UITaskNames.CreateUser,
     ]);
     assert(active, 'Statuses not initialized.');
     assert(tasks.length === 3, 'Tasks not initialized.');

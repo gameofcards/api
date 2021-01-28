@@ -34,7 +34,7 @@ const Developers = 2;
 export const createSecurityGroups = async () => {
   try {
     const userRole = await RoleModel.findOne({ name: RoleNames.User });
-    const administratorRole = await RoleModel.findOne({ name: RoleNames.Administrator});
+    const administratorRole = await RoleModel.findOne({ name: RoleNames.Administrator });
     const developerRole = await RoleModel.findOne({ name: RoleNames.Developer });
     const active = await StatusModel.findByValue(StatusValues.Active);
 

@@ -1,6 +1,7 @@
+import { AddPresidentsTurnInput, GameDataForTurnValidation, PresidentsTurnInput } from './PresidentsTurn.input';
 import { Card, CardModel } from '../../../core';
-import { Field, ID, Int, ObjectType } from 'type-graphql';
 import {
+  DocumentType,
   modelOptions as ModelOptions,
   plugin as Plugin,
   prop as Property,
@@ -8,11 +9,13 @@ import {
   ReturnModelType,
   defaultClasses,
 } from '@typegoose/typegoose';
+import { Field, ID, Int, ObjectType } from 'type-graphql';
 
 import { Instance } from '../../../core';
 import { InstanceId } from '../../../../types';
+import { PresidentsGame } from '../PresidentsGame';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
-import { PresidentsTurnInput } from './PresidentsTurn.input';
+import { PresidentsTurnError } from './errors';
 import { Utils } from '../../../modules.utils';
 import { logger } from './../../../../logger';
 
@@ -143,6 +146,88 @@ export default class PresidentsTurn implements Instance {
       }
     } else {
       return false;
+    }
+  }
+
+  /**
+   * This method will calculate how many skips the cards would cause if they were played.
+   * We can assume cardsPlayed are valid.
+   * @param cardsPlayed Card[]
+   * @returns number 0-4
+   * @public
+   * @async
+   * @automation PresidentsTurn.test.ts #calculateSkips
+   */
+  public static calculateSkips(cardsToBeat: Card[], cards: Card[]) {
+    // first hand of the game there will be no handToBeat
+    if (cardsToBeat.length === 0) {
+      return 0;
+    }
+    // assume cards are valid and cards are better
+    const handToBeatCardRankValue = cardsToBeat[0].cardRank.value;
+    const cardRankValue = cards[0].cardRank.value;
+    const areCardsOfSameRank = handToBeatCardRankValue === cardRankValue;
+    if (areCardsOfSameRank) {
+      if (cardsToBeat.length === cards.length) {
+        return 1;
+      } else {
+        return 1 + cards.length - cardsToBeat.length;
+      }
+    }
+    return 0;
+  }
+
+  /**
+   * This method will validate the turn submitted.
+   * @param turn PresidentsTurnInput
+   * @returns Promise<boolean>
+   * @public
+   * @async
+   * @automation PresidentsTurn.test.ts #isValidTurn
+   */
+  public static isValidTurn(
+    this: ReturnModelType<typeof PresidentsTurn>,
+    game: GameDataForTurnValidation,
+    turn: AddPresidentsTurnInput
+  ) {
+    const isPlayersTurn = turn.forPlayer === game.currentPlayer;
+
+    if (!isPlayersTurn) {
+      throw new PresidentsTurnError(`Unable to process turn. It is not your turn.`);
+    }
+    if (turn.wasPassed) {
+      return true;
+    }
+    const isPlayingCards = turn.cardsPlayed.length > 0;
+    if (!isPlayingCards) {
+      // they didn't pass or play any cards
+      return false;
+    }
+    // Is the current hand valid (all ranks the same)?
+    const areCardsValid = this.areCardsValid(turn.cardsPlayed);
+    if (!areCardsValid) {
+      throw new PresidentsTurnError(`Cannot process an invalid turn. The cards selected are invalid.`);
+    }
+    if (game.isFirstTurnOfTheGame) {
+      const contains3Clubs = turn.cardsPlayed.find((card) => card.shortHand === '3Clubs');
+      if (contains3Clubs) {
+        return true;
+      }
+      throw new PresidentsTurnError(`First turn of the game must contain a 3 of clubs.`);
+    }
+    if (game.isFirstTurnOfCurrentRound) {
+      return true;
+    }
+    // it's a turn in the middle of the round, see if it's better than the last
+    if (game.cardsToBeat.length === 0) {
+      return true;
+    } else {
+      const areCardsBetter = this.areCardsBetter(game.cardsToBeat, turn.cardsPlayed);
+      if (areCardsBetter) {
+        return true;
+      } else {
+        throw new PresidentsTurnError(`Cannot process an invalid turn. Your cards are not better than the last hand.`);
+      }
     }
   }
 }

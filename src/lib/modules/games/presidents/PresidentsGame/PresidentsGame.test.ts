@@ -388,7 +388,7 @@ describe('Presidents Game', function () {
       const game = await PresidentsGameBuilder.build({
         createdByUser: 'tammy',
         usersToAdd: ['bella'],
-        takeFirstTurn: true
+        takeFirstTurn: true,
       });
 
       expect(game.players[0].cards.length).toBeGreaterThan(0);
@@ -402,304 +402,60 @@ describe('Presidents Game', function () {
     });
 
     it('verify test cards', async () => {
-      const [A, B] = await PresidentsGameBuilder.getTestCardHands()
-    });
-  });
-
-  describe('#calculateSkips', function () {
-    it('should return 0 if there is no turn to beat', async () => {
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella']
-      });
-      const cardsPlayed = await CardModel.findManyByShortHands(['3Clubs']);
-      const skips = await game.calculateSkips(cardsPlayed);
-      expect(skips).toEqual(0);
-    });
-
-    it('should return 0 if the new turn to beat has cards of a different rank', async () => {
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        takeFirstTurn: true
-      });
-      const oneCard = await CardModel.findManyByShortHands(['4Clubs']);
-      const twoCards = await CardModel.findManyByShortHands(['9Clubs', '9Hearts']);
-      const threeCards = await CardModel.findManyByShortHands(['AClubs', 'ADiamonds', 'ASpades']);
-      const two = await CardModel.findManyByShortHands(['2Clubs']);
-      let skips = await game.calculateSkips(oneCard);
-      expect(skips).toEqual(0);
-      skips = await game.calculateSkips(twoCards);
-      expect(skips).toEqual(0);
-      skips = await game.calculateSkips(threeCards);
-      expect(skips).toEqual(0);
-      skips = await game.calculateSkips(two);
-      expect(skips).toEqual(0);
-    });
-
-    it('should return 1 for single skip', async () => {
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        takeFirstTurn: true
-      });
-      const cardsPlayed = await CardModel.findManyByShortHands(['3Hearts']);
-      const skips = await game.calculateSkips(cardsPlayed);
-      expect(skips).toEqual(1);
-    });
-
-    it('should return 2 for double skip', async () => {
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        takeFirstTurn: true
-      });
-      const cardsPlayed = await CardModel.findManyByShortHands(['3Hearts', '3Diamonds']);
-      const skips = await game.calculateSkips(cardsPlayed);
-      expect(skips).toEqual(2);
-    });
-
-    it('should return 3 for triple skip', async () => {
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        takeFirstTurn: true
-      });
-      const cardsPlayed = await CardModel.findManyByShortHands(['3Hearts', '3Diamonds', '3Spades']);
-      const skips = await game.calculateSkips(cardsPlayed);
-      expect(skips).toEqual(3);
+      const [A, B] = await PresidentsGameBuilder.getTestCardHands();
     });
   });
 
   describe.skip('#AddPresidentsTurn', function () {
+    it('should throw an error on an invalid turn', async () => {});
 
-   
+    it('should update fields on the game', async () => {
+      // current round has one more turn
+      // current player is updated
+    });
 
+    it("should remove cards from the player's hand", async () => {});
   });
-
-  describe('#isValidTurn', function () {
-
-    it('should error if it’s not the players turn', async () => {
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella']
-      });
-
-      const { currentPlayer } = game;
-      const otherPlayer = game.players.filter(player => player._id !== currentPlayer)[0];
-      const turn: AddPresidentsTurnInput = {
-        forPlayer: otherPlayer._id,
-        cardsPlayed: [],
-        wasPassed: true
-      };
-
-      try {
-        await game.isValidTurn(turn);
-      } catch (err) {
-        expect(err.message).toEqual('Unable to process turn. It is not your turn.');
-      }
-     
-    });
-
-    it('should error if the first turn of the game is not the 3 Clubs', async () => {
-
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella']
-      });
-
-      const forPlayer = (game.players.find(player => player._id === game.currentPlayer))._id;
-      const invalidCards = await CardModel.findManyByShortHands(['4Clubs']);
-      const validCards = await CardModel.findManyByShortHands(['3Clubs']);
-      const invalidTurn: AddPresidentsTurnInput = {
-        forPlayer,
-        cardsPlayed: invalidCards,
-        wasPassed: false
-      };
-      const validTurn: AddPresidentsTurnInput = {
-        forPlayer,
-        cardsPlayed: validCards,
-        wasPassed: false
-      };
-
-      let result = false;
-      try {
-        result = await game.isValidTurn(invalidTurn);
-      } catch (err) {
-        expect(err.message).toEqual('First turn of the game must contain a 3 of clubs.');
-      }
-
-      result = false;
-      try {
-        result = await game.isValidTurn(validTurn);
-      } catch (err) {
-        expect(result).toEqual(true);
-      }
-
-    });
-
-    it('should return true if it is the player\'s turn and they passed', async () => {
-
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        takeFirstTurn: true
-      });
-
-      const forPlayer = (game.players.find(player => player._id === game.currentPlayer))._id;
-      const cardsPlayed = await CardModel.findManyByShortHands(['3Clubs']);
-      const turn: AddPresidentsTurnInput = {
-        forPlayer,
-        cardsPlayed,
-        wasPassed: false
-      };
-      let result = false;
-      try {
-        result = await game.isValidTurn(turn);
-      } catch (err) {
-        expect(err.message).toEqual('First turn of the game must contain a 3 of clubs.');
-      }
-
-    });
-
-    it('should return true if it is the player\'s turn and they have valid cards', async () => {
-
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        takeFirstTurn: true
-      });
-
-      const player = game.players.find(player => player._id === game.currentPlayer);
-      const forPlayer = player._id;
-      const betterCard = player.cards.find(card => card.cardRank.value >= 3);
-      const turn: AddPresidentsTurnInput = {
-        forPlayer,
-        cardsPlayed: [betterCard],
-        wasPassed: false
-      };
-
-      let result = false;
-      try {
-        result = await game.isValidTurn(turn);
-      } catch (err) {
-        logger.error(err.message)
-        expect(result).toEqual(true);
-      }
-
-    });
-
-    it('should error if it is the player\'s turn and they have invalid cards', async () => {
-
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        skipFirstRound: true
-      });
-
-      const player = game.players.find(player => player._id === game.currentPlayer);
-      const forPlayer = player._id;
-      const betterCard = player.cards.find(card => card.cardRank.value >= 9);
-      const turn: AddPresidentsTurnInput = {
-        forPlayer,
-        cardsPlayed: [betterCard],
-        wasPassed: false
-      };
-      let result = false;
-      try {
-        result = await game.isValidTurn(turn);
-      } catch (err) {
-        logger.error(err.message)
-        expect(result).toEqual(true);
-      }
-
-    });
-
-    it('should return true if it is the first turn of the round and any valid card is selected', async () => {
-
-      const game = await PresidentsGameBuilder.build({
-        createdByUser: 'tammy',
-        usersToAdd: ['bella'],
-        skipFirstRound: true
-      });
-
-    
-      const player = game.players.find(player => player._id === game.currentPlayer);
-      const forPlayer = player._id;
-      const card = player.cards[0];
-      const turn: AddPresidentsTurnInput = {
-        forPlayer,
-        cardsPlayed: [card],
-        wasPassed: false
-      };
-
-      let result = false;
-      try {
-        result = await game.isValidTurn(turn);
-      } catch (err) {
-        logger.error(err.message)
-        expect(result).toEqual(true);
-      }
-
-    });
-
-  });
-
-  
-
-  
 
   describe('#isRoundOver', function () {
     it('true - they twoed it and booted it', async function () {
       const game = await PresidentsGameBuilder.build({
         createdByUser: 'tammy',
         usersToAdd: ['bella'],
-        skipFirstRound: true
+        skipFirstRound: true,
       });
-      const player = game.players.find(player => player._id === game.currentPlayer);
+      const player = game.players.find((player) => player._id === game.currentPlayer);
       const forPlayer = player._id;
-      const two = player.cards.find(card => card.cardRank.value === 2);
+      const two = player.cards.find((card) => card.cardRank.value === 2);
       const turn: AddPresidentsTurnInput = {
         forPlayer,
         cardsPlayed: [two],
-        wasPassed: false
+        wasPassed: false,
       };
     });
 
-    it('true - everyone after them skipped or passed', async function () {
+    it('true - everyone after them skipped or passed', async function () {});
 
-    });
+    it('false - not all players have taken a turn', async function () {});
 
-    it('false - not all players have taken a turn', async function () {
+    it("false - it's their first turn of the round", async function () {});
 
-    });
+    it('false - they got skipped', async function () {});
 
-    it('false - it\'s their first turn of the round', async function () {
+    it('false - they passed', async function () {});
 
-    });
-
-    it('false - they got skipped', async function () {
-
-    });
-
-    it('false - they passed', async function () {
-
-    });
-
-    it('false - someone after them played a better hand of cards', async function () {
-
-    });
+    it('false - someone after them played a better hand of cards', async function () {});
   });
 
   describe('#getNextPlayer', function () {
     it('when called 8 times it wraps around the players array', async function () {
       const game = await PresidentsGameBuilder.build({
         createdByUser: 'tammy',
-        usersToAdd: ['bella', 'tommypastrami', 'johnnyroastbeef', 'tony', 'malory', 'bobby', 'timmy']
+        usersToAdd: ['bella', 'tommypastrami', 'johnnyroastbeef', 'tony', 'malory', 'bobby', 'timmy'],
       });
       const startingPlayer = game.currentPlayer;
       let next;
-      await Utils.asyncForEach([1,2,3,4,5,6,7,8], async () => {
+      await Utils.asyncForEach([1, 2, 3, 4, 5, 6, 7, 8], async () => {
         next = await game.getNextPlayerId();
         game.currentPlayer = next;
       });
@@ -707,19 +463,11 @@ describe('Presidents Game', function () {
     });
   });
 
-  describe.skip('#Rematch', function () {
+  describe.skip('#Rematch', function () {});
 
-  });
+  describe.skip('#FulfillDrinkRequest', function () {});
 
-  describe.skip('#FulfillDrinkRequest', function () {
+  describe.skip('#SendDrinkRequest', function () {});
 
-  });
-
-  describe.skip('#SendDrinkRequest', function () {
-
-  });
-
-  describe.skip('#FulfillDrinkRequest', function () {
-
-  });
+  describe.skip('#FulfillDrinkRequest', function () {});
 });

@@ -7,16 +7,15 @@ import { Utils } from '../../../modules.utils';
 type Username = string;
 
 interface TestGameConfig {
-  createdByUser: Username,
-  usersToAdd: Username[],
-  takeFirstTurn?: boolean
-  skipFirstRound?: boolean
-};
+  createdByUser: Username;
+  usersToAdd: Username[];
+  takeFirstTurn?: boolean;
+  skipFirstRound?: boolean;
+}
 
 export class PresidentsGameBuilder {
-
   /** This method will return two decks of cards that are balanced.
-   * 
+   *
    *  @returns Promise<DocumentType<Card>[]>
    *  @public
    *  @static
@@ -81,23 +80,23 @@ export class PresidentsGameBuilder {
     ]);
     return [A, B];
   }
-  
+
   private static async initializeTheGame(config: TestGameConfig) {
     const createdByUser = await UserModel.findOne({ username: config.createdByUser });
-  
+
     let game = await PresidentsGameModel.CreateGameAndAddPlayer({
       name: `${Utils.getObjectId()}`,
-      createdByUser: createdByUser.id
+      createdByUser: createdByUser.id,
     });
-  
+
     for (let username of config.usersToAdd) {
       const user = await UserModel.findOne({ username });
       game = await PresidentsGameModel.JoinGame({
         id: game.id,
-        userId: user.id
+        userId: user.id,
       });
     }
-  
+
     game = await PresidentsGameModel.StartGame(game.id);
 
     return game;
@@ -110,7 +109,7 @@ export class PresidentsGameBuilder {
    *  4. Start the game
    *  5. Optionally take the first turn
    *  5. Optionally skip the first round
-   * 
+   *
    *  @param config: TestGameConfig
    *  @returns Promise<DocumentType<PresidentsGame>>
    *  @public
@@ -118,7 +117,6 @@ export class PresidentsGameBuilder {
    *  @async
    */
   public static async build(config: TestGameConfig) {
-    
     let game = await PresidentsGameBuilder.initializeTheGame(config);
 
     // override the cards to be evenly balanced
@@ -129,19 +127,18 @@ export class PresidentsGameBuilder {
     if (game.players[PLAYER_1]._id === game.currentPlayer) {
       game.players[0].cards = A;
       game.players[1].cards = B;
-    } 
-    else {
+    } else {
       game.players[0].cards = B;
-      game.players[1].cards = A;  
+      game.players[1].cards = A;
     }
-    
+
     if (config.takeFirstTurn) {
       const turnId = Utils.getObjectId();
       const cardsPlayed = await CardModel.findManyByShortHands(['3Clubs']);
       const turnToBeat = {
         _id: turnId,
         id: `${turnId}`,
-        forPlayer: game.players.find(player => player._id === game.currentPlayer)._id,
+        forPlayer: game.players.find((player) => player._id === game.currentPlayer)._id,
         takenAt: Utils.getDate(),
         cardsPlayed,
         wasPassed: false,
@@ -159,7 +156,7 @@ export class PresidentsGameBuilder {
     if (config.skipFirstRound) {
       game = await game.initializeNextRound();
     }
-  
+
     return game;
   }
-};
+}
