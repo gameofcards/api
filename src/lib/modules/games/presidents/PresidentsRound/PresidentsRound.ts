@@ -40,10 +40,6 @@ export default class PresidentsRound implements Instance {
   @Field()
   public startedAt!: Date;
 
-  @Property({ ref: 'PresidentsGame' })
-  @Field((type) => ID)
-  public game!: InstanceId;
-
   @Property({ type: PresidentsTurn })
   @Field((type) => [PresidentsTurn])
   public turns!: PresidentsTurn[];
@@ -60,7 +56,6 @@ export default class PresidentsRound implements Instance {
   public static async createInstance(this: ReturnModelType<typeof PresidentsRound>, input: CreatePresidentsRoundInput) {
     const round = {
       startedAt: Utils.getDate(),
-      game: input.game,
       turns: [],
       number: input.number,
     };

@@ -34,10 +34,12 @@ export default class Player implements Instance {
   @Field((type) => [Card])
   public cards!: Card[];
 
+  // sus
   @Property({ required: true })
   @Field((type) => ID)
   public game!: ObjectId;
 
+  // sus
   public async setCards(this: DocumentType<Player>, cards: Card[]) {
     this.cards = cards;
     await this.save();

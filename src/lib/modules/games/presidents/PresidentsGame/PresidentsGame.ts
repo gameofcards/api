@@ -211,11 +211,12 @@ export default class PresidentsGame extends Game {
     const numPlayers = this.players.length;
     const dealtCards = deckInstance.deal(numPlayers, shuffledCards);
     const indexOf3Clubs = deckInstance.find3ClubsIndex(dealtCards);
-    const players = await PresidentsPlayerModel.findManyByIds(this.getOrderedPlayers());
+    this.getOrderedPlayers().forEach((player, idx) => player.cards = dealtCards[idx]);
+    // const players = await PresidentsPlayerModel.findManyByIds(this.getOrderedPlayers());
     // are they really ordered though?
-    const playerUpdatePromises = players.map((player: DocumentType<PresidentsPlayer>, idx) => player.setCards(dealtCards[idx]));
-    const playerInstances = await Promise.all(playerUpdatePromises);
-    this.players = playerInstances;
+    // const playerUpdatePromises = players.map((player: DocumentType<PresidentsPlayer>, idx) => player.setCards(dealtCards[idx]));
+    // const playerInstances = await Promise.all(playerUpdatePromises);
+    // this.players = playerInstances;
     const currentPlayer = this.findPlayerBySeatPosition(indexOf3Clubs);
     this.currentPlayer = currentPlayer;
     await this.save();
@@ -275,7 +276,7 @@ export default class PresidentsGame extends Game {
    * @automation PresidentsGame.test.ts #StartGame
    */
   private getOrderedPlayers(this: DocumentType<PresidentsGame>) {
-    return this.players.sort((a, b) => (a.seatPosition > b.seatPosition ? 1 : -1)).map((player) => player._id);
+    return this.players.sort((a, b) => (a.seatPosition > b.seatPosition ? 1 : -1));
   }
 
   /**
@@ -353,11 +354,6 @@ export default class PresidentsGame extends Game {
     return presidentsTurnInstance;
   }
 
-  public static async AddPresidentsTurn(this: ReturnModelType<typeof PresidentsGame>, turn: AddPresidentsTurnRequest) {
-    const game = await this.findById(turn.id);
-    return await game.addPresidentsTurn(turn);
-  }
-
   public isFirstTurnOfTheGame(this: DocumentType<PresidentsGame>) {
     return this.rounds.length === 1 && this.rounds[0].turns.length === 0;
   }
@@ -365,6 +361,7 @@ export default class PresidentsGame extends Game {
   public isFirstTurnOfCurrentRound(this: DocumentType<PresidentsGame>) {
     return this.rounds[this.rounds.length - 1].turns.length === 0;
   }
+
   /**
    * This method will add a PresidentsTurn instance to the current round.
    * @param input PresidentsTurnInput
@@ -375,11 +372,16 @@ export default class PresidentsGame extends Game {
    * @graphql
    * @automation PresidentsGame.test.ts #AddPresidentsTurn
    */
+  public static async AddPresidentsTurn(this: ReturnModelType<typeof PresidentsGame>, turn: AddPresidentsTurnRequest) {
+    const game = await this.findById(turn.id);
+    return await game.addPresidentsTurn(turn);
+  }
+
   public async addPresidentsTurn(this: DocumentType<PresidentsGame>, turn: AddPresidentsTurnRequest) {
-    const { wasPassed } = turn;
     const forPlayer = await PresidentsPlayerModel.findById(turn.forPlayer);
     const cardsPlayed = await CardModel.findManyByIds(turn.cardsPlayed);
-    const turnInput = { forPlayer, cardsPlayed, wasPassed };
+    const { wasPassed } = turn;
+    const turnInput = { forPlayer: forPlayer._id, cardsPlayed, wasPassed };
     const gameData: GameDataForTurnValidation = {
       currentPlayer: this.currentPlayer,
       isFirstTurnOfTheGame: this.isFirstTurnOfTheGame(),
@@ -405,14 +407,14 @@ export default class PresidentsGame extends Game {
       }
 
       if (this.status.value === StatusValues.InProgress) {
-        let didCurrentPlayersLastTurnEndTheRound = await this.didCurrentPlayersLastTurnEndTheRound();
+        let didCurrentPlayersLastTurnEndTheRound = this.didCurrentPlayersLastTurnEndTheRound();
         if (didCurrentPlayersLastTurnEndTheRound) {
           await this.initializeNextRound();
         }
       }
 
-      let instance = await this.save();
-      return instance;
+      await this.save();
+      return this;
     }
   }
 
@@ -423,22 +425,21 @@ export default class PresidentsGame extends Game {
    * @returns Promise<boolean>
    * @public
    * @static
-   * @async
    * @automation PresidentsGame.test.ts #didCurrentPlayersLastTurnEndTheRound
    */
-  public async didCurrentPlayersLastTurnEndTheRound(this: DocumentType<PresidentsGame>) {
+  public didCurrentPlayersLastTurnEndTheRound(this: DocumentType<PresidentsGame>) {
     let latestRound = this.rounds[this.rounds.length - 1];
     let playersLastTurnIdx;
     let searchingForLastTurn = true;
     let foundLastTurn = false;
-    let i = latestRound.turns.length;
 
     // not all players have taken a turn
-    if (i < this.players.length) {
+    if (latestRound.turns.length < this.players.length) {
       return false;
     }
 
     let turn;
+    let i = latestRound.turns.length;
     while (searchingForLastTurn) {
       i--;
       // work from the most recent turn backwards

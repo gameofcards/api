@@ -29,6 +29,8 @@ export default class PresidentsPlayer extends Player implements Instance {
   public get displayId() {
     return this.gameDisplayId;
   }
+  
+  // sus
   @Property({ required: true })
   @Field((type) => ID)
   public game!: ObjectId;
@@ -41,6 +43,7 @@ export default class PresidentsPlayer extends Player implements Instance {
   @Field((type) => PoliticalRank)
   public nextGameRank?: PoliticalRank;
 
+  // sus
   @Property({ required: true })
   @Field((type) => Int)
   public drinksDrunk!: number;

@@ -188,7 +188,7 @@ describe('Presidents Game', function () {
   });
 
   describe('#initialize', function () {
-    it('should have dealt cards and set currentPlayer based on 3Clubs', async function () {
+    it.only('should have dealt cards and set currentPlayer based on 3Clubs', async function () {
       const id = Utils.getObjectId();
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
@@ -203,6 +203,8 @@ describe('Presidents Game', function () {
       };
       game = await PresidentsGameModel.JoinGame(joinInput1);
       game = await game.initialize();
+
+      logger.info(game.players[0].cards)
 
       expect(game.players[0].cards.length).toBeGreaterThan(0);
       expect(game.players[1].cards.length).toBeGreaterThan(0);
@@ -415,6 +417,7 @@ describe('Presidents Game', function () {
     });
 
     it("should remove cards from the player's hand", async () => {});
+    it("should add a skip turn", async () => {});
   });
 
   describe('#isRoundOver', function () {
