@@ -1,4 +1,3 @@
-import { InstanceId } from '../../../types';
 import { InstanceOperationsError } from './errors';
 import { ReturnModelType } from '@typegoose/typegoose';
 

@@ -1,5 +1,5 @@
 import { Field, ID, InterfaceType } from 'type-graphql';
-import { plugin as Plugin, prop as Property, defaultClasses } from '@typegoose/typegoose';
+import { prop as Property, defaultClasses } from '@typegoose/typegoose';
 
 import { ObjectId } from 'mongodb';
 

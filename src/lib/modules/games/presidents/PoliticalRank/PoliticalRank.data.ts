@@ -40,7 +40,16 @@ export const createPoliticalRanks = async () => {
     const instances = PoliticalRanks.map((rank) => PoliticalRankModel.createInstance(rank));
     await Promise.all(instances);
   } catch (err) {
-    console.log('[UPLOAD] Political Rank Failed.');
+    console.log('[UPLOAD] Political Rank Creation Failed.');
+    console.log(err);
+  }
+};
+
+export const dropPoliticalRanks = async () => {
+  try {
+    await PoliticalRankModel.deleteMany({});
+  } catch (err) {
+    console.log('[UPLOAD] Political Rank Dropping Failed.');
     console.log(err);
   }
 };

@@ -12,7 +12,7 @@ import {
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 
 import { Instance } from '../../../core';
-import { InstanceId } from '../../../../types';
+import { ObjectId } from 'mongodb';
 import { PresidentsGame } from '../PresidentsGame';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
 import { PresidentsTurnError } from './errors';
@@ -28,7 +28,7 @@ import { logger } from './../../../../logger';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: [Instance] })
 export default class PresidentsTurn implements Instance {
-  public _id: InstanceId;
+  public _id: ObjectId;
   public id!: string;
   public get displayId() {
     return `${this.id}-${this.forPlayer}`;
@@ -158,7 +158,7 @@ export default class PresidentsTurn implements Instance {
    * @async
    * @automation PresidentsTurn.test.ts #calculateSkips
    */
-  public static calculateSkips(cardsToBeat: Card[], cards: Card[]) {
+  public static calculateSkips(cardsToBeat: Card[] = [], cards: Card[]) {
     // first hand of the game there will be no handToBeat
     if (cardsToBeat.length === 0) {
       return 0;
@@ -190,8 +190,7 @@ export default class PresidentsTurn implements Instance {
     game: GameDataForTurnValidation,
     turn: AddPresidentsTurnInput
   ) {
-    const isPlayersTurn = turn.forPlayer === game.currentPlayer;
-
+    const isPlayersTurn = Utils.areIDsEqual(game.currentPlayer, turn.forPlayer);
     if (!isPlayersTurn) {
       throw new PresidentsTurnError(`Unable to process turn. It is not your turn.`);
     }

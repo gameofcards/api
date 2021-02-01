@@ -1,15 +1,19 @@
 import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
+import { AddPresidentsTurnInput, AddPresidentsTurnRequest } from './../PresidentsTurn/PresidentsTurn.input';
 import { CardModel, GameStatusModel, UserModel } from '../../../core';
+import { FulfillDrinkRequestRequest, SendDrinkRequestRequest } from './../DrinkRequest/DrinkRequest.input';
+import { PoliticalRankValues, StatusValues } from './../../../../types';
 import { dropCoreModule, initializeCoreModule } from './../../../core/core.data';
 
-import { AddPresidentsTurnInput } from './../PresidentsTurn/PresidentsTurn.input';
+import { PoliticalRankModel } from '../PoliticalRank';
 import { PresidentsGameBuilder } from './PresidentsGame.builder';
 import { PresidentsGameModel } from '..';
-import { StatusValues } from './../../../../types';
 import { Utils } from './../../../modules.utils';
+import { createPoliticalRanks } from '../PoliticalRank/PoliticalRank.data';
 import db from '../../../../db';
+import { dropPoliticalRanks } from './../PoliticalRank/PoliticalRank.data';
 import { logger } from './../../../../logger';
 
 describe('Presidents Game', function () {
@@ -17,10 +21,12 @@ describe('Presidents Game', function () {
     logger.info('[BEGIN] Presidents Game Tests');
     await db.connect();
     await initializeCoreModule();
+    await createPoliticalRanks();
   });
 
   afterAll(async () => {
     await dropCoreModule();
+    await dropPoliticalRanks();
     await PresidentsGameModel.deleteMany({});
     await db.disconnect();
     logger.info('[END] Presidents Game Tests');
@@ -51,11 +57,10 @@ describe('Presidents Game', function () {
       expect(instance.turnToBeat).toBeFalsy();
       expect(instance.rounds.length).toEqual(0);
       expect(instance.players.length).toEqual(0);
-      expect(instance.drinkRequests.length).toEqual(0);
     });
   });
 
-  describe('#addPlayerFromUserId', function () {
+  describe('#addPlayer', function () {
     it('should create a player and add it to the game', async () => {
       const id = Utils.getObjectId();
       const user = await UserModel.findOne({ username: 'tommypastrami' });
@@ -64,7 +69,7 @@ describe('Presidents Game', function () {
         createdByUser: user.id,
       };
       const instance = await PresidentsGameModel.createInstance(gameInput);
-      const result = await instance.addPlayerFromUserId(user.id);
+      const result = await instance.addPlayer(user.id);
 
       expect(result.players.length).toEqual(1);
       expect(result.players[0].user).toEqual(user._id);
@@ -188,7 +193,7 @@ describe('Presidents Game', function () {
   });
 
   describe('#initialize', function () {
-    it.only('should have dealt cards and set currentPlayer based on 3Clubs', async function () {
+    it('should have dealt cards and set currentPlayer based on 3Clubs', async function () {
       const id = Utils.getObjectId();
       const user = await UserModel.findOne({ username: 'tommypastrami' });
       const gameInput = {
@@ -203,9 +208,6 @@ describe('Presidents Game', function () {
       };
       game = await PresidentsGameModel.JoinGame(joinInput1);
       game = await game.initialize();
-
-      logger.info(game.players[0].cards)
-
       expect(game.players[0].cards.length).toBeGreaterThan(0);
       expect(game.players[1].cards.length).toBeGreaterThan(0);
       expect(game.currentPlayer).toBeDefined();
@@ -408,46 +410,152 @@ describe('Presidents Game', function () {
     });
   });
 
-  describe.skip('#AddPresidentsTurn', function () {
-    it('should throw an error on an invalid turn', async () => {});
+  describe('#AddPresidentsTurn', function () {
+    it('should throw an error on an invalid turn', async () => {
+      const game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      
+      const forPlayer = game.players.find((player) => !Utils.areIDsEqual(player._id, game.currentPlayer));
+      const invalidTurn: AddPresidentsTurnRequest = {
+        id: game.id,
+        forPlayer: forPlayer.id,
+        cardsPlayed: [forPlayer.cards[0].id],
+        wasPassed: false
+      }
+      try {
+        await PresidentsGameModel.AddPresidentsTurn(invalidTurn);
+      } catch (err) {
+        expect(err.message).toEqual('Unable to process turn. It is not your turn.');
+      }
 
-    it('should update fields on the game', async () => {
-      // current round has one more turn
-      // current player is updated
+    });
+    
+    it('should update fields on the game and remove cards from the player', async () => {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      let forPlayer = game.players.find((player) => Utils.areIDsEqual(player._id, game.currentPlayer));
+      const turn: AddPresidentsTurnRequest = {
+        id: game.id,
+        forPlayer: forPlayer.id,
+        cardsPlayed: [forPlayer.cards.find(card => card.shortHand === '3Clubs').id],
+        wasPassed: false
+      }
+      const numberOfCardsBefore = forPlayer.cards.length;
+      game = await PresidentsGameModel.AddPresidentsTurn(turn);
+      // one turn added
+      expect(game.rounds[0].turns.length).toEqual(1);
+      // turn was for current player 
+      expect(Utils.areIDsEqual(game.turnToBeat.forPlayer, turn.forPlayer)).toBeTruthy();
+      // expect a diff current player now
+      expect(Utils.areIDsEqual(game.currentPlayer, forPlayer._id)).toBeFalsy();
+      // get player who took the turn
+      forPlayer = game.players.find((player) => Utils.areIDsEqual(player._id, forPlayer._id));
+      // they should have one less card
+      expect(numberOfCardsBefore - forPlayer.cards.length).toEqual(1);
     });
 
-    it("should remove cards from the player's hand", async () => {});
-    it("should add a skip turn", async () => {});
+    it("should add a skip turn and end the round", async () => {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      let forPlayer = game.players.find((player) => Utils.areIDsEqual(player._id, game.currentPlayer));
+      let turn: AddPresidentsTurnRequest = {
+        id: game.id,
+        forPlayer: forPlayer.id,
+        cardsPlayed: [forPlayer.cards.find(card => card.shortHand === '3Clubs').id],
+        wasPassed: false
+      };
+      game = await PresidentsGameModel.AddPresidentsTurn(turn);
+      forPlayer = game.players.find((player) => Utils.areIDsEqual(player._id, game.currentPlayer));
+      turn = {
+        id: game.id,
+        forPlayer: forPlayer.id,
+        cardsPlayed: [forPlayer.cards.find(card => card.cardRank.value === 3).id],
+        wasPassed: false
+      };
+      game = await PresidentsGameModel.AddPresidentsTurn(turn);
+      // 3 Clubs, a 3, and a skip turn
+      expect(game.rounds[0].turns.length).toEqual(3);
+      // expect same current player
+      expect(Utils.areIDsEqual(forPlayer._id, game.currentPlayer)).toBeTruthy();
+      // expect last turn of first round to be a skip
+      expect(game.rounds[0].turns[2].wasSkipped).toBeTruthy();
+      // expect the 2nd turn to be marked as a round ender
+      expect(game.rounds[0].turns[1].endedRound).toBeTruthy();
+      // expect the next round to be added
+      expect(game.rounds.length).toEqual(2);
+      // expect turn to beat to be null
+      expect(game.turnToBeat).toBeFalsy();
+    });
   });
 
   describe('#isRoundOver', function () {
     it('true - they twoed it and booted it', async function () {
-      const game = await PresidentsGameBuilder.build({
+      let game = await PresidentsGameBuilder.build({
         createdByUser: 'tammy',
         usersToAdd: ['bella'],
-        skipFirstRound: true,
+        takeFirstTurn: false,
       });
-      const player = game.players.find((player) => player._id === game.currentPlayer);
-      const forPlayer = player._id;
-      const two = player.cards.find((card) => card.cardRank.value === 2);
-      const turn: AddPresidentsTurnInput = {
-        forPlayer,
-        cardsPlayed: [two],
-        wasPassed: false,
+      let forPlayer = game.players.find((player) => Utils.areIDsEqual(player._id, game.currentPlayer));
+      let turn: AddPresidentsTurnRequest = {
+        id: game.id,
+        forPlayer: forPlayer.id,
+        cardsPlayed: [forPlayer.cards.find(card => card.shortHand === '3Clubs').id],
+        wasPassed: false
       };
+      game = await PresidentsGameModel.AddPresidentsTurn(turn);
+      forPlayer = game.players.find((player) => Utils.areIDsEqual(player._id, game.currentPlayer));
+      turn = {
+        id: game.id,
+        forPlayer: forPlayer.id,
+        cardsPlayed: [forPlayer.cards.find(card => card.cardRank.value === 2).id],
+        wasPassed: false
+      };
+      game = await PresidentsGameModel.AddPresidentsTurn(turn);
+      // expect round 1 to have 2 turns
+      expect(game.rounds[0].turns.length).toEqual(2);
+      // expect the 2nd turn in round 1 to be marked as round ender
+      expect(game.rounds[0].turns[1].endedRound).toBeTruthy();
     });
 
-    it('true - everyone after them skipped or passed', async function () {});
+    it('true - everyone after them skipped or passed', async function () {
+      // verified in #AddPresidentsTurn "should add a skip turn and end the round"
+    });
 
-    it('false - not all players have taken a turn', async function () {});
+    it('false - not all players have taken a turn', async function () {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      let forPlayer = game.players.find((player) => Utils.areIDsEqual(player._id, game.currentPlayer));
+      let turn: AddPresidentsTurnRequest = {
+        id: game.id,
+        forPlayer: forPlayer.id,
+        cardsPlayed: [forPlayer.cards.find(card => card.shortHand === '3Clubs').id],
+        wasPassed: false
+      };
+      game = await PresidentsGameModel.AddPresidentsTurn(turn);
+      const result = game.isRoundOver();
+      expect(result.isRoundOver).toBeFalsy();
+    });
 
-    it("false - it's their first turn of the round", async function () {});
+    it.skip("false - they haven't played a turn in this round yet", async function () {
+    });
 
-    it('false - they got skipped', async function () {});
+    it.skip('false - they got skipped', async function () {});
 
-    it('false - they passed', async function () {});
+    it.skip('false - they passed', async function () {});
 
-    it('false - someone after them played a better hand of cards', async function () {});
+    it.skip('false - someone after them played a better hand of cards', async function () {});
   });
 
   describe('#getNextPlayer', function () {
@@ -466,11 +574,154 @@ describe('Presidents Game', function () {
     });
   });
 
-  describe.skip('#Rematch', function () {});
+  describe('#Rematch', function () {
+    
+    it('starts a game and assigns political ranks', async function () {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      const president = await PoliticalRankModel.findOne({ name: PoliticalRankValues.President });
+      const asshole = await PoliticalRankModel.findOne({ name: PoliticalRankValues.Asshole });
+      game.findPlayerBySeatPosition(0).nextGameRank = president;
+      game.findPlayerBySeatPosition(1).nextGameRank = asshole;
+      await game.save();    
+      const rematch = await PresidentsGameModel.Rematch(game.id);
+      expect(rematch).toBeDefined();
+      expect(rematch.players.length).toEqual(2);
+      expect(rematch.findPlayerBySeatPosition(0).politicalRank.name).toEqual(PoliticalRankValues.President);
+      expect(rematch.findPlayerBySeatPosition(1).politicalRank.name).toEqual(PoliticalRankValues.Asshole);
+      expect(rematch.status.value).toEqual(StatusValues.InProgress);
+    });
 
-  describe.skip('#FulfillDrinkRequest', function () {});
+  });
 
-  describe.skip('#SendDrinkRequest', function () {});
 
-  describe.skip('#FulfillDrinkRequest', function () {});
+  describe('#SendDrinkRequest', function () {
+
+    it('should throw an error if players do not yet have ranks', async function () {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      const request: SendDrinkRequestRequest = {
+        fromPlayer: game.players[0].id,
+        toPlayer: game.players[1].id,
+        id: game.id
+      };
+      try {
+        await PresidentsGameModel.SendDrinkRequest(request);
+      } catch (err) {
+        expect(err.message).toEqual('you must wait til all players have ranks to give drinks out');
+      }
+    });
+
+    it('should throw an error if giver does not out rank receiver', async function () {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      const president = await PoliticalRankModel.findOne({ name: PoliticalRankValues.President });
+      const asshole = await PoliticalRankModel.findOne({ name: PoliticalRankValues.Asshole });
+      game.findPlayerBySeatPosition(0).politicalRank = president;
+      game.findPlayerBySeatPosition(1).politicalRank = asshole;
+      await game.save();  
+      const request: SendDrinkRequestRequest = {
+        fromPlayer: game.findPlayerBySeatPosition(0).id,
+        toPlayer: game.findPlayerBySeatPosition(1).id,
+        id: game.id
+      };
+      try {
+        await PresidentsGameModel.SendDrinkRequest(request);
+      } catch (err) {
+        expect(err.message).toEqual('fromPlayer must out rank toPlayer in order to give a drink');
+      }  
+    });
+
+    it('should update both player fields if successfull', async function () {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      const president = await PoliticalRankModel.findOne({ name: PoliticalRankValues.President });
+      const asshole = await PoliticalRankModel.findOne({ name: PoliticalRankValues.Asshole });
+      game.findPlayerBySeatPosition(0).politicalRank = president;
+      game.findPlayerBySeatPosition(1).politicalRank = asshole;
+      await game.save();  
+      const request: SendDrinkRequestRequest = {
+        fromPlayer: game.findPlayerBySeatPosition(0).id,
+        toPlayer: game.findPlayerBySeatPosition(1).id,
+        id: game.id
+      };
+      let result = await PresidentsGameModel.SendDrinkRequest(request);
+      expect(result.findPlayerBySeatPosition(0).drinkRequestsSent.length).toEqual(1);
+      expect(result.findPlayerBySeatPosition(1).drinkRequestsReceived.length).toEqual(1);
+    });
+
+    it('should throw an error if receiver has an unfulfilled drink from giver', async function () {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      const president = await PoliticalRankModel.findOne({ name: PoliticalRankValues.President });
+      const asshole = await PoliticalRankModel.findOne({ name: PoliticalRankValues.Asshole });
+      game.findPlayerBySeatPosition(0).politicalRank = president;
+      game.findPlayerBySeatPosition(1).politicalRank = asshole;
+      await game.save();  
+      const request: SendDrinkRequestRequest = {
+        fromPlayer: game.findPlayerBySeatPosition(0).id,
+        toPlayer: game.findPlayerBySeatPosition(1).id,
+        id: game.id
+      };
+      let result = await PresidentsGameModel.SendDrinkRequest(request);
+      try {
+        let result2 = await PresidentsGameModel.SendDrinkRequest(request);
+      } catch (err) {
+        expect(err.message).toEqual('toPlayer already has a drink to drink from fromPlayer. you can\'t give another')
+      }
+    });
+    
+  });
+
+  describe('#FulfillDrinkRequest', function () {
+
+    it('should update both player fields if successful', async function () {
+      let game = await PresidentsGameBuilder.build({
+        createdByUser: 'tammy',
+        usersToAdd: ['bella'],
+        takeFirstTurn: false,
+      });
+      const president = await PoliticalRankModel.findOne({ name: PoliticalRankValues.President });
+      const asshole = await PoliticalRankModel.findOne({ name: PoliticalRankValues.Asshole });
+      game.findPlayerBySeatPosition(0).politicalRank = president;
+      game.findPlayerBySeatPosition(1).politicalRank = asshole;
+      await game.save();  
+      const request: SendDrinkRequestRequest = {
+        fromPlayer: game.findPlayerBySeatPosition(0).id,
+        toPlayer: game.findPlayerBySeatPosition(1).id,
+        id: game.id
+      };
+      game = await PresidentsGameModel.SendDrinkRequest(request);
+      const fulfillmentRequest: FulfillDrinkRequestRequest = {
+        forPlayer: game.findPlayerBySeatPosition(1).id,
+        drinkId: game.findPlayerBySeatPosition(1).drinkRequestsReceived[0].id,
+        id: game.id
+      };
+      game = await PresidentsGameModel.FulfillDrinkRequest(fulfillmentRequest);
+      logger.info(game.findPlayerBySeatPosition(1).drinkRequestsReceived[0])
+      logger.info(game.findPlayerBySeatPosition(0).drinkRequestsSent[0])
+      expect(game.findPlayerBySeatPosition(1).drinkRequestsReceived[0].fulfilled).toBeTruthy();
+      expect(game.findPlayerBySeatPosition(1).drinkRequestsReceived[0].fulfilledAt).toBeTruthy();
+      expect(game.findPlayerBySeatPosition(0).drinkRequestsSent[0].fulfilled).toBeTruthy();
+      expect(game.findPlayerBySeatPosition(0).drinkRequestsSent[0].fulfilledAt).toBeTruthy();
+    });
+
+  });
+
+
 });

@@ -1,24 +1,35 @@
 import { Field, ID, InputType } from 'type-graphql';
 
-import { InstanceId } from './../../../../types';
 import { ObjectId } from 'mongodb';
 import { PresidentsPlayer } from '../PresidentsPlayer';
 import { Ref } from '@typegoose/typegoose';
 
 @InputType()
-export class SendDrinkRequestInput {
-  @Field((type) => ID)
-  fromPlayer: ObjectId;
+export class SendDrinkRequestRequest {
+  @Field()
+  fromPlayer: string;
 
-  @Field((type) => ID)
-  toPlayer: ObjectId;
+  @Field()
+  toPlayer: string;
 
-  @Field((type) => ID)
-  id: ObjectId;
+  @Field()
+  id: string;
+}
+
+@InputType()
+export class FulfillDrinkRequestRequest {
+  @Field()
+  forPlayer: string;
+
+  @Field()
+  drinkId: string;
+
+  @Field()
+  id: string;
 }
 
 export interface CreateDrinkRequestInput {
   fromPlayer: Ref<PresidentsPlayer>;
   toPlayer: Ref<PresidentsPlayer>;
-  game: InstanceId;
+  game: ObjectId;
 }

@@ -3,8 +3,8 @@ import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from 
 
 import { CreateStatusInput } from './Status.input';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
 import { InstanceOperations } from '../InstanceOperations';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -16,7 +16,7 @@ import { Utils } from '../../modules.utils';
  */
 @InterfaceType({ implements: [Instance] })
 export class StatusInterface {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Field()
@@ -32,7 +32,7 @@ export class StatusInterface {
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: [Instance, StatusInterface] })
 export default class Status extends InstanceOperations implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true, uppercase: true, maxlength: 30 })

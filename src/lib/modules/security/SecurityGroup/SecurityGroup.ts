@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 import { Instance, Role, Status } from '../../core';
 
 import { CreateSecurityGroupInput } from './SecurityGroup.input';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { SecurityPolicy } from '../SecurityPolicy';
 import { Utils } from '../../modules.utils';
 
@@ -17,7 +17,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class SecurityGroup implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true, maxlength: 30 })

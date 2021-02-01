@@ -1,6 +1,7 @@
 import { Field, ID, InputType, Int } from 'type-graphql';
 
-import { InstanceId } from './../../../../types';
+import { ObjectId } from 'mongodb';
+import { PoliticalRank } from '../PoliticalRank';
 import { Ref } from '@typegoose/typegoose';
 import { User } from '../../../core';
 
@@ -10,8 +11,11 @@ export class CreatePresidentsPlayerInput {
   user: Ref<User>;
 
   @Field((type) => ID)
-  game: InstanceId;
+  game: ObjectId;
 
   @Field((type) => Int)
   seatPosition: number;
+
+  @Field((type) => PoliticalRank)
+  politicalRank?: PoliticalRank;
 }

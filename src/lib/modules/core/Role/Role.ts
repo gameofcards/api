@@ -3,7 +3,7 @@ import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from 
 
 import { CreateRoleInput } from './Role.input';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -14,7 +14,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class Role implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   get displayId() {

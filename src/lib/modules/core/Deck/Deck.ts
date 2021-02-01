@@ -4,7 +4,7 @@ import { Field, InterfaceType, ObjectType } from 'type-graphql';
 import Card from '../Card/Card';
 import { CreateDeckInput } from './Deck.input';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -16,7 +16,7 @@ import { Utils } from '../../modules.utils';
  */
 @InterfaceType({ implements: [Instance] })
 export class DeckInterface {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Field()
@@ -35,7 +35,7 @@ export class DeckInterface {
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @ObjectType({ implements: [Instance, DeckInterface] })
 export default class Deck implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true, maxlength: 30 })

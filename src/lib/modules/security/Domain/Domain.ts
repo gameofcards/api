@@ -3,7 +3,7 @@ import { Instance, Status } from '../../core';
 import { modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 
 import { CreateDomainInput } from './Domain.input';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { UITask } from '../UITask';
 import { Utils } from '../../modules.utils';
 
@@ -16,7 +16,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class Domain implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true })

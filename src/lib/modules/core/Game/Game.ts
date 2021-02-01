@@ -4,8 +4,7 @@ import { modelOptions as ModelOptions, prop as Property, Ref } from '@typegoose/
 import GameConfiguration from '../GameConfiguration/GameConfiguration';
 import GameStatus from '../GameStatus/GameStatus';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
-import Player from '../Player/Player';
+import { ObjectId } from 'mongodb';
 import User from '../User/User';
 import { Utils } from '../../modules.utils';
 
@@ -18,14 +17,14 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @InterfaceType({ implements: Instance })
 export default class Game implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   get displayId() {
     return this.name;
   }
 
-  @Property({ required: true, unique: true, maxlength: 30 })
+  @Property({ required: true, unique: true })
   @Field()
   public name!: string;
 
@@ -52,8 +51,4 @@ export default class Game implements Instance {
   @Property({ required: true, ref: 'User' })
   @Field((type) => ID)
   public createdByUser!: Ref<User>;
-
-  @Property({ ref: 'Player' })
-  @Field((type) => ID)
-  public currentPlayer?: Ref<Player>;
 }

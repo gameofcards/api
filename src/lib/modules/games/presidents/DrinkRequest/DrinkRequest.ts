@@ -11,7 +11,6 @@ import { Field, ID, ObjectType } from 'type-graphql';
 import { CreateDrinkRequestInput } from './DrinkRequest.input';
 import { DrinkRequestModel } from '.';
 import { Instance } from '../../../core';
-import { InstanceId } from '../../../../types';
 import { ObjectId } from 'mongodb';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
@@ -27,7 +26,7 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class DrinkRequest implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
   public get displayId() {
     return '';

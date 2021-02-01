@@ -13,6 +13,7 @@
     "test:sec": "export NODE_ENV=test && jest security.test.ts",
     "test:core": "export NODE_ENV=test && jest core.test.ts",
     "test": "export NODE_ENV=test && jest modules.test.ts",
+    "clean": "rm -r node_modules",
     "count:src": "find src -name '*.ts' | xargs wc -l",
     "build": "webpack --mode production",
     "lint": "tslint --project '.'",

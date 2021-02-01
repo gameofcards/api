@@ -58,7 +58,7 @@ export class PresidentsTurnInput {
 @InputType()
 export class GameDataForTurnValidation {
   @Field((type) => ID)
-  currentPlayer!: Ref<Player>;
+  currentPlayer!: Ref<PresidentsPlayer>;
 
   @Field()
   isFirstTurnOfTheGame!: boolean;
@@ -67,7 +67,7 @@ export class GameDataForTurnValidation {
   isFirstTurnOfCurrentRound!: boolean;
 
   @Field((type) => [Card])
-  cardsToBeat!: Card[];
+  cardsToBeat?: Card[];
 }
 
 @InputType()

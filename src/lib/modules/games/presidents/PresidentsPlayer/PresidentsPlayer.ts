@@ -5,7 +5,6 @@ import { Instance, UserModel } from '../../../core';
 
 import { CreatePresidentsPlayerInput } from './PresidentsPlayer.input';
 import DrinkRequest from '../DrinkRequest/DrinkRequest';
-import { InstanceId } from '../../../../types';
 import { ObjectId } from 'mongodb';
 import Player from '../../../core/Player/Player';
 import PoliticalRank from '../PoliticalRank/PoliticalRank';
@@ -20,7 +19,7 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @ObjectType({ implements: [Instance, Player] })
 export default class PresidentsPlayer extends Player implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
   public gameDisplayId!: string;
   public user!: Ref<User>;
@@ -43,11 +42,6 @@ export default class PresidentsPlayer extends Player implements Instance {
   @Field((type) => PoliticalRank)
   public nextGameRank?: PoliticalRank;
 
-  // sus
-  @Property({ required: true })
-  @Field((type) => Int)
-  public drinksDrunk!: number;
-
   @Property({ type: DrinkRequest })
   @Field((type) => [DrinkRequest])
   public drinkRequestsSent!: DrinkRequest[];
@@ -67,8 +61,7 @@ export default class PresidentsPlayer extends Player implements Instance {
    * @automation PresidentsPlayer.test.ts #createInstance
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsPlayer>, input: CreatePresidentsPlayerInput) {
-    const { user, game, seatPosition } = input;
-    const drinksDrunk = 0;
+    const { user, game, seatPosition, politicalRank } = input;
     const cards = [];
     const drinkRequestsSent = [];
     const drinkRequestsReceived = [];
@@ -78,11 +71,11 @@ export default class PresidentsPlayer extends Player implements Instance {
       gameDisplayId,
       user,
       seatPosition,
-      drinksDrunk,
       cards,
       game,
       drinkRequestsSent,
       drinkRequestsReceived,
+      politicalRank
     };
     const instance = await this.create(presidentsPlayer);
     await userInstance.addPlayerRecord(instance);
@@ -96,8 +89,8 @@ export default class PresidentsPlayer extends Player implements Instance {
    * @async
    * @automation PresidentsPlayer.test.ts #drinkDrink
    */
-  public async drinkDrink(this: DocumentType<PresidentsPlayer>) {
-    this.drinksDrunk += 1;
+  public async setPoliticalRank(this: DocumentType<PresidentsPlayer>, rank: PoliticalRank) {
+    this.politicalRank = rank;
     await this.save();
     return this;
   }
@@ -111,7 +104,6 @@ export default class PresidentsPlayer extends Player implements Instance {
    */
   public async setCards(this: DocumentType<PresidentsPlayer>, cards: Card[]) {
     this.cards = cards;
-    await this.save();
     return this;
   }
 
@@ -125,7 +117,6 @@ export default class PresidentsPlayer extends Player implements Instance {
    */
   public async addDrinkRequestSent(this: DocumentType<PresidentsPlayer>, request: DocumentType<DrinkRequest>) {
     this.drinkRequestsSent.push(request);
-    await this.save();
     return this;
   }
 
@@ -139,7 +130,6 @@ export default class PresidentsPlayer extends Player implements Instance {
    */
   public async addDrinkRequestReceived(this: DocumentType<PresidentsPlayer>, request: DocumentType<DrinkRequest>) {
     this.drinkRequestsReceived.push(request);
-    await this.save();
     return this;
   }
 

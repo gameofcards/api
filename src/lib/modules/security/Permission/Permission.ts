@@ -3,7 +3,7 @@ import { Instance, Status } from '../../core';
 import { modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 
 import { CreatePermissionInput } from './Permission.input';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { PermissionNamesEnum } from './../../../types';
 import { SecurityGroup } from '../SecurityGroup';
 import { UITask } from '../UITask';
@@ -19,7 +19,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class Permission implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true })

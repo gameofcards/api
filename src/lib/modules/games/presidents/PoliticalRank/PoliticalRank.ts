@@ -9,7 +9,7 @@ import {
 
 import { CreatePoliticalRankInput } from './PoliticalRank.input';
 import { Instance } from '../../../core';
-import { InstanceId } from '../../../../types';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../../modules.utils';
 
 /**
@@ -21,7 +21,7 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class PoliticalRank implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
   public get displayId() {
     return this.name;

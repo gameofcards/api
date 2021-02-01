@@ -2,7 +2,7 @@ import { ReturnModelType, modelOptions } from '@typegoose/typegoose';
 
 import { CreateGameStatusInput } from './GameStatus.input';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { ObjectType } from 'type-graphql';
 import Status from '../Status/Status';
 import { Utils } from '../../modules.utils';
@@ -16,7 +16,7 @@ import { Utils } from '../../modules.utils';
 @modelOptions(Utils.getDisciminatorModelOptions())
 @ObjectType({ implements: [Instance] })
 export default class GameStatus extends Status implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
   public value!: string;
   public get displayId() {

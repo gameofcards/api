@@ -5,7 +5,7 @@ import { Field, ObjectType } from 'type-graphql';
 import { CreateDeckInput } from './../../../core/Deck/Deck.input';
 import { DeckInterface } from '../../../core/Deck/Deck';
 import { Instance } from '../../../core';
-import { InstanceId } from '../../../../types';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../../modules.utils';
 
 /**
@@ -17,7 +17,7 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @ObjectType({ implements: [Instance, DeckInterface] })
 export default class PresidentsDeck extends Deck implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
   public name!: string;
   public cards!: Card[];

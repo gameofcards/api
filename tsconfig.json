@@ -8,6 +8,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true
-  },
+    },
   "include": ["./src/**/*", "jest.config.js"]
 }

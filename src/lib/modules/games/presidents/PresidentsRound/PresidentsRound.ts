@@ -11,7 +11,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 
 import { CreatePresidentsRoundInput } from './PresidentsRound.input';
 import { Instance } from '../../../core';
-import { InstanceId } from '../../../../types';
+import { ObjectId } from 'mongodb';
 import PresidentsGame from '../PresidentsGame/PresidentsGame';
 import { PresidentsRoundModel } from '.';
 import PresidentsTurn from '../PresidentsTurn/PresidentsTurn';
@@ -26,7 +26,7 @@ import { Utils } from '../../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class PresidentsRound implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
   public get displayId() {
     return '';

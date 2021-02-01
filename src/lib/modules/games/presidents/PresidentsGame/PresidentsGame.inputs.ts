@@ -3,6 +3,7 @@ import { Field, ID, InputType, Int } from 'type-graphql';
 
 import { ObjectId } from 'mongodb';
 import { PresidentsGame } from '../PresidentsGame';
+import { PresidentsTurn } from '../PresidentsTurn';
 import { Role } from '../../../core/Role';
 import { User } from '../../../core';
 
@@ -32,6 +33,15 @@ export class JoinPresidentsGameRequest {
 export class IdRequest {
   @Field((type) => ID)
   id: ObjectId;
+}
+
+@InputType()
+export class RoundEndTurnData {
+  @Field()
+  isRoundOver: boolean;
+
+  @Field(type => PresidentsTurn)
+  turn: PresidentsTurn;
 }
 
 @InputType()

@@ -4,7 +4,7 @@ import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from 
 import { CreateGameConfigurationInput } from './GameConfiguration.input';
 import Deck from '../Deck/Deck';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -17,7 +17,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class GameConfiguration implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true, maxlength: 30 })

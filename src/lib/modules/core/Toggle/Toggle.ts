@@ -4,7 +4,7 @@ import { modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } 
 import { ConfidenceLevels } from '../../../types';
 import { CreateToggleInput } from './Toggle.input';
 import { Instance } from '..';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -16,7 +16,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class Toggle implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true })

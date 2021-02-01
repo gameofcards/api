@@ -4,8 +4,8 @@ import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from 
 import { CardRank } from '../CardRank';
 import { CreateCardInput } from './Card.input';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
 import { InstanceOperations } from '../InstanceOperations';
+import { ObjectId } from 'mongodb';
 import { Suit } from '../Suit';
 import { Utils } from '../../modules.utils';
 
@@ -19,7 +19,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class Card extends InstanceOperations implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true, maxlength: 20 })

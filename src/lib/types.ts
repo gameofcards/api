@@ -1,6 +1,7 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 
 import { ObjectId } from 'mongodb';
+import { Ref } from '@typegoose/typegoose';
 
 export const ObjectIdScalar = new GraphQLScalarType({
   name: 'ObjectId',
@@ -22,6 +23,17 @@ export const ObjectIdScalar = new GraphQLScalarType({
 export enum ConfidenceLevels {
   Internal = 'INTERNAL',
   Production = 'PRODUCTION',
+}
+
+export enum PoliticalRankValues {
+  President = 'President',
+  VicePresident = 'Vice President',
+  Speaker = 'Speaker of the House',
+  ProTempore = 'President Pro Tempore of the Senate',
+  State = 'Secretary of State',
+  Treasury = 'Secretary of the Treasury',
+  Defense = 'Secretary of Defense',
+  Asshole = 'Asshole'
 }
 
 export enum StatusValues {
@@ -89,4 +101,4 @@ export enum GameConfigurationNames {
 
 export type NonEmptyArray<TItem> = readonly [TItem, ...TItem[]] | [TItem, ...TItem[]];
 
-export type InstanceId = ObjectId;
+export type ID = string | number | ObjectId | Ref<any, ObjectId>;

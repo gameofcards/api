@@ -1,3 +1,4 @@
+import { ID } from '../types';
 import { Types } from 'mongoose';
 
 export class Utils {
@@ -18,6 +19,12 @@ export class Utils {
         discriminatorKey: 'type',
       },
     };
+  }
+
+  static areIDsEqual(A: ID, B: ID) {
+    const a = new Types.ObjectId(A);
+    const b = new Types.ObjectId(B);
+    return a.equals(b);
   }
 
   static getDate() {

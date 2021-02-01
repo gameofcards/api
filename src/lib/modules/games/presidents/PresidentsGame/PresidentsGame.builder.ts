@@ -119,17 +119,17 @@ export class PresidentsGameBuilder {
   public static async build(config: TestGameConfig) {
     let game = await PresidentsGameBuilder.initializeTheGame(config);
 
-    // override the cards to be evenly balanced
-    const [A, B] = await PresidentsGameBuilder.getTestCardHands();
-    const [PLAYER_1, PLAYER_2] = [0, 1];
-
-    // The stack of cards A has the 3 of clubs
-    if (game.players[PLAYER_1]._id === game.currentPlayer) {
-      game.players[0].cards = A;
-      game.players[1].cards = B;
-    } else {
-      game.players[0].cards = B;
-      game.players[1].cards = A;
+    if (config.usersToAdd.length === 1) {
+      // override the cards to be evenly balanced
+      const [A, B] = await PresidentsGameBuilder.getTestCardHands();
+      // The stack of cards A has the 3 of clubs
+      if (game.players[0]._id === game.currentPlayer) {
+        game.players[0].cards = A;
+        game.players[1].cards = B;
+      } else {
+        game.players[0].cards = B;
+        game.players[1].cards = A;
+      }
     }
 
     if (config.takeFirstTurn) {

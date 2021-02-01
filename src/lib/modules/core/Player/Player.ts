@@ -4,7 +4,6 @@ import { Field, ID, Int, InterfaceType } from 'type-graphql';
 import { Card } from '../Card';
 import { Game } from '../Game';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
 import { ObjectId } from 'mongodb';
 import User from '../User/User';
 import { Utils } from '../../modules.utils';
@@ -12,7 +11,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getDisciminatorModelOptions())
 @InterfaceType({ implements: [Instance] })
 export default class Player implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
   public get displayId() {
     return '';
@@ -54,7 +53,7 @@ export default class Player implements Instance {
    * @static
    * @async
    */
-  public static async findManyByIds(this: ReturnModelType<typeof Player>, ids: InstanceId[]): Promise<Player[]> {
+  public static async findManyByIds(this: ReturnModelType<typeof Player>, ids: ObjectId[]): Promise<Player[]> {
     return this.find({ _id: { $in: ids } });
   }
 }

@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 
 import { CreateUserInput } from './User.input';
 import { Instance } from '../Instance';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import Player from '../Player/Player';
 import { Role } from '../Role';
 import { Utils } from '../../modules.utils';
@@ -17,7 +17,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class User implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   get displayId() {

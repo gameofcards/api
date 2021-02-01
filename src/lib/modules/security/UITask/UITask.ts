@@ -4,7 +4,7 @@ import { Instance, InstanceOperations } from '../../core';
 
 import { CreateUITaskInput } from './UITask.input';
 import { Domain } from '../Domain';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { Utils } from '../../modules.utils';
 
 /**
@@ -16,7 +16,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class UITask extends InstanceOperations implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true })

@@ -4,7 +4,7 @@ import { modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } 
 
 import { CreateSecurityPolicyInput } from './SecurityPolicy.input';
 import { Domain } from '../Domain';
-import { InstanceId } from '../../../types';
+import { ObjectId } from 'mongodb';
 import { Permission } from '../Permission';
 import { SecurityGroup } from '../SecurityGroup';
 import { Utils } from '../../modules.utils';
@@ -18,7 +18,7 @@ import { Utils } from '../../modules.utils';
 @ModelOptions(Utils.getModelOptions())
 @ObjectType({ implements: Instance })
 export default class SecurityPolicy implements Instance {
-  public _id!: InstanceId;
+  public _id!: ObjectId;
   public id!: string;
 
   @Property({ required: true })
