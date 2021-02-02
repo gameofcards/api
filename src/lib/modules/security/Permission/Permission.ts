@@ -27,7 +27,7 @@ export default class Permission implements Instance {
   public name!: string;
 
   @Property({ ref: 'SecurityGroup' })
-  @Field((type) => ID)
+  @Field((type) => ID, { nullable: true })
   public securityGroup?: Ref<SecurityGroup>;
 
   @Property({ type: Status })
@@ -36,7 +36,7 @@ export default class Permission implements Instance {
 
   @Property({ ref: 'UITask' })
   @Field((type) => ID)
-  public task: Ref<UITask>;
+  public task!: Ref<UITask>;
 
   get displayId() {
     return `${this.name}-${this.status.value}`;

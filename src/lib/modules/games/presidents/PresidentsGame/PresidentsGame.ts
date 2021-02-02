@@ -36,12 +36,12 @@ import {
 import { DrinkRequest, DrinkRequestModel } from '../DrinkRequest';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { FulfillDrinkRequestRequest, SendDrinkRequestRequest } from './../DrinkRequest/DrinkRequest.input';
+import { PoliticalRank, PoliticalRankModel } from '../PoliticalRank';
 import { PresidentsPlayer, PresidentsPlayerModel } from '../PresidentsPlayer';
 import { PresidentsRound, PresidentsRoundModel } from '../PresidentsRound';
 import { PresidentsTurn, PresidentsTurnModel } from '../PresidentsTurn';
 
 import { ObjectId } from 'mongodb';
-import { PoliticalRank } from '../PoliticalRank';
 import { PresidentsDeckModel } from '../PresidentsDeck';
 import { PresidentsGameError } from './errors';
 import { StatusValues } from '../../../../types';
@@ -68,15 +68,15 @@ export default class PresidentsGame extends Game {
   public createdByUser!: Ref<User>;
 
   @Property({ ref: 'PresidentsPlayer' })
-  @Field((type) => ID)
+  @Field((type) => ID, { nullable: true })
   public currentPlayer?: Ref<PresidentsPlayer>;
 
   @Property({ ref: 'PresidentsPlayer' })
-  @Field((type) => ID)
+  @Field((type) => ID, { nullable: true })
   public winningPlayer?: Ref<PresidentsPlayer>;
 
   @Property({ type: PresidentsTurn })
-  @Field((type) => PresidentsTurn)
+  @Field((type) => PresidentsTurn, { nullable: true })
   public turnToBeat?: PresidentsTurn;
 
   @Property({ type: PresidentsRound, required: true })
@@ -147,7 +147,7 @@ export default class PresidentsGame extends Game {
    */
   public static async CreateGameAndAddPlayer(this: ReturnModelType<typeof PresidentsGame>, input: CreatePresidentsGameRequest) {
     const game = await this.createInstance(input);
-    return await game.addPlayer(input.createdByUser);
+    return game.addPlayer(input.createdByUser);
   }
 
   /**
@@ -257,7 +257,7 @@ export default class PresidentsGame extends Game {
    * @graphql
    * @automation PresidentsGame.test.ts #StartGame
    */
-  public static async StartGame(this: ReturnModelType<typeof PresidentsGame>, id: StartPresidentsGameRequest) {
+  public static async StartGame(this: ReturnModelType<typeof PresidentsGame>, id: string) {
     const game = await this.findById(id);
     await game.initialize();
     return game.initializeNextRound();
@@ -306,9 +306,7 @@ export default class PresidentsGame extends Game {
     presidentsTurn.skipsRemaining = PresidentsTurnModel.calculateSkips(this?.turnToBeat?.cardsPlayed, turn.cardsPlayed);
     presidentsTurn.didCauseSkips = presidentsTurn.skipsRemaining > 0;
     const presidentsTurnInstance = await PresidentsTurnModel.createInstance(presidentsTurn);
-    const player = this.players.find(player => Utils.areIDsEqual(player._id, turn.forPlayer));
-    player.cards = player.cards.filter(card => turn.cardsPlayed.find(c => !Utils.areIDsEqual(c._id, card._id)));
-    return presidentsTurnInstance;
+  return presidentsTurnInstance;
   }
 
   /**
@@ -366,9 +364,33 @@ export default class PresidentsGame extends Game {
       cardsPlayed, 
       wasPassed 
     };
-    return await game.addPresidentsTurn(turnInput);
+    return game.addPresidentsTurn(turnInput);
   }
 
+  /**
+   * IF the turn is valid
+   * CREATE the turn
+   * ADD turn to current round
+   * IF a two was plaued
+   * INITIALIZE the next round
+   * UPDATE turn to beat
+   * UPDATE current player
+   * IF turn caused skips
+   * ADD skip turns to current round and update current player
+   * REMOVE cards from players hand
+   * IF player has no cards left
+   * SET player's next round rank
+   * IF only one other player now has cards
+   * SET their next round rank
+   * FINALIZE the game
+   * @param turn AddPresidentsTurnInput
+   * @returns DocumentType<PresidentsGame>
+   * @public
+   * @static
+   * @async
+   * @graphql
+   * @automation PresidentsGame.test.ts #AddPresidentsTurn
+   */
   public async addPresidentsTurn(this: DocumentType<PresidentsGame>, turn: AddPresidentsTurnInput) {
     const gameData: GameDataForTurnValidation = {
       currentPlayer: this.currentPlayer,
@@ -383,7 +405,7 @@ export default class PresidentsGame extends Game {
       currentRound.turns.push(presidentsTurnInstance);
       const playedATwo = presidentsTurnInstance.cardsPlayed.find(card => card.cardRank.value === 2);
       if (playedATwo) {
-        return await this.initializeNextRound();
+        return this.initializeNextRound();
       }
       this.turnToBeat = presidentsTurnInstance;
       this.currentPlayer = this.getNextPlayerId();
@@ -396,13 +418,26 @@ export default class PresidentsGame extends Game {
           this.currentPlayer = this.getNextPlayerId();
         }
       }
+      const player = this.players.find(player => Utils.areIDsEqual(player._id, presidentsTurnInstance.forPlayer));
+      player.cards = player.cards.filter(card => turn.cardsPlayed.find(c => !Utils.areIDsEqual(c._id, card._id)));
+      if (player.cards.length === 0) {
+        const playersWithNoCards = this.players.filter(player => player.cards.length === 0);
+        player.nextGameRank = await PoliticalRankModel.findOne({ value: playersWithNoCards.length });
+        if (playersWithNoCards.length === 1) {
+          const playerWithCards = this.players.find(player => player.cards.length > 0);
+          playerWithCards.nextGameRank = await PoliticalRankModel.findOne({ value: playersWithNoCards.length + 1 });
+          this.status = await GameStatus.findByValue(StatusValues.Finalized);
+          this.finishedAt = Utils.getDate();
+        }
+      }
       if (this.status.value === StatusValues.InProgress) {
-        let roundData = this.isRoundOver();
-        if (roundData.isRoundOver) {
-          roundData.turn.endedRound = true;
+        let { isRoundOver, turn } = this.isRoundOver();
+        if (isRoundOver) {
+          turn.endedRound = true;
           await this.initializeNextRound();
         }
       }
+      
       await this.save();
       return this;
     }
@@ -550,7 +585,7 @@ export default class PresidentsGame extends Game {
    * @graphql
    * @automation PresidentsGame.test.ts #Rematch
    */
-  public static async Rematch(this: ReturnModelType<typeof PresidentsGame>, id: IdRequest) {
+  public static async Rematch(this: ReturnModelType<typeof PresidentsGame>, id: string) {
     let game = await this.findById(id);
     let { createdByUser, config } = game;
     let players = game.getOrderedPlayers();
@@ -563,7 +598,7 @@ export default class PresidentsGame extends Game {
       newGame = await newGame.addPlayer(user._id.toString(), user.nextGameRank);
     }
     newGame = await newGame.initialize();
-    return await newGame.initializeNextRound();
+    return newGame.initializeNextRound();
   }
 
   /**
@@ -628,6 +663,7 @@ export default class PresidentsGame extends Game {
       fromPlayer: fromPlayerInstance._id,
       toPlayer: toPlayerInstance._id,
       game: game._id,
+      message: input.message
     });
 
     fromPlayerInstance.drinkRequestsSent.push(requestInstance);

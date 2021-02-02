@@ -11,7 +11,6 @@ import { GraphQLSchema } from 'graphql';
 import { ObjectId } from 'mongodb';
 import { ObjectIdScalar } from '../types';
 import { buildSchema } from 'type-graphql';
-import db from '../db';
 import graphqlHTTP from 'koa-graphiql';
 import { logger } from '../logger';
 import resolvers from '../modules/modules.resolvers';

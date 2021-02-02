@@ -33,7 +33,7 @@ export default class SecurityGroup implements Instance {
   public role!: Role;
 
   @Property({ ref: 'SecurityPolicy' })
-  @Field((type) => ID)
+  @Field((type) => ID, { nullable: true })
   public securityPolicy?: Ref<SecurityPolicy>;
 
   get displayId() {

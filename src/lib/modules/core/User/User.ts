@@ -37,11 +37,9 @@ export default class User implements Instance {
   public displayName!: string;
 
   @Property({ required: true })
-  @Field()
   public password!: string;
 
   @Property()
-  @Field()
   public token?: string;
 
   @Property({ required: true, type: Role })

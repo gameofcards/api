@@ -33,11 +33,11 @@ export default class Game implements Instance {
   public createdAt!: Date;
 
   @Property()
-  @Field()
+  @Field({ nullable: true })
   public startedAt?: Date;
 
   @Property()
-  @Field()
+  @Field({ nullable: true })
   public finishedAt?: Date;
 
   @Property({ required: true, type: GameStatus })

@@ -14,6 +14,9 @@ export class SendDrinkRequestRequest {
 
   @Field()
   id: string;
+
+  @Field()
+  message: string;
 }
 
 @InputType()
@@ -32,4 +35,5 @@ export interface CreateDrinkRequestInput {
   fromPlayer: Ref<PresidentsPlayer>;
   toPlayer: Ref<PresidentsPlayer>;
   game: ObjectId;
+  message: string;
 }

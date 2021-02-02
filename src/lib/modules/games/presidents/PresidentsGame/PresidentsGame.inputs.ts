@@ -28,11 +28,17 @@ export class JoinPresidentsGameRequest {
   userId: string;
 }
 
+@InputType()
+export class PresidentsGamePayload {
+  @Field()
+  game: PresidentsGame;
+}
+
 // For some reason an input with only one field is not an object in usage (no dot access)
 @InputType()
 export class IdRequest {
-  @Field((type) => ID)
-  id: ObjectId;
+  @Field()
+  id: string;
 }
 
 @InputType()
@@ -46,3 +52,6 @@ export class RoundEndTurnData {
 
 @InputType()
 export class StartPresidentsGameRequest extends IdRequest {}
+
+@InputType()
+export class RematchRequest extends IdRequest {}

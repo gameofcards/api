@@ -28,7 +28,7 @@ export default class Domain implements Instance {
   public status!: Status;
 
   @Property({ ref: 'UITask' })
-  @Field((type) => ID)
+  @Field((type) => ID, { nullable: true })
   public tasks?: Ref<UITask>[];
 
   get displayId() {

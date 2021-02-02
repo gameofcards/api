@@ -28,7 +28,7 @@ export default class UITask extends InstanceOperations implements Instance {
   public description!: string;
 
   @Property({ ref: 'Domain' })
-  @Field((type) => ID)
+  @Field((type) => ID, { nullable: true })
   public domain?: Ref<Domain>;
 
   get displayId() {

@@ -40,7 +40,7 @@ export default class DrinkRequest implements Instance {
   @Field((type) => ID)
   public toPlayer!: Ref<PresidentsPlayer>;
 
-  @Property({})
+  @Property()
   @Field((type) => ID)
   public game!: ObjectId;
 
@@ -53,8 +53,12 @@ export default class DrinkRequest implements Instance {
   public fulfilled!: boolean;
 
   @Property()
-  @Field()
+  @Field({ nullable: true })
   public fulfilledAt?: Date;
+
+  @Property()
+  @Field({ nullable: true })
+  public message?: string;
 
   /**
    * This method will create a DrinkRequest instance.
@@ -71,6 +75,7 @@ export default class DrinkRequest implements Instance {
       game: input.game,
       sentAt: new Date(),
       fulfilled: false,
+      message: input.message
     };
     return this.create(drinkRequestInput);
   }

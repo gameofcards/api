@@ -609,7 +609,8 @@ describe('Presidents Game', function () {
       const request: SendDrinkRequestRequest = {
         fromPlayer: game.players[0].id,
         toPlayer: game.players[1].id,
-        id: game.id
+        id: game.id,
+        message: 'message'
       };
       try {
         await PresidentsGameModel.SendDrinkRequest(request);
@@ -632,7 +633,8 @@ describe('Presidents Game', function () {
       const request: SendDrinkRequestRequest = {
         fromPlayer: game.findPlayerBySeatPosition(0).id,
         toPlayer: game.findPlayerBySeatPosition(1).id,
-        id: game.id
+        id: game.id,
+        message: 'message'
       };
       try {
         await PresidentsGameModel.SendDrinkRequest(request);
@@ -655,7 +657,8 @@ describe('Presidents Game', function () {
       const request: SendDrinkRequestRequest = {
         fromPlayer: game.findPlayerBySeatPosition(0).id,
         toPlayer: game.findPlayerBySeatPosition(1).id,
-        id: game.id
+        id: game.id,
+        message: 'message'
       };
       let result = await PresidentsGameModel.SendDrinkRequest(request);
       expect(result.findPlayerBySeatPosition(0).drinkRequestsSent.length).toEqual(1);
@@ -676,7 +679,8 @@ describe('Presidents Game', function () {
       const request: SendDrinkRequestRequest = {
         fromPlayer: game.findPlayerBySeatPosition(0).id,
         toPlayer: game.findPlayerBySeatPosition(1).id,
-        id: game.id
+        id: game.id,
+        message: 'message'
       };
       let result = await PresidentsGameModel.SendDrinkRequest(request);
       try {
@@ -704,7 +708,8 @@ describe('Presidents Game', function () {
       const request: SendDrinkRequestRequest = {
         fromPlayer: game.findPlayerBySeatPosition(0).id,
         toPlayer: game.findPlayerBySeatPosition(1).id,
-        id: game.id
+        id: game.id,
+        message: 'message'
       };
       game = await PresidentsGameModel.SendDrinkRequest(request);
       const fulfillmentRequest: FulfillDrinkRequestRequest = {

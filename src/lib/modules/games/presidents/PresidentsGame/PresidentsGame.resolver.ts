@@ -1,3 +1,6 @@
+import { FulfillDrinkRequestRequest, SendDrinkRequestRequest } from './../DrinkRequest/DrinkRequest.input';
+import { logger } from './../../../../logger';
+import { CreatePresidentsGameRequest, JoinPresidentsGameRequest, PresidentsGamePayload, IdRequest, StartPresidentsGameRequest, RematchRequest } from './PresidentsGame.inputs';
 import { DocumentType } from '@typegoose/typegoose';
 import { ObjectId } from 'mongodb';
 import { PubSubEngine } from 'graphql-subscriptions';
@@ -18,88 +21,92 @@ export default class PresidentsGameResolver {
     return await PresidentsGameModel.find({});
   }
 
-  // @Mutation((returns) => PresidentsGame)
-  // async createGameAndAddUser(@Arg('input') input: PresidentsGameInput): Promise<PresidentsGame> {
-  //   const { name, config, createdByUser } = input;
-  //   const presidentsGame = { name, config, createdByUser };
-  //   const game = await PresidentsGameModel.CreateGameAndAddUser(presidentsGame);
-  //   return game;
-  // }
+  @Mutation((returns) => PresidentsGame)
+  async createPresidentsGame(@Arg('input') input: CreatePresidentsGameRequest): Promise<PresidentsGame> {
+    const game = await PresidentsGameModel.CreateGameAndAddPlayer(input);
+    return game;
+  }
 
-  // @Mutation((returns) => PresidentsGame)
-  // async joinGame(@Arg('input') input: JoinPresidentsGameInput, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
-  //   const { id, userId } = input;
-  //   const game = await PresidentsGameModel.JoinGame(id, userId);
-  //   await pubSub.publish(GameEvents.PlayerJoined, game);
-  //   return game;
-  // // }
+  @Mutation((returns) => PresidentsGame)
+  async joinPresidentsGame(@Arg('input') input: JoinPresidentsGameRequest, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
+    const game = await PresidentsGameModel.JoinGame(input);
+    const payload = { game: game.toObject() }
+    await pubSub.publish(GameEvents.PlayerJoined, payload);
+    return game;
+  }
 
-  // @Mutation((returns) => PresidentsGame)
-  // async addPresidentsTurn(@Arg('input') input: AddPresidentsTurnRequest, @PubSub() pubSub: PubSubEngine) {
-  //   const game = await PresidentsGameModel.AddPresidentsTurn(input);
-  //   // await pubSub.publish(GameEvents.TurnTaken, game);
-  //   // if (game.status.value === StatusValues.Finalized) {
-  //   //   await pubSub.publish(GameEvents.GameEnded, game);
-  //   // }
-  //   // return game;
-  // }
+  @Mutation((returns) => PresidentsGame)
+  async startPresidentsGame(@Arg('input') input: StartPresidentsGameRequest, @PubSub() pubSub: PubSubEngine) {
+    const game = await PresidentsGameModel.StartGame(input.id);
+    const payload = { game: game.toObject() }
+    await pubSub.publish(GameEvents.GameStarted, payload);
+    return game;
+  }
 
-  // @Mutation((returns) => PresidentsGame)
-  // async rematch(@Arg('input') input: IdInput, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
-  //   const { id } = input;
-  //   const game = await PresidentsGameModel.Rematch(id);
-  //   await pubSub.publish(GameEvents.RematchStarted, game);
-  //   return game;
-  // }
+  @Mutation((returns) => PresidentsGame)
+  async addPresidentsTurn(@Arg('input') input: AddPresidentsTurnRequest, @PubSub() pubSub: PubSubEngine) {
+    const game = await PresidentsGameModel.AddPresidentsTurn(input);
+    const payload = { game: game.toObject() }
+    await pubSub.publish(GameEvents.TurnTaken, payload);
+    return game;
+  }
 
-  // @Mutation((returns) => PresidentsGame)
-  // async fulfillDrinkRequest(@Arg('input') input: IdInput, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
-  //   const { id } = input;
-  //   const game = await PresidentsGameModel.FulfillDrinkRequest(id);
-  //   await pubSub.publish(GameEvents.DrinkRequestFulfilled, game);
-  //   return game;
-  // }
+  @Mutation((returns) => PresidentsGame)
+  async rematch(@Arg('input') input: RematchRequest, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
+    const game = await PresidentsGameModel.Rematch(input.id);
+    const payload = { game: game.toObject() }
+    await pubSub.publish(GameEvents.RematchStarted, payload);
+    return game;
+  }
 
-  // @Mutation((returns) => PresidentsGame)
-  // async sendDrinkRequest(@Arg('input') input: IdInput, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
-  //   const { id } = input;
-  //   const game = await PresidentsGameModel.SendDrinkRequest(id);
-  //   await pubSub.publish(GameEvents.DrinkRequestSent, game);
-  //   return game;
-  // }
+  @Mutation((returns) => PresidentsGame)
+  async fulfillDrinkRequest(@Arg('input') input: FulfillDrinkRequestRequest, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
+    const game = await PresidentsGameModel.FulfillDrinkRequest(input);
+    const payload = { game: game.toObject() }
+    await pubSub.publish(GameEvents.DrinkRequestFulfilled, payload);
+    return game;
+  }
+
+  @Mutation((returns) => PresidentsGame)
+  async sendDrinkRequest(@Arg('input') input: SendDrinkRequestRequest, @PubSub() pubSub: PubSubEngine): Promise<PresidentsGame> {
+    const game = await PresidentsGameModel.SendDrinkRequest(input);
+    const payload = { game: game.toObject() }
+    await pubSub.publish(GameEvents.DrinkRequestSent, payload);
+    return game;
+  }
 
   @Subscription({ topics: GameEvents.PlayerJoined })
-  playerJoined(@Root() game: PresidentsGame): PresidentsGame {
+  playerJoined(@Root() { game }: PresidentsGamePayload): PresidentsGame {
     return game;
   }
 
   @Subscription({ topics: GameEvents.GameStarted })
-  gameStarted(@Root() game: PresidentsGame): PresidentsGame {
+  gameStarted(@Root()  { game }: PresidentsGamePayload): PresidentsGame {
     return game;
   }
 
   @Subscription({ topics: GameEvents.TurnTaken })
-  turnTaken(@Root() game: PresidentsGame): PresidentsGame {
+  turnTaken(@Root()  { game }: PresidentsGamePayload): PresidentsGame {
     return game;
   }
 
   @Subscription({ topics: GameEvents.GameEnded })
-  gameEnded(@Root() game: PresidentsGame): PresidentsGame {
+  gameEnded(@Root()  { game }: PresidentsGamePayload): PresidentsGame {
     return game;
   }
 
   @Subscription({ topics: GameEvents.RematchStarted })
-  rematchStarted(@Root() game: PresidentsGame): PresidentsGame {
+  rematchStarted(@Root()  { game }: PresidentsGamePayload): PresidentsGame {
     return game;
   }
 
   @Subscription({ topics: GameEvents.DrinkRequestSent })
-  drinkRequestSent(@Root() game: PresidentsGame): PresidentsGame {
+  drinkRequestSent(@Root()  { game }: PresidentsGamePayload): PresidentsGame {
     return game;
   }
 
   @Subscription({ topics: GameEvents.DrinkRequestFulfilled })
-  drinkRequestFulfilled(@Root() game: PresidentsGame): PresidentsGame {
+  drinkRequestFulfilled(@Root()  { game }: PresidentsGamePayload): PresidentsGame {
     return game;
   }
 }

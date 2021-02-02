@@ -6,7 +6,7 @@
   "scripts": {
     "start": "export NODE_ENV=test && nodemon src/index.ts",
     "script": "export NODE_ENV=test && ts-node ./src/lib/modules/script.ts",
-    "dataDump": "export NODE_ENV=test && ts-node ./src/lib/modules/modules.data.ts",
+    "data": "export NODE_ENV=test && ts-node ./src/lib/modules/modules.data.ts",
     "test:prez": "export NODE_ENV=test && jest presidents.test.ts",
     "test:prez-game": "export NODE_ENV=test && jest PresidentsGame.test.ts",
     "test:prez-turn": "export NODE_ENV=test && jest PresidentsTurn.test.ts",

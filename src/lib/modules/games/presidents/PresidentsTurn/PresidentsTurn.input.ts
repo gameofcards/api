@@ -12,7 +12,7 @@ export class AddPresidentsTurnRequest {
   @Field()
   forPlayer!: string;
 
-  @Field()
+  @Field((type) => [String])
   cardsPlayed!: string[];
 
   @Field()
@@ -75,7 +75,7 @@ export class BuildPresidentsTurnInput {
   @Field((type) => ID)
   forPlayer!: Ref<PresidentsPlayer>;
 
-  @Field()
+  @Field((type) => [String])
   cardsPlayed!: string[];
 
   @Field()

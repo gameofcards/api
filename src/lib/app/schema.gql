@@ -3,6 +3,13 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input AddPresidentsTurnRequest {
+  cardsPlayed: [String!]!
+  forPlayer: String!
+  id: String!
+  wasPassed: Boolean!
+}
+
 type Card implements Instance {
   _id: ID!
   cardRank: CardRank!
@@ -17,6 +24,11 @@ type CardRank implements Instance {
   id: String!
   name: String!
   value: Int!
+}
+
+input CreatePresidentsGameRequest {
+  createdByUser: String!
+  name: String!
 }
 
 """
@@ -42,11 +54,18 @@ type DrinkRequest implements Instance {
   _id: ID!
   fromPlayer: ID!
   fulfilled: Boolean!
-  fulfilledAt: DateTime!
+  fulfilledAt: DateTime
   game: ID!
   id: String!
+  message: String
   sentAt: DateTime!
   toPlayer: ID!
+}
+
+input FulfillDrinkRequestRequest {
+  drinkId: String!
+  forPlayer: String!
+  id: String!
 }
 
 interface Game implements Instance {
@@ -54,11 +73,10 @@ interface Game implements Instance {
   config: GameConfiguration!
   createdAt: DateTime!
   createdByUser: ID!
-  currentPlayer: ID!
-  finishedAt: DateTime!
+  finishedAt: DateTime
   id: String!
   name: String!
-  startedAt: DateTime!
+  startedAt: DateTime
   status: GameStatus!
 }
 
@@ -81,6 +99,21 @@ type GameStatus implements Instance & StatusInterface {
 interface Instance {
   _id: ID!
   id: String!
+}
+
+input JoinPresidentsGameRequest {
+  id: String!
+  userId: String!
+}
+
+type Mutation {
+  addPresidentsTurn(input: AddPresidentsTurnRequest!): PresidentsGame!
+  createPresidentsGame(input: CreatePresidentsGameRequest!): PresidentsGame!
+  fulfillDrinkRequest(input: FulfillDrinkRequestRequest!): PresidentsGame!
+  joinPresidentsGame(input: JoinPresidentsGameRequest!): PresidentsGame!
+  rematch(input: RematchRequest!): PresidentsGame!
+  sendDrinkRequest(input: SendDrinkRequestRequest!): PresidentsGame!
+  startPresidentsGame(input: StartPresidentsGameRequest!): PresidentsGame!
 }
 
 """Mongo object id scalar type"""
@@ -108,17 +141,16 @@ type PresidentsGame implements Game & Instance {
   config: GameConfiguration!
   createdAt: DateTime!
   createdByUser: ID!
-  currentPlayer: ID!
-  drinkRequests: [DrinkRequest!]!
-  finishedAt: DateTime!
+  currentPlayer: ID
+  finishedAt: DateTime
   id: String!
   name: String!
   players: [PresidentsPlayer!]!
   rounds: [PresidentsRound!]!
-  startedAt: DateTime!
+  startedAt: DateTime
   status: GameStatus!
-  turnToBeat: PresidentsTurn!
-  winningPlayer: ID!
+  turnToBeat: PresidentsTurn
+  winningPlayer: ID
 }
 
 type PresidentsPlayer implements Instance & Player {
@@ -126,7 +158,6 @@ type PresidentsPlayer implements Instance & Player {
   cards: [Card!]!
   drinkRequestsReceived: [DrinkRequest!]!
   drinkRequestsSent: [DrinkRequest!]!
-  drinksDrunk: Int!
   game: ID!
   gameDisplayId: String!
   id: String!
@@ -134,12 +165,10 @@ type PresidentsPlayer implements Instance & Player {
   politicalRank: PoliticalRank!
   seatPosition: Int!
   user: ID!
-  wonTheGame: Boolean!
 }
 
 type PresidentsRound implements Instance {
   _id: ID!
-  game: ID!
   id: String!
   number: Float!
   startedAt: DateTime!
@@ -180,10 +209,25 @@ type Query {
   users: [User!]!
 }
 
+input RematchRequest {
+  id: String!
+}
+
 type Role implements Instance {
   _id: ID!
   id: String!
   name: String!
+}
+
+input SendDrinkRequestRequest {
+  fromPlayer: String!
+  id: String!
+  message: String!
+  toPlayer: String!
+}
+
+input StartPresidentsGameRequest {
+  id: String!
 }
 
 type Status implements Instance & StatusInterface {
@@ -196,6 +240,16 @@ interface StatusInterface implements Instance {
   _id: ID!
   id: String!
   value: String!
+}
+
+type Subscription {
+  drinkRequestFulfilled: PresidentsGame!
+  drinkRequestSent: PresidentsGame!
+  gameEnded: PresidentsGame!
+  gameStarted: PresidentsGame!
+  playerJoined: PresidentsGame!
+  rematchStarted: PresidentsGame!
+  turnTaken: PresidentsGame!
 }
 
 type Suit implements Instance {
@@ -212,9 +266,7 @@ type User implements Instance {
   displayName: String!
   email: String!
   id: String!
-  password: String!
   playerRecords: [ID!]!
   role: Role!
-  token: String!
   username: String!
 }
