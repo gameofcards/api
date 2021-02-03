@@ -16,6 +16,7 @@ import { ObjectId } from 'mongodb';
 import { PresidentsGame } from '../PresidentsGame';
 import PresidentsPlayer from '../PresidentsPlayer/PresidentsPlayer';
 import { PresidentsTurnError } from './errors';
+import { PresidentsTurnValidations } from './../../../../types';
 import { Utils } from '../../../modules.utils';
 import { logger } from './../../../../logger';
 
@@ -192,7 +193,7 @@ export default class PresidentsTurn implements Instance {
   ) {
     const isPlayersTurn = Utils.areIDsEqual(game.currentPlayer, turn.forPlayer);
     if (!isPlayersTurn) {
-      throw new PresidentsTurnError(`Unable to process turn. It is not your turn.`);
+      throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.NotYourTurn));
     }
     if (turn.wasPassed) {
       return true;
@@ -205,14 +206,14 @@ export default class PresidentsTurn implements Instance {
     // Is the current hand valid (all ranks the same)?
     const areCardsValid = this.areCardsValid(turn.cardsPlayed);
     if (!areCardsValid) {
-      throw new PresidentsTurnError(`Cannot process an invalid turn. The cards selected are invalid.`);
+      throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.InvalidCards));
     }
     if (game.isFirstTurnOfTheGame) {
       const contains3Clubs = turn.cardsPlayed.find((card) => card.shortHand === '3Clubs');
       if (contains3Clubs) {
         return true;
       }
-      throw new PresidentsTurnError(`First turn of the game must contain a 3 of clubs.`);
+      throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.FirstTurn3Clubs));
     }
     if (game.isFirstTurnOfCurrentRound) {
       return true;
@@ -225,7 +226,7 @@ export default class PresidentsTurn implements Instance {
       if (areCardsBetter) {
         return true;
       } else {
-        throw new PresidentsTurnError(`Cannot process an invalid turn. Your cards are not better than the last hand.`);
+        throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.CardsNotBetter));
       }
     }
   }

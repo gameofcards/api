@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { AddPresidentsTurnInput, AddPresidentsTurnRequest } from './../PresidentsTurn/PresidentsTurn.input';
 import { CardModel, GameStatusModel, UserModel } from '../../../core';
 import { FulfillDrinkRequestRequest, SendDrinkRequestRequest } from './../DrinkRequest/DrinkRequest.input';
-import { PoliticalRankValues, StatusValues } from './../../../../types';
+import { PoliticalRankValues, PresidentsGameValidations, PresidentsTurnValidations, StatusValues } from './../../../../types';
 import { dropCoreModule, initializeCoreModule } from './../../../core/core.data';
 
 import { PoliticalRankModel } from '../PoliticalRank';
@@ -137,7 +137,7 @@ describe('Presidents Game', function () {
         game.status = inProgressStatus;
         await PresidentsGameModel.JoinGame(joinInput1);
       } catch (err) {
-        expect(err.message).toEqual('Cannot join game. It`s in progress.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.GameInProgress));
       }
     });
 
@@ -159,7 +159,7 @@ describe('Presidents Game', function () {
         game.status = finalizedStatus;
         await PresidentsGameModel.JoinGame(joinInput1);
       } catch (err) {
-        expect(err.message).toEqual('Cannot join game. It`s finished.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.GameIsFinalized));
       }
     });
 
@@ -187,7 +187,7 @@ describe('Presidents Game', function () {
           game = await PresidentsGameModel.JoinGame(input);
         }
       } catch (err) {
-        expect(err.message).toEqual('Cannot join game. It is already full.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.GameIsFull));
       }
     });
   });
@@ -230,7 +230,7 @@ describe('Presidents Game', function () {
       try {
         const result = await instance.initialize();
       } catch (err) {
-        expect(err.message).toEqual('Unable to start game. Minimum number of players is 2.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.MinimumPlayersNotReached));
       }
     });
   });
@@ -315,7 +315,7 @@ describe('Presidents Game', function () {
       try {
         game = await game.initializeNextRound();
       } catch (err) {
-        expect(err.message).toEqual('Unable to start next round. The game is finalized.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.GameIsFinalized));
       }
     });
 
@@ -382,7 +382,7 @@ describe('Presidents Game', function () {
       try {
         await PresidentsGameModel.StartGame(game.id);
       } catch (err) {
-        expect(err.message).toEqual('Unable to start game. It is already in progress.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.GameInProgress));
       }
     });
   });
@@ -428,7 +428,7 @@ describe('Presidents Game', function () {
       try {
         await PresidentsGameModel.AddPresidentsTurn(invalidTurn);
       } catch (err) {
-        expect(err.message).toEqual('Unable to process turn. It is not your turn.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsTurnValidations.NotYourTurn));
       }
 
     });
@@ -615,7 +615,7 @@ describe('Presidents Game', function () {
       try {
         await PresidentsGameModel.SendDrinkRequest(request);
       } catch (err) {
-        expect(err.message).toEqual('you must wait til all players have ranks to give drinks out');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.NoRanksAssigned));
       }
     });
 
@@ -639,7 +639,7 @@ describe('Presidents Game', function () {
       try {
         await PresidentsGameModel.SendDrinkRequest(request);
       } catch (err) {
-        expect(err.message).toEqual('fromPlayer must out rank toPlayer in order to give a drink');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.PlayerRankTooLow));
       }  
     });
 
@@ -686,7 +686,7 @@ describe('Presidents Game', function () {
       try {
         let result2 = await PresidentsGameModel.SendDrinkRequest(request);
       } catch (err) {
-        expect(err.message).toEqual('toPlayer already has a drink to drink from fromPlayer. you can\'t give another')
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsGameValidations.DrinkUnfulfilled));
       }
     });
     

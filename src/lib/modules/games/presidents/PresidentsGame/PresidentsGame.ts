@@ -44,6 +44,7 @@ import { PresidentsTurn, PresidentsTurnModel } from '../PresidentsTurn';
 import { ObjectId } from 'mongodb';
 import { PresidentsDeckModel } from '../PresidentsDeck';
 import { PresidentsGameError } from './errors';
+import { PresidentsGameValidations } from './../../../../types';
 import { StatusValues } from '../../../../types';
 import { Utils } from '../../../modules.utils';
 import { logger } from './../../../../logger';
@@ -165,20 +166,20 @@ export default class PresidentsGame extends Game {
     const game = await this.findById(input.id);
 
     if (game.status.value === StatusValues.InProgress) {
-      return Promise.reject(new PresidentsGameError('Cannot join game. It`s in progress.'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.GameInProgress)));
     }
 
     if (game.status.value === StatusValues.Finalized) {
-      return Promise.reject(new PresidentsGameError('Cannot join game. It`s finished.'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.GameIsFinalized)));
     }
 
     if (game.players.length === game.config.maxPlayers) {
-      return Promise.reject(new PresidentsGameError('Cannot join game. It is already full.'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.GameIsFull)));
     }
 
     const hasUserJoined = game.players.find((player) => Utils.areIDsEqual(player.id, input.userId));
     if (hasUserJoined) {
-      return Promise.reject(new PresidentsGameError('User has already joined the game.'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.UserHasAlreadyJoined)));
     }
 
     return game.addPlayer(input.userId);
@@ -194,15 +195,13 @@ export default class PresidentsGame extends Game {
    */
   public async initialize(this: DocumentType<PresidentsGame>) {
     if (this.status.value === StatusValues.InProgress) {
-      return Promise.reject(new PresidentsGameError('Unable to start game. It is already in progress.'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.GameInProgress)));
     }
     if (this.status.value === StatusValues.Finalized) {
-      return Promise.reject(new PresidentsGameError('Unable to start game. It has already finished.'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.GameIsFinalized)));
     }
     if (this.players.length < this.config.minPlayers) {
-      return Promise.reject(
-        new PresidentsGameError(`Unable to start game. Minimum number of players is ${this.config.minPlayers}.`)
-      );
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.MinimumPlayersNotReached)));
     }
 
     let { deck } = this.config;
@@ -227,7 +226,7 @@ export default class PresidentsGame extends Game {
    */
   public async initializeNextRound(this: DocumentType<PresidentsGame>) {
     if (this.status.value === StatusValues.Finalized) {
-      return Promise.reject(new PresidentsGameError('Unable to start next round. The game is finalized.'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.GameIsFinalized)));
     }
     if (this.status.value === StatusValues.InProgress) {
       if (this.turnToBeat) {
@@ -645,18 +644,18 @@ export default class PresidentsGame extends Game {
     const toPlayerInstance = game.players.find(player => Utils.areIDsEqual(player._id, input.toPlayer));
 
     if (!fromPlayerInstance.politicalRank || !toPlayerInstance.politicalRank) {
-      return Promise.reject(new PresidentsGameError('you must wait til all players have ranks to give drinks out'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.NoRanksAssigned)));
     }
 
     const doesGiverOutRankReceiver = fromPlayerInstance.politicalRank.value < fromPlayerInstance.politicalRank.value;
     if (doesGiverOutRankReceiver) {
-      return Promise.reject(new PresidentsGameError('fromPlayer must out rank toPlayer in order to give a drink'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.PlayerRankTooLow)));
     }
     const unfulfilledDrinksFromSender = toPlayerInstance.drinkRequestsReceived
       .filter(drink => !drink.fulfilled)
       .filter(drink => Utils.areIDsEqual(drink.fromPlayer, fromPlayerInstance._id));
     if (unfulfilledDrinksFromSender.length > 0) {
-      return Promise.reject(new PresidentsGameError('toPlayer already has a drink to drink from fromPlayer. you can\'t give another'));
+      return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.DrinkUnfulfilled)));
     }
 
     const requestInstance = await DrinkRequestModel.createInstance({

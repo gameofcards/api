@@ -28,12 +28,34 @@ export enum ConfidenceLevels {
 export enum PoliticalRankValues {
   President = 'President',
   VicePresident = 'Vice President',
-  Speaker = 'Speaker of the House',
+  SpeakerOfTheHouse = 'Speaker of the House',
   ProTempore = 'President Pro Tempore of the Senate',
-  State = 'Secretary of State',
-  Treasury = 'Secretary of the Treasury',
-  Defense = 'Secretary of Defense',
+  SecretaryOfState = 'Secretary of State',
+  SecretaryOfTreasury = 'Secretary of the Treasury',
+  SecretaryOfDefense = 'Secretary of Defense',
   Asshole = 'Asshole'
+}
+
+export enum PresidentsGameValidations {
+  GameInProgress = 'The game is in progress.',
+  GameIsFinalized = 'The game is finished.',
+  GameIsFull = 'The game is full.',
+  UserHasAlreadyJoined = 'You have already joined the game.',
+  MinimumPlayersNotReached = 'The minimum number of players has not been reached.',
+  NoRanksAssigned = 'Not all players have ranks yet.',
+  PlayerRankTooLow = 'The player receiving this drink out ranks you.',
+  DrinkUnfulfilled = 'The player receiving this drink currently has one from you.'
+}
+
+export enum PresidentsTurnValidations {
+  NotYourTurn = 'It is not your turn.',
+  InvalidCards = 'The cards selected are invalid.',
+  FirstTurn3Clubs = 'The first turn of the game must contain the 3 of clubs.',
+  CardsNotBetter = 'Your cards are not better than the last turn.',
+}
+
+export enum Errors {
+  OperationFailed = 'Operation failed.',
 }
 
 export enum StatusValues {

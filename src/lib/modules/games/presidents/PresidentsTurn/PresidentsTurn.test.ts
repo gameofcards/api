@@ -2,12 +2,12 @@ import 'regenerator-runtime/runtime';
 import 'reflect-metadata';
 
 import { AddPresidentsTurnInput, GameDataForTurnValidation } from './PresidentsTurn.input';
+import { PresidentsTurnValidations, StatusValues } from './../../../../types';
 import { dropCoreModule, initializeCoreModule } from './../../../core/core.data';
 
 import { CardModel } from '../../../core';
 import { PresidentsGameBuilder } from './../PresidentsGame/PresidentsGame.builder';
 import { PresidentsTurnModel } from '.';
-import { StatusValues } from './../../../../types';
 import { Utils } from './../../../modules.utils';
 import db from '../../../../db';
 import { logger } from '../../../../logger';
@@ -179,7 +179,7 @@ describe('Presidents Turn', function () {
       try {
         PresidentsTurnModel.isValidTurn(gameData, turn);
       } catch (err) {
-        expect(err.message).toEqual('Unable to process turn. It is not your turn.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsTurnValidations.NotYourTurn));
       }
     });
 
@@ -213,7 +213,7 @@ describe('Presidents Turn', function () {
       try {
         PresidentsTurnModel.isValidTurn(gameData, invalidTurn);
       } catch (err) {
-        expect(err.message).toEqual('First turn of the game must contain a 3 of clubs.');
+        expect(err.message).toEqual(Utils.operationFailed(PresidentsTurnValidations.FirstTurn3Clubs));
       }
 
       let result = false;

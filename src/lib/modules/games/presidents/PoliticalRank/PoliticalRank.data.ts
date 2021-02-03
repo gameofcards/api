@@ -1,36 +1,37 @@
 import { PoliticalRankModel } from '.';
+import { PoliticalRankValues } from './../../../../types';
 
 const PoliticalRanks = [
   {
-    name: 'President',
+    name: PoliticalRankValues.President,
     value: 1,
   },
   {
-    name: 'Vice President',
+    name: PoliticalRankValues.VicePresident,
     value: 2,
   },
   {
-    name: 'Speaker of the House',
+    name: PoliticalRankValues.SpeakerOfTheHouse,
     value: 3,
   },
   {
-    name: 'President Pro Tempore of the Senate',
+    name: PoliticalRankValues.ProTempore,
     value: 4,
   },
   {
-    name: 'Secretary of State',
+    name: PoliticalRankValues.SecretaryOfState,
     value: 5,
   },
   {
-    name: 'Secretary of the Treasury',
+    name: PoliticalRankValues.SecretaryOfTreasury,
     value: 6,
   },
   {
-    name: 'Secretary of Defense',
+    name: PoliticalRankValues.SecretaryOfDefense,
     value: 7,
   },
   {
-    name: 'Asshole',
+    name: PoliticalRankValues.Asshole,
     value: 8,
   },
 ];

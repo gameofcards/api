@@ -1,3 +1,4 @@
+import { Errors } from './../types';
 import { ID } from '../types';
 import { Types } from 'mongoose';
 
@@ -88,5 +89,9 @@ export class Utils {
     for (let index = 0; index < array.length; index++) {
       await callback(array[index], index, array);
     }
+  }
+
+  static operationFailed(message: string) {
+    return `${Errors.OperationFailed} ${message}`;
   }
 }
