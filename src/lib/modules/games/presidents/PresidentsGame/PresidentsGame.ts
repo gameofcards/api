@@ -88,7 +88,6 @@ export default class PresidentsGame extends Game {
   @Field((type) => [PresidentsPlayer])
   public players!: PresidentsPlayer[];
 
-
   /**
    * This method will create a PresidentsGame instance.
    * @param input PresidentsGameInput
@@ -129,7 +128,7 @@ export default class PresidentsGame extends Game {
       user: user._id,
       game: this._id,
       seatPosition: this.players.length,
-      politicalRank
+      politicalRank,
     });
     this.players.push(player);
     await this.save();
@@ -210,7 +209,7 @@ export default class PresidentsGame extends Game {
     const numPlayers = this.players.length;
     const dealtCards = deckInstance.deal(numPlayers, shuffledCards);
     const indexOf3Clubs = deckInstance.find3ClubsIndex(dealtCards);
-    this.getOrderedPlayers().forEach((player, idx) => player.cards = dealtCards[idx]);
+    this.getOrderedPlayers().forEach((player, idx) => (player.cards = dealtCards[idx]));
     this.currentPlayer = this.findPlayerBySeatPosition(indexOf3Clubs);
     await this.save();
     return this;
@@ -297,7 +296,7 @@ export default class PresidentsGame extends Game {
       forPlayer: turn.forPlayer,
       cardsPlayed: turn.cardsPlayed,
       wasPassed: turn.wasPassed,
-      endedRound: !!turn.cardsPlayed.find(card => card.cardRank.value === 2),
+      endedRound: !!turn.cardsPlayed.find((card) => card.cardRank.value === 2),
       wasSkipped: false,
       didCauseSkips: false,
       skipsRemaining: 0,
@@ -305,7 +304,7 @@ export default class PresidentsGame extends Game {
     presidentsTurn.skipsRemaining = PresidentsTurnModel.calculateSkips(this?.turnToBeat?.cardsPlayed, turn.cardsPlayed);
     presidentsTurn.didCauseSkips = presidentsTurn.skipsRemaining > 0;
     const presidentsTurnInstance = await PresidentsTurnModel.createInstance(presidentsTurn);
-  return presidentsTurnInstance;
+    return presidentsTurnInstance;
   }
 
   /**
@@ -341,9 +340,9 @@ export default class PresidentsGame extends Game {
 
   /**
    * This method will add a PresidentsTurn instance to the current round.
-   * It first validates the turn, and if it is valid it adds it to the 
-   * latest round. After setting the next player, we check if the previous 
-   * turn caused any skips and add those as well. At the end we check to see 
+   * It first validates the turn, and if it is valid it adds it to the
+   * latest round. After setting the next player, we check if the previous
+   * turn caused any skips and add those as well. At the end we check to see
    * if we need to create the next round.
    * @param turn AddPresidentsTurnRequest
    * @returns DocumentType<PresidentsGame>
@@ -355,13 +354,13 @@ export default class PresidentsGame extends Game {
    */
   public static async AddPresidentsTurn(this: ReturnModelType<typeof PresidentsGame>, turn: AddPresidentsTurnRequest) {
     const game = await this.findById(turn.id);
-    const forPlayer = game.players.find(player => Utils.areIDsEqual(player.id, turn.forPlayer));
-    const cardsPlayed = forPlayer.cards.filter(card => turn.cardsPlayed.find(c => Utils.areIDsEqual(c, card.id)));
+    const forPlayer = game.players.find((player) => Utils.areIDsEqual(player.id, turn.forPlayer));
+    const cardsPlayed = forPlayer.cards.filter((card) => turn.cardsPlayed.find((c) => Utils.areIDsEqual(c, card.id)));
     const { wasPassed } = turn;
-    const turnInput: AddPresidentsTurnInput = { 
-      forPlayer: forPlayer._id, 
-      cardsPlayed, 
-      wasPassed 
+    const turnInput: AddPresidentsTurnInput = {
+      forPlayer: forPlayer._id,
+      cardsPlayed,
+      wasPassed,
     };
     return game.addPresidentsTurn(turnInput);
   }
@@ -402,7 +401,7 @@ export default class PresidentsGame extends Game {
       const presidentsTurnInstance = await this.createPresidentsTurn(turn);
       const currentRound = this.rounds[this.rounds.length - 1];
       currentRound.turns.push(presidentsTurnInstance);
-      const playedATwo = presidentsTurnInstance.cardsPlayed.find(card => card.cardRank.value === 2);
+      const playedATwo = presidentsTurnInstance.cardsPlayed.find((card) => card.cardRank.value === 2);
       if (playedATwo) {
         return this.initializeNextRound();
       }
@@ -417,13 +416,13 @@ export default class PresidentsGame extends Game {
           this.currentPlayer = this.getNextPlayerId();
         }
       }
-      const player = this.players.find(player => Utils.areIDsEqual(player._id, presidentsTurnInstance.forPlayer));
-      player.cards = player.cards.filter(card => turn.cardsPlayed.find(c => !Utils.areIDsEqual(c._id, card._id)));
+      const player = this.players.find((player) => Utils.areIDsEqual(player._id, presidentsTurnInstance.forPlayer));
+      player.cards = player.cards.filter((card) => turn.cardsPlayed.find((c) => !Utils.areIDsEqual(c._id, card._id)));
       if (player.cards.length === 0) {
-        const playersWithNoCards = this.players.filter(player => player.cards.length === 0);
+        const playersWithNoCards = this.players.filter((player) => player.cards.length === 0);
         player.nextGameRank = await PoliticalRankModel.findOne({ value: playersWithNoCards.length });
         if (playersWithNoCards.length === 1) {
-          const playerWithCards = this.players.find(player => player.cards.length > 0);
+          const playerWithCards = this.players.find((player) => player.cards.length > 0);
           playerWithCards.nextGameRank = await PoliticalRankModel.findOne({ value: playersWithNoCards.length + 1 });
           this.status = await GameStatus.findByValue(StatusValues.Finalized);
           this.finishedAt = Utils.getDate();
@@ -436,7 +435,7 @@ export default class PresidentsGame extends Game {
           await this.initializeNextRound();
         }
       }
-      
+
       await this.save();
       return this;
     }
@@ -446,7 +445,7 @@ export default class PresidentsGame extends Game {
    * This method will determine if the round is over, ie. the current player's last turn ended the round.
    * We do this when, for one example, everyone passes after a players turn and it's now
    * their turn again. We need to know this so we can add a new round.
-   * 
+   *
    * IF not all players have taken a turn => false
    * FIND current players last turn taken
    * IF we found one and a 2 was played => true
@@ -469,7 +468,7 @@ export default class PresidentsGame extends Game {
 
     // not all players have taken a turn
     if (latestRound.turns.length < this.players.length) {
-      return {isRoundOver: false, turn: null};
+      return { isRoundOver: false, turn: null };
     }
 
     let turn;
@@ -487,12 +486,12 @@ export default class PresidentsGame extends Game {
 
     // if we found a turn and it contained a 2 they ended the round
     if (turn.cardsPlayed.find((card) => card.cardRank.value === 2)) {
-      return {isRoundOver: true, turn};
+      return { isRoundOver: true, turn };
     }
 
     // we didn't find one
     if (!foundLastTurn) {
-      return {isRoundOver: false, turn: null};
+      return { isRoundOver: false, turn: null };
     }
 
     // we found one, did it end the round?
@@ -500,7 +499,7 @@ export default class PresidentsGame extends Game {
     let playersLastTurn = turns[0];
     // they passed
     if (playersLastTurn.wasPassed) {
-      return {isRoundOver: false, turn: null};
+      return { isRoundOver: false, turn: null };
     }
     // they could've been skipped
     if (playersLastTurn.wasSkipped) {
@@ -511,14 +510,14 @@ export default class PresidentsGame extends Game {
         if (turn.didCauseSkips) {
           // but if they skipped themself, and now it's back to them they're good
           if (Utils.areIDsEqual(this.currentPlayer, turn.forPlayer)) {
-            return {isRoundOver: true, turn: playersLastTurn};
+            return { isRoundOver: true, turn: playersLastTurn };
           }
           // if they didn't skip themself, they didn't end the round
-          return {isRoundOver: false, turn: null};
+          return { isRoundOver: false, turn: null };
         }
       }
       // if they didn't skip themself, they didn't end the round
-      return {isRoundOver: false, turn: null};
+      return { isRoundOver: false, turn: null };
     }
 
     i = 1;
@@ -538,14 +537,14 @@ export default class PresidentsGame extends Game {
     while (checkingForPasses && i < turns.length) {
       let turn = turns[i];
       if (!turn.wasPassed) {
-        return {isRoundOver: false, turn: null};
+        return { isRoundOver: false, turn: null };
       } else {
         i++;
       }
     }
 
     // they played a turn so good nobody could beat it
-    return {isRoundOver: true, turn: playersLastTurn};
+    return { isRoundOver: true, turn: playersLastTurn };
   }
 
   /**
@@ -612,13 +611,13 @@ export default class PresidentsGame extends Game {
    */
   public static async FulfillDrinkRequest(this: ReturnModelType<typeof PresidentsGame>, input: FulfillDrinkRequestRequest) {
     let game = await this.findById(input.id);
-    const receiver = game.players.find(player => Utils.areIDsEqual(player._id, input.forPlayer));
-    const drinkReceived = receiver.drinkRequestsReceived.find(drink => Utils.areIDsEqual(drink._id, input.drinkId));
+    const receiver = game.players.find((player) => Utils.areIDsEqual(player._id, input.forPlayer));
+    const drinkReceived = receiver.drinkRequestsReceived.find((drink) => Utils.areIDsEqual(drink._id, input.drinkId));
     const now = Utils.getDate();
     drinkReceived.fulfilled = true;
     drinkReceived.fulfilledAt = now;
-    const sender = game.players.find(player => Utils.areIDsEqual(player._id, drinkReceived.fromPlayer));
-    const drinkSent = sender.drinkRequestsSent.find(drink => Utils.areIDsEqual(drink._id, input.drinkId));
+    const sender = game.players.find((player) => Utils.areIDsEqual(player._id, drinkReceived.fromPlayer));
+    const drinkSent = sender.drinkRequestsSent.find((drink) => Utils.areIDsEqual(drink._id, input.drinkId));
     drinkSent.fulfilled = true;
     drinkSent.fulfilledAt = now;
     await game.save();
@@ -640,8 +639,8 @@ export default class PresidentsGame extends Game {
    */
   public static async SendDrinkRequest(this: ReturnModelType<typeof PresidentsGame>, input: SendDrinkRequestRequest) {
     let game = await this.findById(input.id);
-    const fromPlayerInstance = game.players.find(player => Utils.areIDsEqual(player._id, input.fromPlayer));
-    const toPlayerInstance = game.players.find(player => Utils.areIDsEqual(player._id, input.toPlayer));
+    const fromPlayerInstance = game.players.find((player) => Utils.areIDsEqual(player._id, input.fromPlayer));
+    const toPlayerInstance = game.players.find((player) => Utils.areIDsEqual(player._id, input.toPlayer));
 
     if (!fromPlayerInstance.politicalRank || !toPlayerInstance.politicalRank) {
       return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.NoRanksAssigned)));
@@ -652,8 +651,8 @@ export default class PresidentsGame extends Game {
       return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.PlayerRankTooLow)));
     }
     const unfulfilledDrinksFromSender = toPlayerInstance.drinkRequestsReceived
-      .filter(drink => !drink.fulfilled)
-      .filter(drink => Utils.areIDsEqual(drink.fromPlayer, fromPlayerInstance._id));
+      .filter((drink) => !drink.fulfilled)
+      .filter((drink) => Utils.areIDsEqual(drink.fromPlayer, fromPlayerInstance._id));
     if (unfulfilledDrinksFromSender.length > 0) {
       return Promise.reject(new PresidentsGameError(Utils.operationFailed(PresidentsGameValidations.DrinkUnfulfilled)));
     }
@@ -662,7 +661,7 @@ export default class PresidentsGame extends Game {
       fromPlayer: fromPlayerInstance._id,
       toPlayer: toPlayerInstance._id,
       game: game._id,
-      message: input.message
+      message: input.message,
     });
 
     fromPlayerInstance.drinkRequestsSent.push(requestInstance);

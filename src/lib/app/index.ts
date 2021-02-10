@@ -1,5 +1,6 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
+import * as jwt from 'koa-jwt';
 import * as path from 'path';
 
 import { ApolloServer, PubSub } from 'apollo-server-koa';
@@ -10,9 +11,12 @@ import { ApplicationError } from './errors';
 import { GraphQLSchema } from 'graphql';
 import { ObjectId } from 'mongodb';
 import { ObjectIdScalar } from '../types';
+import { RoleNames } from './../types';
+import { auth } from './auth';
 import { buildSchema } from 'type-graphql';
 import graphqlHTTP from 'koa-graphiql';
 import { logger } from '../logger';
+import { middleware } from './middleware';
 import resolvers from '../modules/modules.resolvers';
 
 const port = process.env.PORT || 3000;
@@ -46,24 +50,39 @@ export class Application {
 
   public async start() {
     await this.initializeApolloServer();
+    this.initializeKoa();
     this.initializeGraphiql();
     this.initializeHttpServer();
   }
 
+  private initializeKoa() {
+    this.app.use(middleware)
+  }
+
   private async initializeApolloServer() {
     const { app, pubsub } = this;
-    const schema: GraphQLSchema = await buildSchema({
+    this.schema = await buildSchema({
       resolvers,
       emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
       scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
+      authChecker: auth,
+      validate: false
     });
     this.apollo = new ApolloServer({
-      schema,
-      extensions: [() => new ApolloLogExtension({ level: 'debug', timestamp: true, prefix: 'apollo' })],
+      schema: this.schema,
+      // extensions: [() => new ApolloLogExtension({ level: 'debug', timestamp: true, prefix: 'apollo' })],
       engine: {
         reportSchema: true,
       },
-      context: async ({ req, connection }) => ({ pubsub }),
+      context: ({ ctx }) => {
+        const token  = ctx.cookies.get('token');
+        logger.info(`apollo:context:token -- ${token}`);
+        const user = {
+          role: RoleNames.Administrator,
+          id: '6018c463a65201803da6b465',
+        };
+        return { koaCtx: ctx, user, pubsub };
+      },
     });
     this.apollo.applyMiddleware({ app });
   }

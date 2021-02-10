@@ -46,7 +46,7 @@ export class RoundEndTurnData {
   @Field()
   isRoundOver: boolean;
 
-  @Field(type => PresidentsTurn)
+  @Field((type) => PresidentsTurn)
   turn: PresidentsTurn;
 }
 

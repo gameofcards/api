@@ -104,4 +104,4 @@ class Logger {
   }
 }
 
-export const logger = Logger.GetInstance();
+export const logger = Logger.GetInstance({ dir: 'debug' });

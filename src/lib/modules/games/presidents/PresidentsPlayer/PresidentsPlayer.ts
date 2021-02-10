@@ -28,7 +28,7 @@ export default class PresidentsPlayer extends Player implements Instance {
   public get displayId() {
     return this.gameDisplayId;
   }
-  
+
   // sus
   @Property({ required: true })
   @Field((type) => ID)
@@ -75,7 +75,7 @@ export default class PresidentsPlayer extends Player implements Instance {
       game,
       drinkRequestsSent,
       drinkRequestsReceived,
-      politicalRank
+      politicalRank,
     };
     const instance = await this.create(presidentsPlayer);
     await userInstance.addPlayerRecord(instance);

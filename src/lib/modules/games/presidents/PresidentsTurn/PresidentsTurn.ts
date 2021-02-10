@@ -78,7 +78,6 @@ export default class PresidentsTurn implements Instance {
    */
   public static async createInstance(this: ReturnModelType<typeof PresidentsTurn>, input: PresidentsTurnInput) {
     let { forPlayer, cardsPlayed, wasPassed, wasSkipped, didCauseSkips, skipsRemaining, endedRound } = input;
-
     const turn = {
       forPlayer,
       takenAt: Utils.getDate(),
@@ -89,7 +88,6 @@ export default class PresidentsTurn implements Instance {
       skipsRemaining,
       endedRound,
     };
-
     const instance = await this.create(turn);
     return instance;
   }
@@ -122,17 +120,14 @@ export default class PresidentsTurn implements Instance {
   public static areCardsBetter(cardsToBeat: Card[], cardsPlayed: Card[]) {
     const handToBeatCardRankValues = cardsToBeat.map((card) => card.cardRank.value);
     const currentHandCardRankValues = cardsPlayed.map((card) => card.cardRank.value);
-
     const doesContainTwo = !!currentHandCardRankValues.find((value) => value === 2);
     if (doesContainTwo) {
       return true;
     }
-
     const doesCurrentHandHaveMoreCards = currentHandCardRankValues.length > handToBeatCardRankValues.length;
     if (doesCurrentHandHaveMoreCards) {
       return true;
     }
-
     const areNumberOfCardsEqual = currentHandCardRankValues.length === handToBeatCardRankValues.length;
     if (areNumberOfCardsEqual) {
       const areCardsSameRank = currentHandCardRankValues[0] === handToBeatCardRankValues[0];
@@ -199,34 +194,33 @@ export default class PresidentsTurn implements Instance {
       return true;
     }
     const isPlayingCards = turn.cardsPlayed.length > 0;
-    if (!isPlayingCards) {
-      // they didn't pass or play any cards
+    if (!isPlayingCards && !turn.wasPassed) {
       return false;
     }
-    // Is the current hand valid (all ranks the same)?
     const areCardsValid = this.areCardsValid(turn.cardsPlayed);
     if (!areCardsValid) {
       throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.InvalidCards));
     }
-    if (game.isFirstTurnOfTheGame) {
-      const contains3Clubs = turn.cardsPlayed.find((card) => card.shortHand === '3Clubs');
-      if (contains3Clubs) {
+    if (areCardsValid) {
+      if (game.isFirstTurnOfTheGame) {
+        const contains3Clubs = turn.cardsPlayed.find((card) => card.shortHand === '3Clubs');
+        if (contains3Clubs) {
+          return true;
+        }
+        throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.FirstTurn3Clubs));
+      } 
+      else if (game.isFirstTurnOfCurrentRound) {
         return true;
       }
-      throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.FirstTurn3Clubs));
-    }
-    if (game.isFirstTurnOfCurrentRound) {
-      return true;
-    }
-    // it's a turn in the middle of the round, see if it's better than the last
-    if (game.cardsToBeat.length === 0) {
-      return true;
-    } else {
-      const areCardsBetter = this.areCardsBetter(game.cardsToBeat, turn.cardsPlayed);
-      if (areCardsBetter) {
+      else if (game.cardsToBeat.length === 0) {
         return true;
       } else {
-        throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.CardsNotBetter));
+        const areCardsBetter = this.areCardsBetter(game.cardsToBeat, turn.cardsPlayed);
+        if (areCardsBetter) {
+          return true;
+        } else {
+          throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.CardsNotBetter));
+        }
       }
     }
   }

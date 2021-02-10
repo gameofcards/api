@@ -31,6 +31,13 @@ input CreatePresidentsGameRequest {
   name: String!
 }
 
+input CreateUserRequest {
+  displayName: String!
+  email: String!
+  password: String!
+  username: String!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -109,6 +116,7 @@ input JoinPresidentsGameRequest {
 type Mutation {
   addPresidentsTurn(input: AddPresidentsTurnRequest!): PresidentsGame!
   createPresidentsGame(input: CreatePresidentsGameRequest!): PresidentsGame!
+  createUser(input: CreateUserRequest!): User!
   fulfillDrinkRequest(input: FulfillDrinkRequestRequest!): PresidentsGame!
   joinPresidentsGame(input: JoinPresidentsGameRequest!): PresidentsGame!
   rematch(input: RematchRequest!): PresidentsGame!
@@ -266,7 +274,9 @@ type User implements Instance {
   displayName: String!
   email: String!
   id: String!
+  password: String!
   playerRecords: [ID!]!
   role: Role!
+  token: String!
   username: String!
 }

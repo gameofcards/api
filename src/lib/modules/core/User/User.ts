@@ -1,12 +1,15 @@
+import { CreateUserInput, CreateUserRequest } from './User.input';
 import { DocumentType, modelOptions as ModelOptions, prop as Property, Ref, ReturnModelType } from '@typegoose/typegoose';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { Role, RoleModel } from '../Role';
 
-import { CreateUserInput } from './User.input';
 import { Instance } from '../Instance';
 import { ObjectId } from 'mongodb';
 import Player from '../Player/Player';
-import { Role } from '../Role';
+import { RoleNames } from './../../../types';
 import { Utils } from '../../modules.utils';
+import { logger } from './../../../logger';
+import {sign} from 'jsonwebtoken';
 
 /**
  * This class represents a User.
@@ -24,22 +27,24 @@ export default class User implements Instance {
     return this.displayName;
   }
 
-  @Property({ required: true, unique: true, maxlength: 30 })
+  @Property({ required: true, unique: true })
   @Field()
   public username!: string;
 
-  @Property({ required: true, unique: true, maxlength: 50 })
+  @Property({ required: true, unique: true })
   @Field()
   public email!: string;
 
-  @Property({ required: true, maxlength: 30 })
+  @Property({ required: true })
   @Field()
   public displayName!: string;
 
   @Property({ required: true })
+  @Field()
   public password!: string;
 
   @Property()
+  @Field()
   public token?: string;
 
   @Property({ required: true, type: Role })
@@ -49,6 +54,27 @@ export default class User implements Instance {
   @Property({ ref: 'Player' })
   @Field((type) => [ID])
   public playerRecords!: Ref<Player>[];
+
+  /**
+   * This public method for GraphQL.
+   * @param input The required parameters to create a user.
+   * @returns Promise<User>
+   * @public
+   * @static
+   * @async
+   * @automation User.test.ts #createInstance
+   */
+  public static async CreateUser(this: ReturnModelType<typeof User>, input: CreateUserRequest) {
+    const role = await RoleModel.findOne({ name: RoleNames.User });
+    const user = {
+      ...input,
+      role,
+      token: sign({...input}, process.env.JWT_SECRET),
+      playerRecords: [],
+    };
+    const instance = await this.createInstance(user);
+    return instance;
+  }
 
   /**
    * This method will create a User.
@@ -62,7 +88,6 @@ export default class User implements Instance {
   public static async createInstance(this: ReturnModelType<typeof User>, input: CreateUserInput) {
     const user = {
       ...input,
-      token: '',
       playerRecords: [],
     };
     const instance = await this.create(user);

@@ -11,5 +11,5 @@ export class CreateToggleInput {
   public description!: string;
 
   @Field()
-  public confidenceLevel!: ConfidenceLevels.Internal | ConfidenceLevels.Production;
+  public confidenceLevel!: ConfidenceLevels;
 }

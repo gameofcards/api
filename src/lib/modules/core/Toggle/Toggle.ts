@@ -29,7 +29,7 @@ export default class Toggle implements Instance {
 
   @Property({ required: true })
   @Field()
-  public confidenceLevel!: ConfidenceLevels.Internal | ConfidenceLevels.Production;
+  public confidenceLevel!: ConfidenceLevels;
 
   get displayId() {
     return `${this.name}-${this.confidenceLevel}`;

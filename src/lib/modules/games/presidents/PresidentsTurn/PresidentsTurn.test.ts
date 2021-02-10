@@ -246,8 +246,7 @@ describe('Presidents Turn', function () {
       try {
         const result = PresidentsTurnModel.isValidTurn(gameData, turn);
         expect(result).toBeTruthy();
-      } catch (err) {
-      }
+      } catch (err) {}
     });
 
     it("should return true if it is the player's turn and they have valid cards", async () => {

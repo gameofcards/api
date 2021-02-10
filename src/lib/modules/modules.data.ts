@@ -5,20 +5,18 @@ import db from '../db';
 import { logger } from '../logger';
 
 export const initializeModules = async () => {
-  logger.info('[DATA] initializing all modules...')
+  logger.info('[DATA] initializing all modules...');
   await initializeCoreModule();
   await initializeGamesModule();
-  logger.info('[DATA] initialization complete.')
-
+  logger.info('[DATA] initialization complete.');
 };
 
 export const dropModules = async () => {
-  logger.info('[DATA] dropping all modules...')
+  logger.info('[DATA] dropping all modules...');
   await dropCoreModule();
   await dropGamesModule();
-  logger.info('[DATA] drop complete.')
+  logger.info('[DATA] drop complete.');
 };
-
 
 (async () => {
   logger.info('[DATA] starting');

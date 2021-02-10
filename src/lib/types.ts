@@ -22,6 +22,7 @@ export const ObjectIdScalar = new GraphQLScalarType({
 
 export enum ConfidenceLevels {
   Internal = 'INTERNAL',
+  Development = 'DEVELOPMENT',
   Production = 'PRODUCTION',
 }
 
@@ -33,7 +34,7 @@ export enum PoliticalRankValues {
   SecretaryOfState = 'Secretary of State',
   SecretaryOfTreasury = 'Secretary of the Treasury',
   SecretaryOfDefense = 'Secretary of Defense',
-  Asshole = 'Asshole'
+  Asshole = 'Asshole',
 }
 
 export enum PresidentsGameValidations {
@@ -44,7 +45,7 @@ export enum PresidentsGameValidations {
   MinimumPlayersNotReached = 'The minimum number of players has not been reached.',
   NoRanksAssigned = 'Not all players have ranks yet.',
   PlayerRankTooLow = 'The player receiving this drink out ranks you.',
-  DrinkUnfulfilled = 'The player receiving this drink currently has one from you.'
+  DrinkUnfulfilled = 'The player receiving this drink currently has one from you.',
 }
 
 export enum PresidentsTurnValidations {

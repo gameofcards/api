@@ -64,6 +64,7 @@ describe('User', function () {
         displayName: 'displayName',
         password: 'password',
         role: userRole,
+        token: ''
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -95,6 +96,7 @@ describe('User', function () {
         displayName: 'displayName',
         password: 'password',
         role: userRole,
+        token: ''
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -131,6 +133,19 @@ describe('User', function () {
       } catch (err) {
         expect(err.message).toEqual('User validation failed: role: Path `role` is required.');
       }
+    });
+  });
+
+  describe('@CreateUser()', function () {
+    it('should create a user', async function () {
+      const user = await UserModel.CreateUser({
+        username: 'bill',
+        password: 'bob',
+        email: 'bill@bob.com',
+        displayName: 'billybob'
+      });
+      expect(user).toBeDefined();
+      expect(user.token).toBeDefined();
     });
   });
 });

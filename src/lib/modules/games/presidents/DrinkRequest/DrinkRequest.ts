@@ -75,24 +75,8 @@ export default class DrinkRequest implements Instance {
       game: input.game,
       sentAt: new Date(),
       fulfilled: false,
-      message: input.message
+      message: input.message,
     };
     return this.create(drinkRequestInput);
-  }
-
-  /**
-   * This method will create a card instance.
-   * @param input Required parameters to create a card
-   * @returns Promise<Card>
-   * @public
-   * @static
-   * @async
-   * @automation
-   */
-  public async fulfill(this: DocumentType<DrinkRequest>) {
-    this.fulfilled = true;
-    this.fulfilledAt = Utils.getDate();
-    await this.save();
-    return this;
   }
 }
