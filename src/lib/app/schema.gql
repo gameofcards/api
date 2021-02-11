@@ -113,6 +113,11 @@ input JoinPresidentsGameRequest {
   userId: String!
 }
 
+input LoginRequest {
+  password: String!
+  username: String!
+}
+
 type Mutation {
   addPresidentsTurn(input: AddPresidentsTurnRequest!): PresidentsGame!
   createPresidentsGame(input: CreatePresidentsGameRequest!): PresidentsGame!
@@ -207,6 +212,7 @@ type Query {
   gameConfigurations: [GameConfiguration!]!
   gameStatus(id: ObjectId!): GameStatus!
   gameStatuses: [GameStatus!]!
+  login(input: LoginRequest!): User!
   presidentsGame(id: ObjectId!): PresidentsGame!
   presidentsGames: [PresidentsGame!]!
   status(id: ObjectId!): Status!

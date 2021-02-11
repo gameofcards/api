@@ -1,6 +1,7 @@
 import { Errors } from './../types';
 import { ID } from '../types';
 import { Types } from 'mongoose';
+import { logger } from './../logger';
 
 export class Utils {
   static getModelOptions() {
@@ -93,5 +94,13 @@ export class Utils {
 
   static operationFailed(message: string) {
     return `${Errors.OperationFailed} ${message}`;
+  }
+
+  static async tryto(fn) {
+    try {
+      await fn();
+    } catch(err) {
+      logger.info('no bueno')
+    }
   }
 }

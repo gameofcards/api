@@ -208,11 +208,9 @@ export default class PresidentsTurn implements Instance {
           return true;
         }
         throw new PresidentsTurnError(Utils.operationFailed(PresidentsTurnValidations.FirstTurn3Clubs));
-      } 
-      else if (game.isFirstTurnOfCurrentRound) {
+      } else if (game.isFirstTurnOfCurrentRound) {
         return true;
-      }
-      else if (game.cardsToBeat.length === 0) {
+      } else if (game.cardsToBeat.length === 0) {
         return true;
       } else {
         const areCardsBetter = this.areCardsBetter(game.cardsToBeat, turn.cardsPlayed);

@@ -1,9 +1,5 @@
 import { Field, Int, ObjectType } from 'type-graphql';
-import {
-  modelOptions as ModelOptions,
-  prop as Property,
-  ReturnModelType,
-} from '@typegoose/typegoose';
+import { modelOptions as ModelOptions, prop as Property, ReturnModelType } from '@typegoose/typegoose';
 
 import { CreatePoliticalRankInput } from './PoliticalRank.input';
 import { Instance } from '../../../core';

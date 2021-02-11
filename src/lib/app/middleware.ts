@@ -14,10 +14,9 @@ const errorHandler = async (ctx: Koa.Context, next: Function) => {
 
 export const middleware = compose([
   errorHandler,
-  bodyParser(), 
+  bodyParser(),
   cors({
     credentials: true,
-    exposeHeaders: ['Access-Token', 'Cookie']
+    exposeHeaders: ['Access-Token', 'Cookie'],
   }),
 ]);
-

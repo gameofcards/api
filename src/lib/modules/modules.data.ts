@@ -24,8 +24,8 @@ export const dropModules = async () => {
 
   try {
     // await db.drop()
-    await dropModules();
-    // await initializeModules();
+    // await dropModules();
+    await initializeModules();
   } catch (err) {
     logger.error('[DATA] failed.');
   }

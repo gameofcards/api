@@ -12,8 +12,7 @@ const Users = [
     displayName: 'tommyCHEESE',
     password: 'cheese',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'johnnyroastbeef',
@@ -21,8 +20,7 @@ const Users = [
     password: 'XxBeefCakexX',
     displayName: 'beefcake',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'bella',
@@ -30,8 +28,7 @@ const Users = [
     password: 'mortadella',
     displayName: 'belladella',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'tony',
@@ -39,8 +36,7 @@ const Users = [
     password: 'pepperoni',
     displayName: 'tonyP',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'tammy',
@@ -48,8 +44,7 @@ const Users = [
     password: 'salami',
     displayName: 'tammy.salami',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'malory',
@@ -57,8 +52,7 @@ const Users = [
     password: 'cellory',
     displayName: 'mal.cell',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'bobby',
@@ -66,8 +60,7 @@ const Users = [
     password: 'apples',
     displayName: 'bobbyeatsapples',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'timmy',
@@ -75,8 +68,7 @@ const Users = [
     password: 'cheesecake',
     displayName: 'timmy.cheese',
     role: null,
-    token: ''
-
+    token: '',
   },
   {
     username: 'jethro',
@@ -84,7 +76,7 @@ const Users = [
     password: 'mud',
     displayName: 'jethro.mud',
     role: null,
-    token: ''
+    token: '',
   },
 ];
 

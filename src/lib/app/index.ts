@@ -12,6 +12,7 @@ import { GraphQLSchema } from 'graphql';
 import { ObjectId } from 'mongodb';
 import { ObjectIdScalar } from '../types';
 import { RoleNames } from './../types';
+import { UserModel } from '../modules/core';
 import { auth } from './auth';
 import { buildSchema } from 'type-graphql';
 import graphqlHTTP from 'koa-graphiql';
@@ -56,7 +57,7 @@ export class Application {
   }
 
   private initializeKoa() {
-    this.app.use(middleware)
+    this.app.use(middleware);
   }
 
   private async initializeApolloServer() {
@@ -66,7 +67,7 @@ export class Application {
       emitSchemaFile: path.resolve(__dirname, 'schema.gql'),
       scalarsMap: [{ type: ObjectId, scalar: ObjectIdScalar }],
       authChecker: auth,
-      validate: false
+      validate: false,
     });
     this.apollo = new ApolloServer({
       schema: this.schema,
@@ -74,9 +75,15 @@ export class Application {
       engine: {
         reportSchema: true,
       },
-      context: ({ ctx }) => {
-        const token  = ctx.cookies.get('token');
+      context: async ({ ctx }) => {
+        const token = ctx.cookies.get('token');
         logger.info(`apollo:context:token -- ${token}`);
+        // const userInstance = await UserModel.findByToken(token);
+        // const user = {
+        //   role: userInstance.role.name,
+        //   id: userInstance.id,
+        // };
+        // logger.info(`apollo:context:user -- ${userInstance.displayId}`);
         const user = {
           role: RoleNames.Administrator,
           id: '6018c463a65201803da6b465',

@@ -55,6 +55,12 @@ export enum PresidentsTurnValidations {
   CardsNotBetter = 'Your cards are not better than the last turn.',
 }
 
+export enum UserValidations {
+  UserDoesNotExist = 'Sorry, that username does not exist.',
+  IncorrectPassword = 'Sorry, your password is incorrect.',
+  InvalidToken = 'Sorry, your token is invalid.'
+}
+
 export enum Errors {
   OperationFailed = 'Operation failed.',
 }

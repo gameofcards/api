@@ -17,6 +17,14 @@ export class CreateUserRequest {
   displayName: string;
 }
 
+@InputType()
+export class LoginRequest {
+  @Field()
+  username: string;
+
+  @Field()
+  password: string;
+}
 
 @InputType()
 export class CreateUserInput {

@@ -1,3 +1,3 @@
 import Instance from './Instance';
-
-export { Instance };
+import { InstanceResolver } from './Instance.resolver';
+export { Instance, InstanceResolver };

@@ -64,7 +64,7 @@ describe('User', function () {
         displayName: 'displayName',
         password: 'password',
         role: userRole,
-        token: ''
+        token: '',
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -96,7 +96,7 @@ describe('User', function () {
         displayName: 'displayName',
         password: 'password',
         role: userRole,
-        token: ''
+        token: '',
       };
       try {
         const instance = await UserModel.createInstance(user);
@@ -142,10 +142,34 @@ describe('User', function () {
         username: 'bill',
         password: 'bob',
         email: 'bill@bob.com',
-        displayName: 'billybob'
+        displayName: 'billybob',
       });
       expect(user).toBeDefined();
       expect(user.token).toBeDefined();
+    });
+  });
+
+  describe('@LoginUser()', function () {
+    it('should login a user', async function () {
+      const user = await UserModel.LoginUser({
+        username: 'bill',
+        password: 'bob'
+      });
+      expect(user).toBeDefined();
+      expect(user.token).toBeDefined();
+    });
+  });
+
+  describe('@findByToken()', function () {
+    it('should find a user by token', async function () {
+      const user = await UserModel.CreateUser({
+        username: 'joe',
+        password: 'blow',
+        email: 'joe@blow.com',
+        displayName: 'joeblow',
+      });
+      const user2 = await UserModel.findByToken(user.token);
+      expect(user.id).toEqual(user2.id)
     });
   });
 });

@@ -1,6 +1,6 @@
 import { ApolloServerContext } from '../../../app/ctx';
 import { logger } from './../../../logger';
-import { CreateUserRequest } from './User.input';
+import { CreateUserRequest, LoginRequest } from './User.input';
 import { RoleNames } from './../../../types';
 import { ObjectId } from 'mongodb';
 import { Resolver, Query, Arg, Authorized, Ctx, Mutation } from 'type-graphql';
@@ -22,12 +22,16 @@ export default class UserResolver {
   }
 
   @Mutation((returns) => User)
-  async createUser(@Arg('input') input: CreateUserRequest,
-  @Ctx() ctx: ApolloServerContext
-  )
-  : Promise<User> {
+  async createUser(@Arg('input') input: CreateUserRequest, @Ctx() ctx: ApolloServerContext): Promise<User> {
     const user = await UserModel.CreateUser(input);
     ctx.koaCtx.cookies.set('token', user.token);
-    return user
+    return user;
+  }
+
+  @Query((returns) => User)
+  async login(@Arg('input') input: LoginRequest, @Ctx() ctx: ApolloServerContext): Promise<User> {
+    const user = await UserModel.LoginUser(input);
+    ctx.koaCtx.cookies.set('token', user.token);
+    return user;
   }
 }
