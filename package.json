@@ -80,7 +80,7 @@
     "apollo-log": "^0.2.0",
     "apollo-server-koa": "^2.17.0",
     "bcrypt": "^5.0.0",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.14.0",
     "graphql": "^15.3.0",
     "graphql-modules": "^1.0.0-alpha.2",
     "kcors": "^2.2.2",
